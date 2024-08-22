@@ -1,4 +1,4 @@
-package com.hive
+package com.shellyapps.hive
 
 import android.app.Application
 import com.facebook.react.PackageList

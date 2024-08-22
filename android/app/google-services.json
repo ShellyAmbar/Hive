@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "495400713932",
+    "project_id": "hive-c997e",
+    "storage_bucket": "hive-c997e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495400713932:android:b04f6b694b4012611f4c69",
+        "android_client_info": {
+          "package_name": "com.shellyapps.hive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsJyxdmDeLdA0K0-kxYjKoc4O9SHoc2ig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
