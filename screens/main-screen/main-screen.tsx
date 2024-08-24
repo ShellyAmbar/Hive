@@ -1,15 +1,13 @@
 import {View} from 'react-native';
 import React from 'react';
-import FloatingButton from '@hive/components/floating-button/floating-button';
 import styles from './main-screen.styles';
+import GettingCall from '@hive/components/getting-call/getting-call';
+import Video from './video/video';
 const MainScreen = () => {
   return (
     <View style={styles.container}>
-      <FloatingButton
-        containerStyle={{bottom: 50, alignSelf: 'center'}}
-        iconName="video"
-        onPress={() => {}}
-      />
+      <Video />
+      <GettingCall join={() => {}} hangup={() => {}} />
     </View>
   );
 };

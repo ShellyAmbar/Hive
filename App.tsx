@@ -11,11 +11,12 @@ import React from 'react';
 
 import {SafeAreaView, StatusBar} from 'react-native';
 import StackNavigation from './navigation/stack-navigation';
+import {GlobalColors} from './styles/colors';
 
 function App(): React.JSX.Element {
   return (
     <SafeAreaView style={{flex: 1}}>
-      <StatusBar barStyle={'dark-content'} />
+      <StatusBar barStyle="light-content" />
       <NavigationContainer>
         <StackNavigation />
       </NavigationContainer>
