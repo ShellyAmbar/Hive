@@ -1,25 +1,19 @@
-import {TouchableOpacity, ViewStyle} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import React from 'react';
 import styles from './floating-button.styles';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import IFloatingButton from './interfaces';
 const FloatingButton = ({
   iconName,
   containerStyle,
   iconStyle,
   onPress,
   iconColor = '#FFF',
-  iconSize = 20,
-}: {
-  iconName: string;
-  iconColor?: string;
-  containerStyle?: ViewStyle;
-  iconStyle?: ViewStyle;
-  onPress: () => void;
-  iconSize?: number;
-}) => {
+  iconSize = 30,
+}: IFloatingButton) => {
   return (
     <TouchableOpacity
-      style={[styles.container, {...containerStyle}]}
+      style={[styles.container, styles.shadow, {...containerStyle}]}
       onPress={onPress}>
       <Icon
         name={iconName}
