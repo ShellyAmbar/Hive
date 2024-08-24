@@ -10,13 +10,25 @@ const Video = ({localStrem, remoteStrem, hangup}: IVideoProps) => {
   return (
     <View style={styles.container}>
       {localStrem && !remoteStrem ? (
-        <RTCView streamURL={localStrem.toURL()} objectFit="cover" />
+        <RTCView
+          streamURL={localStrem.toURL()}
+          objectFit="cover"
+          style={styles.otherVideo}
+        />
       ) : localStrem && remoteStrem ? (
         <>
-          <RTCView streamURL={remoteStrem.toURL()} objectFit="cover" />
-          <View style={styles.myVideo}>
-            <RTCView streamURL={localStrem.toURL()} objectFit="contain" />
-          </View>
+          <RTCView
+            streamURL={remoteStrem.toURL()}
+            objectFit="cover"
+            style={styles.otherVideo}
+          />
+
+          <RTCView
+            streamURL={localStrem.toURL()}
+            objectFit="cover"
+            style={styles.myVideo}
+          />
+
           <FloatingButton
             containerStyle={{
               bottom: 50,

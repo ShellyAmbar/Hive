@@ -19,4 +19,9 @@ export default StyleSheet.create({
     bottom: 50,
     right: 50,
   },
+  otherVideo: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+  },
 });
