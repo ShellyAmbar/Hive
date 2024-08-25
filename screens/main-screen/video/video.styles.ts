@@ -24,4 +24,9 @@ export default StyleSheet.create({
     height: '100%',
     width: '100%',
   },
+  hangupBtn: {
+    bottom: 50,
+    alignSelf: 'center',
+    backgroundColor: GlobalColors.SystemColors.Error,
+  },
 });

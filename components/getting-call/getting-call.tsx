@@ -31,7 +31,7 @@ const GettingCall = ({hangup, join}: IGettingCall) => {
         dotCount={4}
         dotSize={30}
         dotSpacing={8}
-        duration={400}
+        duration={300}
         dotStyle={{borderRadius: 5}}
         animationType="FADE_IN_OUT"
       />
