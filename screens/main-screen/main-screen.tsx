@@ -12,8 +12,10 @@ import {
 import FloatingButton from '@hive/components/floating-button/floating-button';
 import {getStream} from '@hive/utils/stream-util';
 import firestore, {
+  doc,
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
+import {db} from '@hive/firebase-config';
 const peerConstraints = {
   iceServers: [
     {
@@ -74,34 +76,40 @@ const MainScreen = () => {
     }
 
     // get remote stream
-    (pc.current as RTCPeerConnection)?.ontrack(event => {
+    pc.current.ontrack = event => {
       // Grab the remote track from the connected participant.
       const [remoteStream] = event.streams;
       setRemoteStream(remoteStream);
-    });
+    };
   };
   const create = async () => {
-    console.log('calling');
-    connecting.current = true;
-    await setupWebRTC();
+    try {
+      console.log('calling');
+      connecting.current = true;
+      await setupWebRTC();
 
-    const cRef = firestore().collection('meet').doc('chatId');
-    // exchange the ICE candidates between the caller and the callee
-    collectionIceCandidates(cRef, 'caller', 'callee');
-    if (pc.current) {
-      // create the offer for the call
-      //store the offer under the document
-      const offer = await pc.current.createOffer({});
-      pc.current.setLocalDescription(offer);
+      const cRef = firestore().collection('meet').doc('chatId');
+      console.log('cRef', cRef);
 
-      const cWithOffer = {
-        offer: {
-          type: offer.type,
-          sdp: offer.sdp,
-        },
-      };
+      // exchange the ICE candidates between the caller and the callee
+      collectionIceCandidates(cRef, 'caller', 'callee');
+      if (pc.current) {
+        // create the offer for the call
+        //store the offer under the document
+        const offer = await pc.current.createOffer({});
+        pc.current.setLocalDescription(offer);
 
-      cRef.set(cWithOffer);
+        const cWithOffer = {
+          offer: {
+            type: offer.type,
+            sdp: offer.sdp,
+          },
+        };
+
+        cRef.set(cWithOffer);
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
   const join = async () => {
@@ -109,6 +117,7 @@ const MainScreen = () => {
     connecting.current = true;
     setGettingCall(false);
     const cRef = firestore().collection('meet').doc('chatId');
+
     const offer = (await cRef.get())?.data()?.offer;
     if (offer) {
       await setupWebRTC();
@@ -195,12 +204,12 @@ const MainScreen = () => {
   };
 
   if (gettingCall) {
-    return <GettingCall join={join} hangup={hangup} />;
+    return <GettingCall join={() => join()} hangup={() => hangup()} />;
   }
   if (localStream) {
     return (
       <Video
-        hangup={hangup}
+        hangup={() => hangup()}
         localStrem={localStream}
         remoteStrem={remoteStream}
       />
@@ -211,7 +220,7 @@ const MainScreen = () => {
       <FloatingButton
         containerStyle={styles.callBtn}
         iconName="video"
-        onPress={create}
+        onPress={() => create()}
       />
     </View>
   );
