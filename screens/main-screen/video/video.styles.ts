@@ -13,11 +13,11 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   myVideo: {
-    height: 100,
-    width: 100,
+    height: 150,
+    width: 150,
     position: 'absolute',
-    bottom: 50,
-    right: 50,
+    bottom: 20,
+    right: 20,
   },
   otherVideo: {
     position: 'absolute',

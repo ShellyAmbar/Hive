@@ -9,24 +9,26 @@ import {GlobalColors} from '@hive/styles/colors';
 const GettingCall = ({hangup, join}: IGettingCall) => {
   return (
     <View style={styles.container}>
-      <FloatingButton
-        containerStyle={{
-          bottom: 50,
-          alignSelf: 'center',
-          backgroundColor: GlobalColors.SystemColors.Success,
-        }}
-        iconName="video"
-        onPress={() => join()}
-      />
-      <FloatingButton
-        containerStyle={{
-          bottom: 50,
-          alignSelf: 'center',
-          backgroundColor: GlobalColors.SystemColors.Error,
-        }}
-        iconName="video"
-        onPress={() => hangup()}
-      />
+      <View style={styles.horizontal}>
+        <FloatingButton
+          containerStyle={{
+            position: 'relative',
+
+            backgroundColor: GlobalColors.SystemColors.Success,
+          }}
+          iconName="phone"
+          onPress={() => join()}
+        />
+        <FloatingButton
+          containerStyle={{
+            position: 'relative',
+
+            backgroundColor: GlobalColors.SystemColors.Error,
+          }}
+          iconName="phone"
+          onPress={() => hangup()}
+        />
+      </View>
       <Loading
         dotCount={4}
         dotSize={30}

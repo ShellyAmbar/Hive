@@ -9,10 +9,10 @@ import {NavigationContainer} from '@react-navigation/native';
 
 import React from 'react';
 
-import {SafeAreaView, StatusBar} from 'react-native';
+import {LogBox, SafeAreaView, StatusBar} from 'react-native';
 import StackNavigation from './navigation/stack-navigation';
-import {GlobalColors} from './styles/colors';
 
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 function App(): React.JSX.Element {
   return (
     <SafeAreaView style={{flex: 1}}>
