@@ -12,6 +12,7 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import DeviceInfo from 'react-native-device-info';
+import {useDispatch, useSelector} from 'react-redux';
 
 const peerConstraints = {
   iceServers: [
@@ -28,7 +29,8 @@ const useMainScreen = () => {
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
-
+  const {name} = useSelector(state => state.user);
+  const dispatch = useDispatch();
   const getFirebaseRef = async () => {
     const myRef = firestore()
       .collection('meet')
@@ -67,6 +69,10 @@ const useMainScreen = () => {
                 if (newCall && newCall?.offer && !connecting.current) {
                   console.log('data?.offer');
                   setGettingCall(true);
+                  dispatch({
+                    type: 'SET_INCOMING_USER_NAME',
+                    payload: newCall.callerName,
+                  });
                 }
               }
             });
@@ -184,6 +190,7 @@ const useMainScreen = () => {
           },
           status: 'pending',
           callerId: DeviceInfo.getDeviceId(),
+          callerName: name,
         };
 
         fbRef.set(cWithOffer);

@@ -1,9 +1,10 @@
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 import React from 'react';
 import styles from './video.styles';
 import IVideoProps from './interfaces';
 import FloatingButton from '@hive/components/floating-button/floating-button';
 import {RTCView} from 'react-native-webrtc';
+import Loading from 'react-native-animated-loading-dots';
 
 const Video = ({localStrem, remoteStrem, hangup}: IVideoProps) => {
   const showLocalStream = () => (
@@ -13,11 +14,25 @@ const Video = ({localStrem, remoteStrem, hangup}: IVideoProps) => {
         objectFit="cover"
         style={styles.otherVideo}
       />
-      <FloatingButton
-        containerStyle={styles.hangupBtn}
-        iconName="video"
-        onPress={() => hangup()}
-      />
+      <View style={styles.shade} />
+      <View style={styles.content}>
+        <Text style={styles.subTitle}>
+          {'Looking for \n a partner for you ..'}
+        </Text>
+        <Loading
+          dotCount={4}
+          dotSize={30}
+          dotSpacing={8}
+          duration={300}
+          dotStyle={{borderRadius: 30}}
+          animationType="UP_AND_DOWN"
+        />
+        <FloatingButton
+          containerStyle={styles.hangupBtn}
+          iconName="video"
+          onPress={() => hangup()}
+        />
+      </View>
     </>
   );
 

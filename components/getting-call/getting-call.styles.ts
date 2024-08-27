@@ -16,4 +16,36 @@ export default StyleSheet.create({
     position: 'absolute',
     bottom: 50,
   },
+  content: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 3,
+  },
+  subTitle: {
+    color: GlobalColors.TextColors.white,
+
+    fontSize: 30,
+    marginBottom: 50,
+    textAlign: 'center',
+    fontFamily: 'Jersey10-Regular',
+  },
+  video: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 0,
+  },
+  shade: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: GlobalColors.BgColors.Bg2,
+  },
 });
