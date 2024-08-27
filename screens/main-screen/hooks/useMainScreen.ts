@@ -27,7 +27,6 @@ const useMainScreen = () => {
   const [listenToNewCalls, setlistenToNewCalls] = useState(true);
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
-  const firebaseRef = useRef(null);
   const [fbRef, setfbRef] = useState(null);
 
   const getFirebaseRef = async () => {
