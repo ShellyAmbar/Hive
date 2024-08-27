@@ -8,16 +8,34 @@ import FloatingButton from '@hive/components/floating-button/floating-button';
 import useMainScreen from './hooks/useMainScreen';
 
 const MainScreen = () => {
-  const {gettingCall, join, hangup, localStream, remoteStream, create} =
-    useMainScreen();
+  const {
+    gettingCall,
+    join,
+    hangup,
+    localStream,
+    remoteStream,
+    create,
+    hangupAndCallAgain,
+    declineIncomingCall,
+  } = useMainScreen();
 
   if (gettingCall) {
-    return <GettingCall join={join} hangup={hangup} />;
+    return (
+      <GettingCall
+        join={join}
+        hangup={() => {
+          // hangup();
+          declineIncomingCall();
+        }}
+      />
+    );
   }
   if (localStream) {
     return (
       <Video
-        hangup={() => hangup()}
+        hangup={() => {
+          hangupAndCallAgain();
+        }}
         localStrem={localStream}
         remoteStrem={remoteStream}
       />
