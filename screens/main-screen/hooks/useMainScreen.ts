@@ -7,7 +7,7 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 
-import {getStream} from '@hive/utils/stream-util';
+import VideoStreamManager from '@hive/utils/stream-util';
 import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
@@ -39,6 +39,21 @@ const useMainScreen = () => {
 
     return myRef;
   };
+
+  useEffect(() => {
+    (async () => {
+      const videoStreamManager = VideoStreamManager.getInstance();
+      try {
+        const videoStream = await videoStreamManager.getStream(false, true);
+
+        setLocalStream(videoStream);
+      } catch (error) {
+        console.error('Failed to get stream:', error);
+      }
+    })();
+
+    return () => {};
+  }, []);
 
   useEffect(() => {
     if (listenToNewCalls) {
@@ -74,11 +89,12 @@ const useMainScreen = () => {
                     payload: newCall.callerName,
                   });
                 }
-              } else if (change.type === 'removed') {
-                console.log('----------removed');
-
-                hangup();
               }
+              //  else if (change.type === 'removed') {
+              //   console.log('----------removed', DeviceInfo.getDeviceId());
+
+              //   hangup();
+              // }
             });
           });
 
@@ -110,13 +126,13 @@ const useMainScreen = () => {
 
           if (
             pc.current &&
-            !pc.current.remoteDescription &&
+            !pc.current?.remoteDescription &&
             newCall &&
             newCall.answer
           ) {
             console.log('answer ------------');
 
-            pc.current.setRemoteDescription(
+            pc.current?.setRemoteDescription(
               new RTCSessionDescription(newCall?.answer),
             );
           }
@@ -136,9 +152,22 @@ const useMainScreen = () => {
           });
         });
 
+      const subscribeDeleteCaller = fbRef
+        ?.collection('caller')
+        .onSnapshot(snapshot => {
+          snapshot?.docChanges().forEach(change => {
+            console.log("change.type === 'removed'", change.type === 'removed');
+
+            if (change.type === 'removed') {
+              hangup();
+            }
+          });
+        });
+
       return () => {
         subscribeDelete && subscribeDelete();
         unSubscribeAnswer && unSubscribeAnswer();
+        subscribeDeleteCaller && subscribeDeleteCaller();
       };
     }
   }, [fbRef]);
@@ -147,7 +176,11 @@ const useMainScreen = () => {
     try {
       pc.current = new RTCPeerConnection(peerConstraints);
       //get voice and video stream
-      const stream = await getStream(false, true);
+
+      const videoStreamManager = VideoStreamManager.getInstance();
+
+      const stream = await videoStreamManager.getStream(false, true);
+
       if (stream) {
         setLocalStream(stream);
         stream.getTracks().forEach(track => {
@@ -156,16 +189,18 @@ const useMainScreen = () => {
       }
 
       // get remote stream
-      pc.current.ontrack = event => {
-        // Grab the remote track from the connected participant.
-        const remoteStream = new MediaStream();
-        event.streams[0].getTracks().forEach(track => {
-          remoteStream.addTrack(track);
-          console.log('remote add track -----------');
-        });
+      if (pc.current) {
+        pc.current.ontrack = event => {
+          // Grab the remote track from the connected participant.
+          const remoteStream = new MediaStream();
+          event.streams[0].getTracks().forEach(track => {
+            remoteStream.addTrack(track);
+            console.log('remote add track -----------');
+          });
 
-        setRemoteStream(remoteStream);
-      };
+          setRemoteStream(remoteStream);
+        };
+      }
     } catch (e) {
       console.log('error', e);
     }
@@ -184,8 +219,8 @@ const useMainScreen = () => {
       if (pc.current) {
         // create the offer for the call
         //store the offer under the document
-        const offer = await pc.current.createOffer();
-        pc.current.setLocalDescription(offer);
+        const offer = await pc.current?.createOffer();
+        pc.current?.setLocalDescription(offer);
 
         const cWithOffer = {
           offer: {
@@ -218,12 +253,12 @@ const useMainScreen = () => {
         //chaeck the parameters , its reversed. since the claiing part is callee
         await collectionIceCandidates(fbRef, 'callee', 'caller');
         if (pc.current) {
-          pc.current.setRemoteDescription(new RTCSessionDescription(offer));
+          pc.current?.setRemoteDescription(new RTCSessionDescription(offer));
           //create answer for the call
           //update doc with answer
 
-          const answer = await pc.current.createAnswer();
-          pc.current.setLocalDescription(answer);
+          const answer = await pc.current?.createAnswer();
+          pc.current?.setLocalDescription(answer);
 
           const cWithAnswer = {
             answer: {
@@ -243,7 +278,7 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
-    console.log('hangup -----------');
+    console.log('hangup -----------', DeviceInfo.getDeviceId());
     dispatch({
       type: 'SET_INCOMING_USER_NAME',
       payload: '',
@@ -254,7 +289,7 @@ const useMainScreen = () => {
 
     await firestoreCleanup();
     if (pc.current) {
-      await pc.current.close();
+      await pc.current?.close();
     }
     setlistenToNewCalls(true);
   };
@@ -271,7 +306,7 @@ const useMainScreen = () => {
 
     await firestoreCleanup();
     if (pc.current) {
-      await pc.current.close();
+      await pc.current?.close();
     }
     setlistenToNewCalls(false);
   };
@@ -293,16 +328,16 @@ const useMainScreen = () => {
   };
 
   const streamCleanup = async () => {
-    if (localStream) {
-      localStream.getTracks().forEach(t => t.stop());
-      // Stop all video tracks
-      localStream.getVideoTracks().forEach(track => track.stop());
-      // Stop all audio tracks
-      localStream.getAudioTracks().forEach(track => track.stop());
-      localStream.release();
-    }
+    // if (localStream) {
+    //   localStream.getTracks().forEach(t => t.stop());
+    //   // Stop all video tracks
+    //   localStream.getVideoTracks().forEach(track => track.stop());
+    //   // Stop all audio tracks
+    //   localStream.getAudioTracks().forEach(track => track.stop());
+    //   localStream.release();
+    // }
 
-    setLocalStream(null);
+    // setLocalStream(null);
     setRemoteStream(null);
   };
   const firestoreCleanup = async () => {

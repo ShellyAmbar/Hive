@@ -4,8 +4,10 @@ import {StyleSheet} from 'react-native';
 export default StyleSheet.create({
   video: {
     position: 'absolute',
-    height: '100%',
-    width: '100%',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   subTitle: {
     color: GlobalColors.TextColors.white,

@@ -1,11 +1,12 @@
-import React from 'react';
-import GettingCall from '@hive/components/getting-call/getting-call';
+import React, {useEffect} from 'react';
+import GettingCall from '@hive/screens/main-screen/getting-call/getting-call';
 import Video from './video/video';
 import useMainScreen from './hooks/useMainScreen';
 import Waiting from './waiting/waiting';
 import {View} from 'react-native';
 import styles from './main-screen.styles';
 import Header from '@hive/components/header/header';
+import DeviceInfo from 'react-native-device-info';
 
 const MainScreen = props => {
   const {
@@ -16,18 +17,29 @@ const MainScreen = props => {
     remoteStream,
     declineIncomingCall,
     hangup,
+    connecting,
   } = useMainScreen();
+
+  useEffect(() => {
+    console.log(
+      'connecting.current---------',
+      connecting.current,
+      'gettingCall ----',
+      gettingCall,
+      DeviceInfo.getDeviceId(),
+    );
+  }, [connecting.current]);
 
   return (
     <View style={styles.container}>
       <Header
         onClickBack={() => {
-          props.navigation.navigate('Welcome');
+          props.navigation.replace('Welcome');
           hangup();
         }}
         backButtonColor="#FFFF"
       />
-      {gettingCall ? (
+      {gettingCall && (
         <GettingCall
           localStream={localStream}
           join={join}
@@ -35,7 +47,9 @@ const MainScreen = props => {
             declineIncomingCall();
           }}
         />
-      ) : localStream ? (
+      )}
+
+      {connecting.current && (
         <Video
           hangup={() => {
             hangup();
@@ -43,11 +57,13 @@ const MainScreen = props => {
           localStrem={localStream}
           remoteStrem={remoteStream}
         />
-      ) : (
+      )}
+      {!gettingCall && !connecting.current && (
         <Waiting
           create={create}
           isWaiting={false}
           title={'Create a new call'}
+          localStream={localStream}
         />
       )}
     </View>

@@ -9,7 +9,7 @@ import {
 import React, {useEffect, useState} from 'react';
 import styles from './details-screen.styles';
 import {MediaStream, RTCView} from 'react-native-webrtc';
-import {getStream} from '@hive/utils/stream-util';
+import VideoStreamManager from '@hive/utils/stream-util';
 import ReactiveTextInput from 'rn-reactive-text-input';
 
 import {useDispatch, useSelector} from 'react-redux';
@@ -27,37 +27,28 @@ const DetailsScreen = props => {
     props.navigation.navigate('Home');
   };
 
-  const closeStraem = () => {
-    if (localStream) {
-      localStream.getTracks().forEach(t => t.stop());
-      // Stop all video tracks
-      localStream.getVideoTracks().forEach(track => track.stop());
-      // Stop all audio tracks
-      localStream.getAudioTracks().forEach(track => track.stop());
-      localStream.release();
-    }
-
-    setLocalStream(null);
-  };
-
   const chooseImage = () => {};
 
   useEffect(() => {
     (async () => {
-      const stream = await getStream(false, true);
-      setLocalStream(stream);
+      const videoStreamManager = VideoStreamManager.getInstance();
+      try {
+        const videoStream = await videoStreamManager.getStream(false, true);
+
+        setLocalStream(videoStream);
+      } catch (error) {
+        console.error('Failed to get stream:', error);
+      }
     })();
 
-    return () => {
-      closeStraem();
-    };
+    return () => {};
   }, []);
 
   return (
     <View style={styles.container}>
       <Header
         onClickBack={() => {
-          props.navigation.navigate('Welcome');
+          props.navigation.replace('Welcome');
         }}
         backButtonColor="#FFFF"
       />

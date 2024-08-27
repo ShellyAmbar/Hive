@@ -2,8 +2,8 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './welcome-screen.styles';
 import {MediaStream, RTCView} from 'react-native-webrtc';
-import {getStream} from '@hive/utils/stream-util';
-import {useDispatch, useSelector} from 'react-redux';
+import VideoStreamManager from '@hive/utils/stream-util';
+
 const WelcomeScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
 
@@ -11,28 +11,19 @@ const WelcomeScreen = props => {
     props.navigation.navigate('Details');
   };
 
-  const closeStraem = () => {
-    if (localStream) {
-      localStream.getTracks().forEach(t => t.stop());
-      // Stop all video tracks
-      localStream.getVideoTracks().forEach(track => track.stop());
-      // Stop all audio tracks
-      localStream.getAudioTracks().forEach(track => track.stop());
-      localStream.release();
-    }
-
-    setLocalStream(null);
-  };
-
   useEffect(() => {
     (async () => {
-      const stream = await getStream(false, true);
-      setLocalStream(stream);
+      const videoStreamManager = VideoStreamManager.getInstance();
+      try {
+        const videoStream = await videoStreamManager.getStream(false, true);
+
+        setLocalStream(videoStream);
+      } catch (error) {
+        console.error('Failed to get stream:', error);
+      }
     })();
 
-    return () => {
-      closeStraem();
-    };
+    return () => {};
   }, []);
 
   return (

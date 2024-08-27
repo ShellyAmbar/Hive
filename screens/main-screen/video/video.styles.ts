@@ -9,8 +9,6 @@ export default StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   myVideo: {
     height: 150,
@@ -48,7 +46,5 @@ export default StyleSheet.create({
   content: {
     flex: 1,
     zIndex: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
