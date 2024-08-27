@@ -6,19 +6,11 @@ import IGettingCall from './interfaces';
 import Loading from 'react-native-animated-loading-dots';
 import {GlobalColors} from '@hive/styles/colors';
 import {useSelector} from 'react-redux';
-import {MediaStream, RTCView} from 'react-native-webrtc';
-import {getStream} from '@hive/utils/stream-util';
+import {RTCView} from 'react-native-webrtc';
 
-const GettingCall = ({hangup, join}: IGettingCall) => {
+const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
   const {incomingUserName} = useSelector(state => state.user);
-  const [localStream, setLocalStream] = useState<null | MediaStream>();
 
-  useEffect(() => {
-    (async () => {
-      const stream = await getStream(false, true);
-      setLocalStream(stream);
-    })();
-  }, []);
   return (
     <View style={styles.container}>
       <RTCView

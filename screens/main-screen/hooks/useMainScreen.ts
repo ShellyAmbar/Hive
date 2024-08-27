@@ -74,6 +74,10 @@ const useMainScreen = () => {
                     payload: newCall.callerName,
                   });
                 }
+              } else if (change.type === 'removed') {
+                console.log('----------removed');
+
+                hangup();
               }
             });
           });
@@ -240,10 +244,14 @@ const useMainScreen = () => {
   //cleanup
   const hangup = async () => {
     console.log('hangup -----------');
-
+    dispatch({
+      type: 'SET_INCOMING_USER_NAME',
+      payload: '',
+    });
     setGettingCall(false);
     connecting.current = false;
     await streamCleanup();
+
     await firestoreCleanup();
     if (pc.current) {
       await pc.current.close();
@@ -252,27 +260,28 @@ const useMainScreen = () => {
   };
 
   const hangupAndCallAgain = async () => {
+    dispatch({
+      type: 'SET_INCOMING_USER_NAME',
+      payload: '',
+    });
     console.log('hangupAndCallAgain -----------');
     setGettingCall(false);
     connecting.current = false;
     await streamCleanup();
+
     await firestoreCleanup();
     if (pc.current) {
       await pc.current.close();
     }
     setlistenToNewCalls(false);
-
-    const time = setTimeout(() => {
-      if (!connecting.current && !gettingCall) {
-        create();
-      }
-
-      clearTimeout(time);
-    }, 2000);
   };
 
   const declineIncomingCall = () => {
     console.log('declineIncomingCall -----------');
+    dispatch({
+      type: 'SET_INCOMING_USER_NAME',
+      payload: '',
+    });
     setGettingCall(false);
     connecting.current = false;
     setlistenToNewCalls(false);
@@ -295,8 +304,6 @@ const useMainScreen = () => {
 
     setLocalStream(null);
     setRemoteStream(null);
-
-    console.log('local', localStream === null);
   };
   const firestoreCleanup = async () => {
     if (fbRef) {
@@ -354,6 +361,7 @@ const useMainScreen = () => {
     create,
     hangupAndCallAgain,
     declineIncomingCall,
+    connecting,
   };
 };
 

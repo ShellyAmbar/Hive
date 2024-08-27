@@ -1,53 +1,55 @@
-import {View} from 'react-native';
 import React from 'react';
-import styles from './main-screen.styles';
 import GettingCall from '@hive/components/getting-call/getting-call';
 import Video from './video/video';
-
-import FloatingButton from '@hive/components/floating-button/floating-button';
 import useMainScreen from './hooks/useMainScreen';
+import Waiting from './waiting/waiting';
+import {View} from 'react-native';
+import styles from './main-screen.styles';
+import Header from '@hive/components/header/header';
 
-const MainScreen = () => {
+const MainScreen = props => {
   const {
+    create,
     gettingCall,
     join,
-    hangup,
     localStream,
     remoteStream,
-    create,
-    hangupAndCallAgain,
     declineIncomingCall,
+    hangup,
   } = useMainScreen();
 
-  if (gettingCall) {
-    return (
-      <GettingCall
-        join={join}
-        hangup={() => {
-          // hangup();
-          declineIncomingCall();
-        }}
-      />
-    );
-  }
-  if (localStream) {
-    return (
-      <Video
-        hangup={() => {
-          hangupAndCallAgain();
-        }}
-        localStrem={localStream}
-        remoteStrem={remoteStream}
-      />
-    );
-  }
   return (
     <View style={styles.container}>
-      <FloatingButton
-        containerStyle={styles.callBtn}
-        iconName="video"
-        onPress={() => create()}
+      <Header
+        onClickBack={() => {
+          props.navigation.navigate('Welcome');
+          hangup();
+        }}
+        backButtonColor="#FFFF"
       />
+      {gettingCall ? (
+        <GettingCall
+          localStream={localStream}
+          join={join}
+          hangup={() => {
+            declineIncomingCall();
+          }}
+        />
+      ) : localStream ? (
+        <Video
+          hangup={() => {
+            hangup();
+          }}
+          localStrem={localStream}
+          remoteStrem={remoteStream}
+        />
+      ) : (
+        <Waiting
+          create={create}
+          isWaiting={false}
+          title={'Create a new call'}
+        />
+      )}
     </View>
   );
 };
