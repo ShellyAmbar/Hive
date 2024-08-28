@@ -32,10 +32,11 @@ const useMainScreen = () => {
   const {name, image} = useSelector(state => state.user);
   const dispatch = useDispatch();
   const getFirebaseRef = async () => {
+    const id = await DeviceInfo.getUniqueId();
     const myRef = firestore()
       .collection('meet')
-      .doc('chatId-' + DeviceInfo.getDeviceId());
-    console.log('id -------', DeviceInfo.getDeviceId());
+      .doc('chatId-' + id);
+    console.log('id -------', id);
 
     return myRef;
   };
@@ -56,124 +57,146 @@ const useMainScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (listenToNewCalls) {
-      try {
-        //listen to new incoming calls that is not mine
-        const unsubscribe = firestore()
-          .collection('meet')
-          .where('status', '==', 'pending')
-          .where('callerId', '!=', DeviceInfo.getDeviceId())
-          .onSnapshot(snap => {
-            snap.docChanges().forEach(change => {
-              console.log('listeningForNewCall -------');
-              if (change.type === 'added') {
-                console.log('added call ------------');
+    (async () => {
+      if (listenToNewCalls) {
+        try {
+          //listen to new incoming calls that is not mine
+          const id = await DeviceInfo.getUniqueId();
+          const unsubscribe = firestore()
+            .collection('meet')
+            .where('status', '==', 'pending')
+            .where('callerId', '!=', id)
+            .onSnapshot(snap => {
+              snap.docChanges().forEach(change => {
+                console.log('listeningForNewCall -------');
+                if (change.type === 'added') {
+                  console.log('added call ------------');
 
-                //on answer start call
-                const newCall = change.doc.data();
-                setfbRef(change.doc.ref);
-                console.log(
-                  'path -------',
-                  change.doc.ref.path,
-                  'connecting.current',
-                  connecting.current,
-                );
+                  //on answer start call
+                  const newCall = change.doc.data();
+                  setfbRef(change.doc.ref);
+                  console.log(
+                    'path -------',
+                    change.doc.ref.path,
+                    'connecting.current',
+                    connecting.current,
+                  );
 
-                //if there is offer for chatid set the getting call flag
+                  //if there is offer for chatid set the getting call flag
 
-                if (newCall && newCall?.offer && !connecting.current) {
-                  console.log('data?.offer');
-                  setGettingCall(true);
-                  dispatch({
-                    type: 'SET_INCOMING_USER_NAME',
-                    payload: newCall.callerName,
-                  });
-                  dispatch({
-                    type: 'SET_INCOMING_USER_IMAGE',
-                    payload: newCall.image,
-                  });
+                  if (newCall && newCall?.offer && !connecting.current) {
+                    console.log('data?.offer');
+                    setGettingCall(true);
+                    dispatch({
+                      type: 'SET_INCOMING_USER_NAME',
+                      payload: newCall.callerName,
+                    });
+                    dispatch({
+                      type: 'SET_INCOMING_USER_IMAGE',
+                      payload: newCall.image,
+                    });
+                  }
                 }
-              }
-              //  else if (change.type === 'removed') {
-              //   console.log('----------removed', DeviceInfo.getDeviceId());
+              });
+            });
 
-              //   hangup();
-              // }
+          return () => {
+            console.log('unsubscribe');
+
+            unsubscribe && unsubscribe();
+          };
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    })();
+  }, [listenToNewCalls]);
+
+  useEffect(() => {
+    (async () => {
+      if (fbRef) {
+        const id = await DeviceInfo.getUniqueId();
+        //listen to answer call and update remote
+        const unSubscribeAnswer = fbRef?.onSnapshot(snap => {
+          if (snap.exists) {
+            const newCall = snap.data();
+            //if call has been answered by someone else
+            if (
+              newCall.status !== 'pending' &&
+              newCall.callerId !== id &&
+              newCall.calleeId !== id
+            ) {
+              console.log(
+                'decline ---------------',
+                id,
+                newCall.callerId,
+                newCall.calleeId,
+              );
+
+              declineIncomingCall();
+              return;
+            }
+
+            // Check if the call has been answered
+
+            if (
+              pc.current &&
+              !pc.current?.remoteDescription &&
+              newCall &&
+              newCall.answer &&
+              newCall.callerId === id
+            ) {
+              console.log(
+                'someone answered to my call  ------------',
+                id,
+                newCall.calleeId,
+              );
+
+              pc.current?.setRemoteDescription(
+                new RTCSessionDescription(newCall?.answer),
+              );
+            }
+          }
+        });
+
+        //hangup call when other hanguped
+        const subscribeDelete = fbRef
+          ?.collection('callee')
+          .onSnapshot(snapshot => {
+            snapshot?.docChanges().forEach(change => {
+              console.log(
+                "change.type === 'removed'",
+                change.type === 'removed',
+              );
+
+              if (change.type === 'removed') {
+                hangup();
+              }
+            });
+          });
+
+        const subscribeDeleteCaller = fbRef
+          ?.collection('caller')
+          .onSnapshot(snapshot => {
+            snapshot?.docChanges().forEach(change => {
+              console.log(
+                "change.type === 'removed'",
+                change.type === 'removed',
+              );
+
+              if (change.type === 'removed') {
+                hangup();
+              }
             });
           });
 
         return () => {
-          console.log('unsubscribe');
-
-          unsubscribe && unsubscribe();
+          subscribeDelete && subscribeDelete();
+          unSubscribeAnswer && unSubscribeAnswer();
+          subscribeDeleteCaller && subscribeDeleteCaller();
         };
-      } catch (e) {
-        console.log(e);
       }
-    }
-  }, [listenToNewCalls]);
-
-  useEffect(() => {
-    if (fbRef) {
-      //listen to answer call and update remote
-      const unSubscribeAnswer = fbRef?.onSnapshot(snap => {
-        if (snap.exists) {
-          const newCall = snap.data();
-          console.log(
-            'Call updated:-------------',
-            pc.current !== null,
-            !pc.current?.remoteDescription,
-            newCall.answer !== null,
-          );
-
-          // Check if the call has been answered
-
-          if (
-            pc.current &&
-            !pc.current?.remoteDescription &&
-            newCall &&
-            newCall.answer
-          ) {
-            console.log('answer ------------');
-
-            pc.current?.setRemoteDescription(
-              new RTCSessionDescription(newCall?.answer),
-            );
-          }
-        }
-      });
-
-      //hangup call when other hanguped
-      const subscribeDelete = fbRef
-        ?.collection('callee')
-        .onSnapshot(snapshot => {
-          snapshot?.docChanges().forEach(change => {
-            console.log("change.type === 'removed'", change.type === 'removed');
-
-            if (change.type === 'removed') {
-              hangup();
-            }
-          });
-        });
-
-      const subscribeDeleteCaller = fbRef
-        ?.collection('caller')
-        .onSnapshot(snapshot => {
-          snapshot?.docChanges().forEach(change => {
-            console.log("change.type === 'removed'", change.type === 'removed');
-
-            if (change.type === 'removed') {
-              hangup();
-            }
-          });
-        });
-
-      return () => {
-        subscribeDelete && subscribeDelete();
-        unSubscribeAnswer && unSubscribeAnswer();
-        subscribeDeleteCaller && subscribeDeleteCaller();
-      };
-    }
+    })();
   }, [fbRef]);
 
   const setupWebRTC = async () => {
@@ -224,17 +247,18 @@ const useMainScreen = () => {
         // create the offer for the call
         //store the offer under the document
         const offer = await pc.current?.createOffer();
-        pc.current?.setLocalDescription(offer);
 
+        pc.current?.setLocalDescription(offer);
+        const id = await DeviceInfo.getUniqueId();
         const cWithOffer = {
           offer: {
             type: offer.type,
             sdp: offer.sdp,
           },
           status: 'pending',
-          callerId: DeviceInfo.getDeviceId(),
+          callerId: id,
           callerName: name,
-          image: image,
+          image: image ? image : '',
         };
 
         fbRef.set(cWithOffer);
@@ -248,7 +272,7 @@ const useMainScreen = () => {
     setlistenToNewCalls(false);
     connecting.current = true;
     setGettingCall(false);
-
+    const id = await DeviceInfo.getUniqueId();
     try {
       const offer = (await fbRef.get())?.data()?.offer;
 
@@ -271,6 +295,7 @@ const useMainScreen = () => {
               sdp: answer.sdp,
             },
             status: 'answered',
+            calleeId: id,
           };
           console.log('offer and answer');
           fbRef.update(cWithAnswer);
@@ -283,7 +308,6 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
-    console.log('hangup -----------', DeviceInfo.getDeviceId());
     dispatch({
       type: 'SET_INCOMING_USER_NAME',
       payload: '',
@@ -325,6 +349,7 @@ const useMainScreen = () => {
     setGettingCall(false);
     connecting.current = false;
     setlistenToNewCalls(false);
+    setfbRef(null);
 
     const time = setTimeout(() => {
       setlistenToNewCalls(true);

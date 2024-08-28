@@ -28,7 +28,7 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
         </Text>
 
         <Spacer size={52} />
-        {incomingUserImage && (
+        {incomingUserImage?.length > 0 && (
           <>
             <Image style={styles.image} source={{uri: incomingUserImage}} />
             <Spacer size={52} />
