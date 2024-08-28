@@ -1,6 +1,8 @@
 const initialState = {
   name: '',
   incomingUserName: '',
+  image: '',
+  incomingUserImage: '',
 };
 
 const UserReducer = (state = initialState, action) => {
@@ -14,6 +16,16 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         incomingUserName: action.payload,
+      };
+    case 'SET_IMAGE':
+      return {
+        ...state,
+        image: action.payload,
+      };
+    case 'SET_INCOMING_USER_IMAGE':
+      return {
+        ...state,
+        incomingUserImage: action.payload,
       };
     default:
       return state;

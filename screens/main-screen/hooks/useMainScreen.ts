@@ -29,7 +29,7 @@ const useMainScreen = () => {
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
-  const {name} = useSelector(state => state.user);
+  const {name, image} = useSelector(state => state.user);
   const dispatch = useDispatch();
   const getFirebaseRef = async () => {
     const myRef = firestore()
@@ -87,6 +87,10 @@ const useMainScreen = () => {
                   dispatch({
                     type: 'SET_INCOMING_USER_NAME',
                     payload: newCall.callerName,
+                  });
+                  dispatch({
+                    type: 'SET_INCOMING_USER_IMAGE',
+                    payload: newCall.image,
                   });
                 }
               }
@@ -230,6 +234,7 @@ const useMainScreen = () => {
           status: 'pending',
           callerId: DeviceInfo.getDeviceId(),
           callerName: name,
+          image: image,
         };
 
         fbRef.set(cWithOffer);

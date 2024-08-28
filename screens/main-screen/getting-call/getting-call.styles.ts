@@ -28,7 +28,7 @@ export default StyleSheet.create({
     color: GlobalColors.TextColors.white,
 
     fontSize: 30,
-    marginBottom: 50,
+
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
   },
@@ -48,5 +48,12 @@ export default StyleSheet.create({
     right: 0,
     zIndex: 1,
     backgroundColor: GlobalColors.BgColors.Bg2,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderColor: GlobalColors.TextColors.white,
+    borderBottomWidth: 1,
+    borderRadius: 100,
   },
 });

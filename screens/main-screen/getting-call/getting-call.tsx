@@ -1,5 +1,5 @@
-import {Text, View} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import {Text, View, Image} from 'react-native';
+import React from 'react';
 import styles from './getting-call.styles';
 import FloatingButton from '@hive/components/floating-button/floating-button';
 import IGettingCall from './interfaces';
@@ -7,9 +7,12 @@ import Loading from 'react-native-animated-loading-dots';
 import {GlobalColors} from '@hive/styles/colors';
 import {useSelector} from 'react-redux';
 import {RTCView} from 'react-native-webrtc';
+import Spacer from '@hive/components/spacer/spacer';
 
 const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
-  const {incomingUserName} = useSelector(state => state.user);
+  const {incomingUserName, incomingUserImage} = useSelector(
+    state => state.user,
+  );
 
   return (
     <View style={styles.container}>
@@ -23,6 +26,15 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
         <Text style={styles.subTitle}>
           {incomingUserName + '\n' + ' is calling you'}
         </Text>
+
+        <Spacer size={52} />
+        {incomingUserImage && (
+          <>
+            <Image style={styles.image} source={{uri: incomingUserImage}} />
+            <Spacer size={52} />
+          </>
+        )}
+
         <View style={styles.horizontal}>
           <FloatingButton
             containerStyle={{
