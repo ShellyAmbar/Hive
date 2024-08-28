@@ -31,45 +31,23 @@ export default StyleSheet.create({
     color: GlobalColors.TextColors.white,
 
     zIndex: 3,
-    fontSize: 40,
+    fontSize: 45,
     marginBottom: 20,
     fontFamily: 'Jersey10-Regular',
   },
   subTitle: {
     color: GlobalColors.Brand.thierd,
     zIndex: 3,
-    fontSize: 20,
+    fontSize: 25,
     marginBottom: 50,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
   },
-  textInputContainer: {
-    borderColor: GlobalColors.TextColors.white,
-    borderWidth: 1,
-    borderRadius: 10,
 
-    width: '80%',
-    zIndex: 3,
-    marginBottom: 50,
-  },
-  textInputText: {
-    color: GlobalColors.TextColors.white,
-    fontFamily: 'Jersey10-Regular',
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  text: {
-    color: GlobalColors.TextColors.white,
-    zIndex: 3,
-    fontSize: 16,
-    marginBottom: 10,
-    textAlign: 'center',
-    fontFamily: 'Jersey10-Regular',
-  },
   btnText: {
     color: GlobalColors.Brand.primary,
 
-    fontSize: 20,
+    fontSize: 22,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
   },
