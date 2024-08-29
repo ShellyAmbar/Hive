@@ -38,7 +38,7 @@ export default StyleSheet.create({
   subTitle: {
     color: GlobalColors.Brand.thierd,
     zIndex: 3,
-    fontSize: 25,
+    fontSize: 30,
     marginBottom: 50,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',

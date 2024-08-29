@@ -53,7 +53,7 @@ export default StyleSheet.create({
   subTitle: {
     color: GlobalColors.Brand.thierd,
 
-    fontSize: 20,
+    fontSize: 25,
 
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
@@ -67,7 +67,7 @@ export default StyleSheet.create({
   textInputText: {
     color: GlobalColors.TextColors.white,
     fontFamily: 'Jersey10-Regular',
-    fontSize: 20,
+    fontSize: 30,
     textAlign: 'center',
   },
   image: {

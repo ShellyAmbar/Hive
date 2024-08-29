@@ -29,7 +29,9 @@ const WelcomeScreen = props => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>DateRoulatte</Text>
-      <Text style={styles.subTitle}>Meet new friends in one click away ..</Text>
+      <Text style={styles.subTitle}>
+        {'Meet new friends\nin one click away ..'}
+      </Text>
 
       <RTCView
         streamURL={localStream?.toURL()}

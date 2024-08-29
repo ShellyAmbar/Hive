@@ -41,7 +41,6 @@ const DetailsScreen = props => {
           DeviceInfo.getDeviceId(),
           name,
         );
-        console.log('imageUri ---------', imageUri);
 
         dispatch({type: 'SET_IMAGE', payload: imageUri});
       }
@@ -73,6 +72,46 @@ const DetailsScreen = props => {
     return () => {};
   }, []);
 
+  const popup = () => {
+    return (
+      <Popup
+        isCancelable={true}
+        isVisible={showPopupChoose}
+        onClickClose={() => {
+          setshowPopupChoose(false);
+        }}>
+        <View>
+          <TouchableOpacity
+            style={styles.btnChoose}
+            onPress={() => {
+              setshowPopupChoose(false);
+              chooseImageFromGallery(
+                uri => {
+                  setImage(uri);
+                },
+                err => {},
+              );
+            }}>
+            <Text style={styles.textChoose}>{'Upload from library'}</Text>
+          </TouchableOpacity>
+          <Spacer size={12} />
+          <TouchableOpacity
+            style={styles.btnChoose}
+            onPress={() => {
+              setshowPopupChoose(false);
+              takePicture(
+                uri => {
+                  setImage(uri);
+                },
+                err => {},
+              );
+            }}>
+            <Text style={styles.textChoose}>{'Take new image'}</Text>
+          </TouchableOpacity>
+        </View>
+      </Popup>
+    );
+  };
   return (
     <View style={styles.container}>
       <Header
@@ -81,44 +120,7 @@ const DetailsScreen = props => {
         }}
         backButtonColor="#FFFF"
       />
-      {showPopupChoose && (
-        <Popup
-          isCancelable={true}
-          isVisible={showPopupChoose}
-          onClickClose={() => {
-            setshowPopupChoose(false);
-          }}>
-          <View>
-            <TouchableOpacity
-              style={styles.btnChoose}
-              onPress={() => {
-                setshowPopupChoose(false);
-                chooseImageFromGallery(
-                  uri => {
-                    setImage(uri);
-                  },
-                  err => {},
-                );
-              }}>
-              <Text style={styles.textChoose}>{'Upload from library'}</Text>
-            </TouchableOpacity>
-            <Spacer size={12} />
-            <TouchableOpacity
-              style={styles.btnChoose}
-              onPress={() => {
-                setshowPopupChoose(false);
-                takePicture(
-                  uri => {
-                    setImage(uri);
-                  },
-                  err => {},
-                );
-              }}>
-              <Text style={styles.textChoose}>{'Take new image'}</Text>
-            </TouchableOpacity>
-          </View>
-        </Popup>
-      )}
+      {showPopupChoose && popup()}
       <RTCView
         streamURL={localStream?.toURL()}
         objectFit="cover"
@@ -127,7 +129,7 @@ const DetailsScreen = props => {
       <View style={styles.shade} />
       <ScrollView style={styles.scroll}>
         <View style={styles.content}>
-          <Spacer size={10} />
+          <Spacer size={30} />
           <Text style={styles.title}>Tell us about you..</Text>
           <Spacer size={30} />
           <Text style={styles.subTitle}>
@@ -135,6 +137,7 @@ const DetailsScreen = props => {
           </Text>
           <Spacer size={8} />
           <ReactiveTextInput
+            textAlignVertical={'bottom'}
             placeholder="Enter your name.."
             placeHolderColor="#FFFF"
             defaultValue={name}
@@ -154,7 +157,7 @@ const DetailsScreen = props => {
             }}
             cursorColor={GlobalColors.TextColors.white}
           />
-          <Spacer size={20} />
+          <Spacer size={30} />
           <TouchableOpacity
             style={styles.imageBtn}
             onPress={() => chooseImage()}>
