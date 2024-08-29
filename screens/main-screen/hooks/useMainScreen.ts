@@ -72,7 +72,10 @@ const useMainScreen = () => {
           .where('callerId', '!=', deviceId)
           .onSnapshot(snap => {
             snap.docChanges().forEach(change => {
-              console.log('listen to new incoming calls that is not mine');
+              console.log(
+                'listen to new incoming calls that is not mine',
+                change.type,
+              );
               if (change.type === 'added') {
                 console.log(
                   'added call ------------',
@@ -235,12 +238,13 @@ const useMainScreen = () => {
       console.log('error', e);
     }
   };
+
   const create = async () => {
     try {
       listenToNewCallsRef.current = false;
-
-      console.log('calling--------');
       connecting.current = true;
+      console.log('calling--------');
+
       await setupWebRTC();
 
       const myRef = await getFirebaseRef();
@@ -316,6 +320,8 @@ const useMainScreen = () => {
   const hangup = async () => {
     if (connecting.current) {
       listenToNewCallsRef.current = true;
+      connecting.current = false;
+
       console.log('hangup--------------');
 
       dispatch({
@@ -327,7 +333,7 @@ const useMainScreen = () => {
         payload: '',
       });
       setGettingCall(false);
-      connecting.current = false;
+
       await streamCleanup();
 
       await firestoreCleanup();
@@ -342,6 +348,7 @@ const useMainScreen = () => {
       console.log('declineIncomingCall -----------');
 
       listenToNewCallsRef.current = true;
+      connecting.current = false;
       dispatch({
         type: 'SET_INCOMING_USER_NAME',
         payload: '',
@@ -352,7 +359,7 @@ const useMainScreen = () => {
       });
 
       setGettingCall(false);
-      connecting.current = false;
+
       fireBaseRef.current = null;
       setfbRef(null);
     }

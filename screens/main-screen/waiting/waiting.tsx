@@ -35,7 +35,7 @@ const Waiting = ({
         <Text style={styles.subTitle}>{title}</Text>
         {!isWaiting && (
           <CircularTimer
-            duration={10}
+            duration={20}
             height={80}
             width={100}
             onFinish={() => {

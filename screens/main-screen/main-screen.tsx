@@ -50,7 +50,7 @@ const MainScreen = props => {
         <Waiting
           create={create}
           isWaiting={false}
-          title={'Create a new call'}
+          title={'create a new call\nor wait for a partner\nto join'}
           localStream={localStream}
         />
       )}
