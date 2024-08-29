@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 import {
   MediaStream,
@@ -31,55 +31,67 @@ const useMainScreen = () => {
   const fireBaseRef = useRef(null);
   const [fbRef, setfbRef] = useState(null);
   const {name, image} = useSelector(state => state.user);
+  const [deviceId, setDeviceId] = useState('');
   const dispatch = useDispatch();
   const getFirebaseRef = async () => {
-    const id = await DeviceInfo.getUniqueId();
     const myRef = firestore()
       .collection('meet')
-      .doc('chatId-' + id);
-    console.log('id -------', id);
-    fireBaseRef.current = myRef;
-    setfbRef(myRef);
+      .doc('chatId-' + deviceId);
+    console.log('my    id -------', deviceId);
+
     return myRef;
   };
 
-  useEffect(() => {
-    (async () => {
-      const videoStreamManager = VideoStreamManager.getInstance();
-      try {
-        const videoStream = await videoStreamManager.getStream(false, true);
+  const loadData = useCallback(async () => {
+    const videoStreamManager = VideoStreamManager.getInstance();
+    try {
+      console.log('loading data');
 
-        setLocalStream(videoStream);
-      } catch (error) {
-        console.error('Failed to get stream:', error);
-      }
-    })();
+      const videoStream = await videoStreamManager.getStream(false, true);
 
-    return () => {};
+      setLocalStream(videoStream);
+      const id = await DeviceInfo.getUniqueId();
+      setDeviceId(id);
+    } catch (error) {
+      console.error('Failed to get stream:', error);
+    }
   }, []);
 
   useEffect(() => {
-    (async () => {
+    loadData();
+  }, [loadData]);
+
+  useEffect(() => {
+    if (deviceId?.length > 0) {
       try {
         //listen to new incoming calls that is not mine
-        const id = await DeviceInfo.getUniqueId();
+
         const unsubscribe = firestore()
           .collection('meet')
           .where('status', '==', 'pending')
-          .where('callerId', '!=', id)
+          .where('callerId', '!=', deviceId)
           .onSnapshot(snap => {
             snap.docChanges().forEach(change => {
-              console.log('listeningForNewCall -------');
+              console.log('listen to new incoming calls that is not mine');
               if (change.type === 'added') {
-                console.log('added call ------------');
+                console.log(
+                  'added call ------------',
+                  'myId--------------',
+                  deviceId,
+                  'islistening',
+                  listenToNewCallsRef.current,
+                );
 
                 //on answer start call
                 if (listenToNewCallsRef.current) {
                   console.log(
                     'incoming calll ------------',
                     'listenToNewCalls',
-                    id,
+                    deviceId,
                     listenToNewCallsRef.current,
+                    'connecting',
+                    connecting.current,
+                    name,
                   );
 
                   const newCall = change.doc.data();
@@ -91,6 +103,7 @@ const useMainScreen = () => {
 
                   if (newCall && newCall?.offer && !connecting.current) {
                     console.log('data?.offer');
+                    listenToNewCallsRef.current = false;
                     setGettingCall(true);
                     dispatch({
                       type: 'SET_INCOMING_USER_NAME',
@@ -112,96 +125,81 @@ const useMainScreen = () => {
           unsubscribe && unsubscribe();
         };
       } catch (e) {
-        console.log(e);
+        console.log('error---', e);
       }
-    })();
-  }, []);
+    }
+  }, [deviceId]);
 
   useEffect(() => {
-    (async () => {
-      if (fireBaseRef.current) {
-        const id = await DeviceInfo.getUniqueId();
-        //listen to answer call and update remote
-        const unSubscribeAnswer = fireBaseRef.current?.onSnapshot(snap => {
-          if (snap.exists) {
-            const newCall = snap.data();
-            //if call has been answered by someone else
-            if (
-              newCall.status !== 'pending' &&
-              newCall.callerId !== id &&
-              newCall.calleeId !== null &&
-              newCall.calleeId !== id
-            ) {
-              console.log(
-                'decline ---------------',
-                id,
-                newCall.callerId,
-                newCall.calleeId,
-              );
+    if (fbRef !== null) {
+      console.log('listen to answer call and update remote');
 
+      //listen to answer call and update remote
+      const unSubscribeAnswer = fbRef?.onSnapshot(snap => {
+        if (snap.exists) {
+          const newCall = snap.data();
+          //if call has been answered by someone else
+          if (
+            newCall.status === 'answered' &&
+            newCall.callerId !== deviceId &&
+            newCall.calleeId !== null &&
+            newCall.calleeId !== deviceId
+          ) {
+            console.log('call has been answered by :  ', newCall.callerId);
+
+            declineIncomingCall();
+          }
+
+          // Check if the call has been answered
+
+          if (
+            pc.current &&
+            !pc.current?.remoteDescription &&
+            newCall &&
+            newCall.answer &&
+            newCall.callerId === deviceId
+          ) {
+            //listenToNewCallsRef.current = false;
+            console.log(
+              deviceId + 'someone answered to my call  ------------',
+              deviceId,
+              newCall.calleeId,
+            );
+
+            pc.current?.setRemoteDescription(
+              new RTCSessionDescription(newCall?.answer),
+            );
+          }
+        }
+      });
+
+      //hangup call when other hanguped and i'm the caller
+      const subscribeDelete = fbRef
+        ?.collection('callee')
+        .onSnapshot(snapshot => {
+          snapshot?.docChanges().forEach(change => {
+            if (change.type === 'removed') {
+              hangup();
+            }
+          });
+        });
+      // hangup call when other hanguped and he is the caller
+
+      const subscribeDeleteCaller = fbRef
+        ?.collection('caller')
+        .onSnapshot(snapshot => {
+          snapshot?.docChanges().forEach(change => {
+            if (change.type === 'removed' && snapshot.size === 0) {
               declineIncomingCall();
             }
-
-            // Check if the call has been answered
-
-            if (
-              pc.current &&
-              !pc.current?.remoteDescription &&
-              newCall &&
-              newCall.answer &&
-              newCall.callerId === id
-            ) {
-              console.log(
-                id + 'someone answered to my call  ------------',
-                id,
-                newCall.calleeId,
-              );
-
-              pc.current?.setRemoteDescription(
-                new RTCSessionDescription(newCall?.answer),
-              );
-            }
-          }
+          });
         });
-
-        //hangup call when other hanguped
-        const subscribeDelete = fireBaseRef.current
-          ?.collection('callee')
-          .onSnapshot(snapshot => {
-            snapshot?.docChanges().forEach(change => {
-              console.log(
-                "change.type === 'removed'",
-                change.type === 'removed',
-              );
-
-              if (change.type === 'removed') {
-                hangup();
-              }
-            });
-          });
-
-        const subscribeDeleteCaller = fireBaseRef.current
-          ?.collection('caller')
-          .onSnapshot(snapshot => {
-            snapshot?.docChanges().forEach(change => {
-              console.log(
-                "change.type === 'removed'",
-                change.type === 'removed',
-              );
-
-              if (change.type === 'removed') {
-                hangup();
-              }
-            });
-          });
-
-        return () => {
-          subscribeDelete && subscribeDelete();
-          unSubscribeAnswer && unSubscribeAnswer();
-          subscribeDeleteCaller && subscribeDeleteCaller();
-        };
-      }
-    })();
+      return () => {
+        subscribeDelete && subscribeDelete();
+        unSubscribeAnswer && unSubscribeAnswer();
+        subscribeDeleteCaller && subscribeDeleteCaller();
+      };
+    }
   }, [fbRef]);
 
   const setupWebRTC = async () => {
@@ -241,33 +239,35 @@ const useMainScreen = () => {
     try {
       listenToNewCallsRef.current = false;
 
-      console.log('calling');
+      console.log('calling--------');
       connecting.current = true;
       await setupWebRTC();
 
-      await getFirebaseRef();
+      const myRef = await getFirebaseRef();
+      fireBaseRef.current = myRef;
+      setfbRef(myRef);
 
       // exchange the ICE candidates between the caller and the callee
-      await collectionIceCandidates(fireBaseRef.current, 'caller', 'callee');
+      await collectionIceCandidates(myRef, 'caller', 'callee');
       if (pc.current) {
         // create the offer for the call
         //store the offer under the document
         const offer = await pc.current?.createOffer();
 
         pc.current?.setLocalDescription(offer);
-        const id = await DeviceInfo.getUniqueId();
+
         const cWithOffer = {
           offer: {
             type: offer.type,
             sdp: offer.sdp,
           },
           status: 'pending',
-          callerId: id,
+          callerId: deviceId,
           callerName: name,
           image: image ? image : '',
         };
 
-        fireBaseRef.current.set(cWithOffer);
+        myRef.set(cWithOffer);
       }
     } catch (e) {
       console.log(e);
@@ -278,7 +278,7 @@ const useMainScreen = () => {
     listenToNewCallsRef.current = false;
     connecting.current = true;
     setGettingCall(false);
-    const id = await DeviceInfo.getUniqueId();
+
     try {
       const offer = (await fireBaseRef.current.get())?.data()?.offer;
 
@@ -301,7 +301,7 @@ const useMainScreen = () => {
               sdp: answer.sdp,
             },
             status: 'answered',
-            calleeId: id,
+            calleeId: deviceId,
           };
           console.log('offer and answer');
           fireBaseRef.current.update(cWithAnswer);
@@ -314,54 +314,48 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
-    dispatch({
-      type: 'SET_INCOMING_USER_NAME',
-      payload: '',
-    });
-    setGettingCall(false);
-    connecting.current = false;
-    await streamCleanup();
+    if (connecting.current) {
+      listenToNewCallsRef.current = true;
+      console.log('hangup--------------');
 
-    await firestoreCleanup();
-    if (pc.current) {
-      await pc.current?.close();
+      dispatch({
+        type: 'SET_INCOMING_USER_NAME',
+        payload: '',
+      });
+      dispatch({
+        type: 'SET_INCOMING_USER_IMAGE',
+        payload: '',
+      });
+      setGettingCall(false);
+      connecting.current = false;
+      await streamCleanup();
+
+      await firestoreCleanup();
+      if (pc.current) {
+        await pc.current?.close();
+      }
     }
-    listenToNewCallsRef.current = true;
-  };
-
-  const hangupAndCallAgain = async () => {
-    dispatch({
-      type: 'SET_INCOMING_USER_NAME',
-      payload: '',
-    });
-    console.log('hangupAndCallAgain -----------');
-    setGettingCall(false);
-    connecting.current = false;
-    await streamCleanup();
-
-    await firestoreCleanup();
-    if (pc.current) {
-      await pc.current?.close();
-    }
-    listenToNewCallsRef.current = false;
   };
 
   const declineIncomingCall = () => {
-    console.log('declineIncomingCall -----------');
-    dispatch({
-      type: 'SET_INCOMING_USER_NAME',
-      payload: '',
-    });
-    setGettingCall(false);
-    connecting.current = false;
-    listenToNewCallsRef.current = false;
-    fireBaseRef.current = null;
-    setfbRef(null);
+    if (!listenToNewCallsRef.current) {
+      console.log('declineIncomingCall -----------');
 
-    const time = setTimeout(() => {
       listenToNewCallsRef.current = true;
-      clearTimeout(time);
-    }, 500);
+      dispatch({
+        type: 'SET_INCOMING_USER_NAME',
+        payload: '',
+      });
+      dispatch({
+        type: 'SET_INCOMING_USER_IMAGE',
+        payload: '',
+      });
+
+      setGettingCall(false);
+      connecting.current = false;
+      fireBaseRef.current = null;
+      setfbRef(null);
+    }
   };
 
   const streamCleanup = async () => {
@@ -409,8 +403,6 @@ const useMainScreen = () => {
       if (pc.current) {
         //on new ice candidate add to firestore
         pc.current.onicecandidate = event => {
-          console.log('onicecandidate', event.candidate);
-
           if (event.candidate !== null) {
             candidateCollection.add(event.candidate);
           }
@@ -436,7 +428,6 @@ const useMainScreen = () => {
     localStream,
     remoteStream,
     create,
-    hangupAndCallAgain,
     declineIncomingCall,
     connecting,
   };

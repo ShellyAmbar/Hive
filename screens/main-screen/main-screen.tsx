@@ -20,16 +20,6 @@ const MainScreen = props => {
     connecting,
   } = useMainScreen();
 
-  useEffect(() => {
-    console.log(
-      'connecting.current---------',
-      connecting.current,
-      'gettingCall ----',
-      gettingCall,
-      DeviceInfo.getDeviceId(),
-    );
-  }, [connecting.current]);
-
   return (
     <View style={styles.container}>
       <Header
@@ -51,9 +41,7 @@ const MainScreen = props => {
 
       {connecting.current && (
         <Video
-          hangup={() => {
-            hangup();
-          }}
+          hangup={hangup}
           localStrem={localStream}
           remoteStrem={remoteStream}
         />
