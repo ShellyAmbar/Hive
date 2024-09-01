@@ -50,6 +50,7 @@ const useMainScreen = () => {
         const videoStream = await videoStreamManager.getStream(false, isFront);
 
         setLocalStream(videoStream);
+        return videoStream;
       } catch (e) {
         console.log(e);
       }
@@ -58,11 +59,19 @@ const useMainScreen = () => {
   );
 
   const switchCamera = useCallback(async () => {
-    if (isFront) {
-      loadVideo(false);
-    } else {
-      loadVideo(true);
+    const newStream = await loadVideo(isFront ? false : true);
+    // Replace the existing video track with the new one
+    const videoTrack = newStream.getVideoTracks()[0];
+    const sender = pc.current.getSenders().find(s => s.track.kind === 'video');
+    if (sender) {
+      sender.replaceTrack(videoTrack);
     }
+    pc.current.ontrack = event => {
+      // Update the remote stream when a new track is received
+      const remoteStream = event.streams[0];
+      setRemoteStream(remoteStream); // Update your state or UI as needed
+    };
+
     setisFront(prev => {
       return !prev;
     });
