@@ -36,25 +36,25 @@ const Waiting = ({
         {!isWaiting && (
           <CircularTimer
             duration={20}
-            height={80}
-            width={100}
+            height={60}
+            width={80}
             onFinish={() => {
               setShowCountDown(false);
               create && create();
             }}
-            textStyle={{fontSize: 16}}
+            textStyle={{fontSize: 12}}
             progressColor={GlobalColors.Brand.secondary}
             circleColor="white"
             isCountDown={true}
             animateFillProgress={true}
             intervalDuration={1000}
-            strokeWidth={8}
+            strokeWidth={5}
           />
         )}
         {isWaiting && (
           <Loading
             dotCount={4}
-            dotSize={30}
+            dotSize={20}
             dotSpacing={8}
             duration={300}
             dotStyle={{borderRadius: 30}}

@@ -78,13 +78,14 @@ const useMainScreen = () => {
                 //on answer start call
                 const newCall = change.doc.data();
                 console.log(
-                  'new call',
+                  'new call added -----',
+                  name,
                   newCall.callerName,
                   newCall.callerId,
                   lastCallerIdRef.current,
                 );
                 if (
-                  startListenToPending &&
+                  listenToNewCallsRef.current &&
                   (!lastCallerIdRef.current ||
                     lastCallerIdRef.current === undefined ||
                     newCall.callerId !== lastCallerIdRef.current) &&
@@ -92,6 +93,14 @@ const useMainScreen = () => {
                   newCall?.offer &&
                   !connecting.current
                 ) {
+                  console.log(
+                    'new call',
+                    name,
+                    newCall.callerName,
+                    newCall.callerId,
+                    lastCallerIdRef.current,
+                  );
+
                   setfbRef(change.doc.ref);
                   lastCallerIdRef.current = newCall.callerId;
                   //if there is offer for chatid set the getting call flag

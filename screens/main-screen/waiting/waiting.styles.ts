@@ -11,7 +11,7 @@ export default StyleSheet.create({
   },
   subTitle: {
     color: GlobalColors.TextColors.white,
-    fontSize: 30,
+    fontSize: 25,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
     marginBottom: 50,
@@ -24,7 +24,7 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1,
-    backgroundColor: GlobalColors.BgColors.Bg2,
+    backgroundColor: GlobalColors.BgColors.Bg4,
   },
   content: {
     flex: 1,
