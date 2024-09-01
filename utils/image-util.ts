@@ -1,4 +1,4 @@
-import {getDownloadURL, uploadBytes} from 'firebase/storage';
+import {deleteObject, getDownloadURL, uploadBytes} from 'firebase/storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {storage, ref as storegeRef} from '@hive/firebase-config';
 const chooseImageFromGallery = (
@@ -48,6 +48,21 @@ const takePicture = (
 const getImagePathOnCloude = (itemId: string, userId: string) => {
   return `images/${userId}/${itemId}.jpg`;
 };
+
+const deleteImagePath = async (imageId: string, userId: string) => {
+  try {
+    const imagePath = getImagePathOnCloude(imageId, userId);
+    // Create a reference to the file to delete
+    const storageRef = storegeRef(storage, imagePath);
+
+    // Delete the file
+    await deleteObject(storageRef);
+
+    console.log('Image deleted successfully.');
+  } catch (error) {
+    console.error('Error deleting image: ', error);
+  }
+};
 const uploadImageToCloude = async (
   imageId: string,
   userId: string,
@@ -81,4 +96,5 @@ export {
   takePicture,
   dounloadImageFromStorage,
   uploadImageToCloude,
+  deleteImagePath,
 };

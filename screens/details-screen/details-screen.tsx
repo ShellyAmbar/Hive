@@ -6,7 +6,7 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import styles from './details-screen.styles';
 import {MediaStream, RTCView} from 'react-native-webrtc';
 import VideoStreamManager from '@hive/utils/stream-util';
@@ -16,9 +16,11 @@ import {useDispatch, useSelector} from 'react-redux';
 import {GlobalColors} from '@hive/styles/colors';
 import Header from '@hive/components/header/header';
 import Spacer from '@hive/components/spacer/spacer';
+import Icon from 'react-native-vector-icons/AntDesign';
 
 import {
   chooseImageFromGallery,
+  deleteImagePath,
   dounloadImageFromStorage,
   takePicture,
   uploadImageToCloude,
@@ -28,30 +30,51 @@ import DeviceInfo from 'react-native-device-info';
 const DetailsScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
   const dispatch = useDispatch();
-  const {name: useName} = useSelector(state => state.user);
+  const {name: useName, image: myImage} = useSelector(state => state.user);
   const [name, setName] = useState(useName);
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<string | null>(null);
   const [showPopupChoose, setshowPopupChoose] = useState(false);
+  const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      if (image) {
-        await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
-        const imageUri = await dounloadImageFromStorage(
-          DeviceInfo.getDeviceId(),
-          name,
-        );
+    if (myImage) {
+      setImage(myImage);
+      setisNeedToUpdateCloude(false);
+    }
+  }, [myImage]);
 
-        dispatch({type: 'SET_IMAGE', payload: imageUri});
-      }
-    })();
-  }, [image]);
+  const updateImageUri = useCallback((imageUri: string | null) => {
+    console.log('updateImageUri----');
 
-  const onStart = async () => {
+    setImage(imageUri);
+    setisNeedToUpdateCloude(true);
+  }, []);
+
+  const updateImageToCloude = useCallback(async () => {
+    console.log('updateImageToCloude------------');
+    if (image) {
+      await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
+      const imageUri = await dounloadImageFromStorage(
+        DeviceInfo.getDeviceId(),
+        name,
+      );
+
+      dispatch({type: 'SET_IMAGE', payload: imageUri});
+    } else {
+      await deleteImagePath(DeviceInfo.getDeviceId(), name);
+      dispatch({type: 'SET_IMAGE', payload: null});
+    }
+    setisNeedToUpdateCloude(false);
+  }, [name, image]);
+  const onStart = useCallback(async () => {
     dispatch({type: 'SET_NAME', payload: name});
 
+    if (isNeedToUpdateCloude) {
+      updateImageToCloude();
+    }
+
     props.navigation.navigate('Home');
-  };
+  }, [isNeedToUpdateCloude]);
 
   const chooseImage = () => {
     setshowPopupChoose(true);
@@ -87,7 +110,7 @@ const DetailsScreen = props => {
               setshowPopupChoose(false);
               chooseImageFromGallery(
                 uri => {
-                  setImage(uri);
+                  updateImageUri(uri);
                 },
                 err => {},
               );
@@ -101,7 +124,7 @@ const DetailsScreen = props => {
               setshowPopupChoose(false);
               takePicture(
                 uri => {
-                  setImage(uri);
+                  updateImageUri(uri);
                 },
                 err => {},
               );
@@ -114,12 +137,6 @@ const DetailsScreen = props => {
   };
   return (
     <View style={styles.container}>
-      <Header
-        onClickBack={() => {
-          props.navigation.replace('Welcome');
-        }}
-        backButtonColor="#FFFF"
-      />
       {showPopupChoose && popup()}
       <RTCView
         streamURL={localStream?.toURL()}
@@ -157,16 +174,26 @@ const DetailsScreen = props => {
             }}
             cursorColor={GlobalColors.TextColors.white}
           />
-          <Spacer size={30} />
+          <Spacer size={40} />
           <TouchableOpacity
             style={styles.imageBtn}
             onPress={() => chooseImage()}>
             <Text style={styles.text}>Upload a picture</Text>
           </TouchableOpacity>
-          <Spacer size={50} />
+          <Spacer size={55} />
           {image && (
             <>
-              <Image style={styles.image} source={{uri: image}} />
+              <View style={styles.image}>
+                <TouchableOpacity
+                  style={styles.closeBtn}
+                  onPress={() => {
+                    updateImageUri(null);
+                  }}>
+                  <Icon name="close" size={24} color={'#FFFF'} />
+                </TouchableOpacity>
+                <Image style={styles.imageContainer} source={{uri: image}} />
+              </View>
+
               <Spacer size={50} />
             </>
           )}

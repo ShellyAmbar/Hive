@@ -38,14 +38,14 @@ export default StyleSheet.create({
   subTitle: {
     color: GlobalColors.Brand.thierd,
     zIndex: 3,
-    fontSize: 30,
+    fontSize: 25,
     marginBottom: 50,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
   },
 
   btnText: {
-    color: GlobalColors.Brand.primary,
+    color: GlobalColors.Brand.secondary,
 
     fontSize: 22,
     textAlign: 'center',

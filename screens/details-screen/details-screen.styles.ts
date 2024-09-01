@@ -10,6 +10,8 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
+    paddingHorizontal: 20,
+    zIndex: 3,
   },
   scroll: {
     flex: 1,
@@ -17,7 +19,7 @@ export default StyleSheet.create({
     zIndex: 3,
   },
   imageBtn: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 20,
     borderColor: GlobalColors.TextColors.white,
@@ -46,23 +48,24 @@ export default StyleSheet.create({
   title: {
     color: GlobalColors.TextColors.white,
 
-    fontSize: 40,
+    fontSize: 35,
 
     fontFamily: 'Jersey10-Regular',
   },
   subTitle: {
     color: GlobalColors.Brand.thierd,
 
-    fontSize: 25,
+    fontSize: 20,
 
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
+    width: '100%',
   },
   textInputContainer: {
     borderColor: GlobalColors.TextColors.white,
     borderBottomWidth: 1,
 
-    width: '80%',
+    width: '90%',
   },
   textInputText: {
     color: GlobalColors.TextColors.white,
@@ -73,9 +76,22 @@ export default StyleSheet.create({
   image: {
     width: '70%',
     height: 200,
-    borderColor: GlobalColors.TextColors.white,
-    borderBottomWidth: 1,
     borderRadius: 10,
+  },
+  imageContainer: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: -10,
+    left: -10,
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: GlobalColors.TextColors.white,
+    zIndex: 4,
+    padding: 5,
   },
   text: {
     color: GlobalColors.TextColors.white,
@@ -85,7 +101,7 @@ export default StyleSheet.create({
     fontFamily: 'Jersey10-Regular',
   },
   btnText: {
-    color: GlobalColors.Brand.primary,
+    color: GlobalColors.Brand.secondary,
 
     fontSize: 20,
     textAlign: 'center',
