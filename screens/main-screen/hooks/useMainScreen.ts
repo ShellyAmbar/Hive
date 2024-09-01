@@ -27,7 +27,6 @@ const useMainScreen = () => {
   const [gettingCall, setGettingCall] = useState(false);
   const listenToNewCallsRef = useRef(true);
   const pc = useRef<RTCPeerConnection>();
-  const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
   const {name, image} = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
@@ -81,7 +80,11 @@ const useMainScreen = () => {
 
                   //if there is offer for chatid set the getting call flag
 
-                  if (newCall && newCall?.offer && !connecting.current) {
+                  if (
+                    newCall &&
+                    newCall?.offer &&
+                    listenToNewCallsRef.current
+                  ) {
                     setstartListenToPending(false);
                     listenToNewCallsRef.current = false;
                     setGettingCall(true);
@@ -208,7 +211,6 @@ const useMainScreen = () => {
     try {
       setstartListenToPending(false);
       listenToNewCallsRef.current = false;
-      connecting.current = true;
 
       await setupWebRTC();
 
@@ -245,7 +247,7 @@ const useMainScreen = () => {
   const join = async () => {
     setstartListenToPending(false);
     listenToNewCallsRef.current = false;
-    connecting.current = true;
+
     setGettingCall(false);
 
     try {
@@ -283,9 +285,8 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
-    if (connecting.current) {
+    if (!listenToNewCallsRef.current) {
       listenToNewCallsRef.current = true;
-      connecting.current = false;
 
       dispatch({
         type: 'SET_INCOMING_USER_NAME',
@@ -310,7 +311,7 @@ const useMainScreen = () => {
   const declineIncomingCall = () => {
     if (!listenToNewCallsRef.current) {
       listenToNewCallsRef.current = true;
-      connecting.current = false;
+
       dispatch({
         type: 'SET_INCOMING_USER_NAME',
         payload: '',
@@ -393,7 +394,6 @@ const useMainScreen = () => {
     remoteStream,
     create,
     declineIncomingCall,
-    connecting,
     startListenToPending,
   };
 };

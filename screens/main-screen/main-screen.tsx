@@ -16,7 +16,6 @@ const MainScreen = props => {
     remoteStream,
     declineIncomingCall,
     hangup,
-    connecting,
     startListenToPending,
   } = useMainScreen();
 

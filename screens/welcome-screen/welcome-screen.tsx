@@ -8,7 +8,7 @@ const WelcomeScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
 
   const onStart = () => {
-    props.navigation.navigate('Details');
+    props.navigation.replace('Details');
   };
 
   useEffect(() => {
@@ -33,11 +33,13 @@ const WelcomeScreen = props => {
         {'Meet new friends\nin one click away ..'}
       </Text>
 
-      <RTCView
-        streamURL={localStream?.toURL()}
-        objectFit="cover"
-        style={styles.video}
-      />
+      {localStream && (
+        <RTCView
+          streamURL={localStream.toURL()}
+          objectFit="cover"
+          style={styles.video}
+        />
+      )}
       <View style={styles.shade} />
       <TouchableOpacity
         style={styles.startBtn}

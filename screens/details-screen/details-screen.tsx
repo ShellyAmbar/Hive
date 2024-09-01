@@ -138,11 +138,13 @@ const DetailsScreen = props => {
   return (
     <View style={styles.container}>
       {showPopupChoose && popup()}
-      <RTCView
-        streamURL={localStream?.toURL()}
-        objectFit="cover"
-        style={styles.video}
-      />
+      {localStream && (
+        <RTCView
+          streamURL={localStream.toURL()}
+          objectFit="cover"
+          style={styles.video}
+        />
+      )}
       <View style={styles.shade} />
       <ScrollView style={styles.scroll}>
         <View style={styles.content}>
