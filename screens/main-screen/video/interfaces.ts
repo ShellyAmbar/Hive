@@ -5,6 +5,8 @@ interface IVideoProps {
 
   localStrem: MediaStream | null;
   remoteStrem?: MediaStream | null;
+  switchCamera: () => void;
+  isFront: boolean;
 }
 
 export default IVideoProps;

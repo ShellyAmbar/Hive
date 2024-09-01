@@ -14,8 +14,8 @@ export default StyleSheet.create({
     height: 150,
     width: 150,
     position: 'absolute',
-    bottom: 20,
-    right: 20,
+    bottom: 100,
+    right: 10,
   },
   otherVideo: {
     position: 'absolute',
@@ -29,10 +29,23 @@ export default StyleSheet.create({
     fontFamily: 'Jersey10-Regular',
     marginBottom: 50,
   },
+  buttons: {
+    position: 'absolute',
+    bottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
   hangupBtn: {
-    bottom: 50,
-    alignSelf: 'center',
     backgroundColor: GlobalColors.SystemColors.Error,
+    position: 'relative',
+  },
+  switchBtn: {
+    backgroundColor: GlobalColors.Border,
+    position: 'relative',
+    width: 45,
+    height: 45,
   },
   shade: {
     position: 'absolute',

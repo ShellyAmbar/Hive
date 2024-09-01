@@ -8,7 +8,7 @@ import {GlobalColors} from '@hive/styles/colors';
 import {useSelector} from 'react-redux';
 import {RTCView} from 'react-native-webrtc';
 import Spacer from '@hive/components/spacer/spacer';
-
+import Icon from 'react-native-vector-icons/FontAwesome5';
 const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
   const {incomingUserName, incomingUserImage} = useSelector(
     state => state.user,
@@ -42,7 +42,7 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
 
               backgroundColor: GlobalColors.SystemColors.Success,
             }}
-            iconName="phone"
+            icon={() => <Icon size={24} color={'#FFF'} name="phone" />}
             onPress={() => join()}
           />
           <FloatingButton
@@ -51,7 +51,7 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
 
               backgroundColor: GlobalColors.SystemColors.Error,
             }}
-            iconName="phone"
+            icon={() => <Icon size={24} color={'#FFF'} name="phone" />}
             onPress={() => hangup()}
           />
         </View>

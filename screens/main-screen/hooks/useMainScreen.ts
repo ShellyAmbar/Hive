@@ -35,6 +35,32 @@ const useMainScreen = () => {
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
   const dispatch = useDispatch();
+  const [isFront, setisFront] = useState(true);
+
+  const loadVideo = useCallback(
+    async (isFront: boolean) => {
+      try {
+        const videoStreamManager = VideoStreamManager.getInstance();
+        const videoStream = await videoStreamManager.getStream(false, isFront);
+
+        setLocalStream(videoStream);
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [setLocalStream],
+  );
+  const switchCamera = useCallback(async () => {
+    if (isFront) {
+      loadVideo(false);
+    } else {
+      loadVideo(true);
+    }
+    setisFront(prev => {
+      return !prev;
+    });
+  }, [isFront]);
+
   const getFirebaseRef = async () => {
     const myRef = firestore()
       .collection('meet')
@@ -44,15 +70,13 @@ const useMainScreen = () => {
   };
 
   const loadData = useCallback(async () => {
-    const videoStreamManager = VideoStreamManager.getInstance();
     try {
-      const videoStream = await videoStreamManager.getStream(false, true);
+      loadVideo(true);
 
-      setLocalStream(videoStream);
       const id = await DeviceInfo.getUniqueId();
       setDeviceId(id);
     } catch (error) {
-      console.error('Failed to get stream:', error);
+      console.error(error);
     }
   }, []);
 
@@ -425,6 +449,8 @@ const useMainScreen = () => {
     declineIncomingCall,
     connecting,
     startListenToPending,
+    switchCamera,
+    isFront,
   };
 };
 

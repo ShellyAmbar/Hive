@@ -7,6 +7,7 @@ import styles from './waiting.styles';
 import FloatingButton from '@hive/components/floating-button/floating-button';
 import CircularTimer from 'react-native-animated-circular-counter';
 import {GlobalColors} from '@hive/styles/colors';
+import IconVideo from 'react-native-vector-icons/FontAwesome5';
 const Waiting = ({
   hangup,
   create,
@@ -64,13 +65,13 @@ const Waiting = ({
         {isWaiting ? (
           <FloatingButton
             containerStyle={styles.hangupBtn}
-            iconName="phone"
+            icon={() => <IconVideo size={24} color={'#FFF'} name="video" />}
             onPress={() => hangup && hangup()}
           />
         ) : (
           <FloatingButton
             containerStyle={styles.createBtn}
-            iconName="video"
+            icon={() => <IconVideo size={24} color={'#FFF'} name="video" />}
             onPress={() => create && create()}
           />
         )}

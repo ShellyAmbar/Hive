@@ -17,6 +17,8 @@ const MainScreen = props => {
     declineIncomingCall,
     hangup,
     startListenToPending,
+    switchCamera,
+    isFront,
   } = useMainScreen();
 
   return (
@@ -43,6 +45,8 @@ const MainScreen = props => {
           hangup={hangup}
           localStrem={localStream}
           remoteStrem={remoteStream}
+          switchCamera={switchCamera}
+          isFront={isFront}
         />
       )}
       {!gettingCall && startListenToPending && (
