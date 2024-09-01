@@ -32,6 +32,7 @@ const useMainScreen = () => {
   const [fbRef, setfbRef] = useState(null);
   const {name, image} = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
+  const [startListenToPending, setstartListenToPending] = useState(true);
   const dispatch = useDispatch();
   const getFirebaseRef = async () => {
     const myRef = firestore()
@@ -82,16 +83,16 @@ const useMainScreen = () => {
                   'myId--------------',
                   deviceId,
                   'islistening',
-                  listenToNewCallsRef.current,
+                  startListenToPending,
                 );
 
                 //on answer start call
-                if (listenToNewCallsRef.current) {
+                if (startListenToPending) {
                   console.log(
                     'incoming calll ------------',
                     'listenToNewCalls',
                     deviceId,
-                    listenToNewCallsRef.current,
+                    startListenToPending,
                     'connecting',
                     connecting.current,
                     name,
@@ -131,7 +132,7 @@ const useMainScreen = () => {
         console.log('error---', e);
       }
     }
-  }, [deviceId]);
+  }, [deviceId, startListenToPending]);
 
   useEffect(() => {
     if (fbRef !== null) {
@@ -241,6 +242,7 @@ const useMainScreen = () => {
 
   const create = async () => {
     try {
+      setstartListenToPending(false);
       listenToNewCallsRef.current = false;
       connecting.current = true;
       console.log('calling--------');
@@ -279,6 +281,7 @@ const useMainScreen = () => {
   };
   const join = async () => {
     console.log('join');
+    setstartListenToPending(false);
     listenToNewCallsRef.current = false;
     connecting.current = true;
     setGettingCall(false);
@@ -340,6 +343,7 @@ const useMainScreen = () => {
       if (pc.current) {
         await pc.current?.close();
       }
+      setstartListenToPending(true);
     }
   };
 
@@ -362,6 +366,7 @@ const useMainScreen = () => {
 
       fireBaseRef.current = null;
       setfbRef(null);
+      setstartListenToPending(true);
     }
   };
 
@@ -437,6 +442,7 @@ const useMainScreen = () => {
     create,
     declineIncomingCall,
     connecting,
+    startListenToPending,
   };
 };
 

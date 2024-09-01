@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import GettingCall from '@hive/screens/main-screen/getting-call/getting-call';
 import Video from './video/video';
 import useMainScreen from './hooks/useMainScreen';
@@ -6,7 +6,6 @@ import Waiting from './waiting/waiting';
 import {View} from 'react-native';
 import styles from './main-screen.styles';
 import Header from '@hive/components/header/header';
-import DeviceInfo from 'react-native-device-info';
 
 const MainScreen = props => {
   const {
@@ -18,6 +17,7 @@ const MainScreen = props => {
     declineIncomingCall,
     hangup,
     connecting,
+    startListenToPending,
   } = useMainScreen();
 
   return (
@@ -39,14 +39,14 @@ const MainScreen = props => {
         />
       )}
 
-      {connecting.current && (
+      {!startListenToPending && !gettingCall && (
         <Video
           hangup={hangup}
           localStrem={localStream}
           remoteStrem={remoteStream}
         />
       )}
-      {!gettingCall && !connecting.current && (
+      {!gettingCall && startListenToPending && (
         <Waiting
           create={create}
           isWaiting={false}
