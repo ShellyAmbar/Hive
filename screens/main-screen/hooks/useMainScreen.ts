@@ -26,7 +26,10 @@ const useMainScreen = () => {
   const [remoteStream, setRemoteStream] = useState<null | MediaStream>();
   const [gettingCall, setGettingCall] = useState(false);
   const listenToNewCallsRef = useRef(true);
+  const isInCallRef = useRef(false);
+  const lastCallerIdRef = useRef(null);
   const pc = useRef<RTCPeerConnection>();
+  const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
   const {name, image} = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
@@ -73,30 +76,39 @@ const useMainScreen = () => {
             snap.docChanges().forEach(change => {
               if (change.type === 'added') {
                 //on answer start call
-                if (startListenToPending) {
-                  const newCall = change.doc.data();
-
+                const newCall = change.doc.data();
+                console.log(
+                  'new call',
+                  newCall.callerName,
+                  newCall.callerId,
+                  lastCallerIdRef.current,
+                );
+                if (
+                  startListenToPending &&
+                  (!lastCallerIdRef.current ||
+                    lastCallerIdRef.current === undefined ||
+                    newCall.callerId !== lastCallerIdRef.current) &&
+                  newCall &&
+                  newCall?.offer &&
+                  !connecting.current
+                ) {
                   setfbRef(change.doc.ref);
-
+                  lastCallerIdRef.current = newCall.callerId;
                   //if there is offer for chatid set the getting call flag
 
-                  if (
-                    newCall &&
-                    newCall?.offer &&
-                    listenToNewCallsRef.current
-                  ) {
-                    setstartListenToPending(false);
-                    listenToNewCallsRef.current = false;
-                    setGettingCall(true);
-                    dispatch({
-                      type: 'SET_INCOMING_USER_NAME',
-                      payload: newCall.callerName,
-                    });
-                    dispatch({
-                      type: 'SET_INCOMING_USER_IMAGE',
-                      payload: newCall.image,
-                    });
-                  }
+                  //   if (newCall && newCall?.offer && !connecting.current) {
+                  setstartListenToPending(false);
+                  listenToNewCallsRef.current = false;
+                  setGettingCall(true);
+                  dispatch({
+                    type: 'SET_INCOMING_USER_NAME',
+                    payload: newCall.callerName,
+                  });
+                  dispatch({
+                    type: 'SET_INCOMING_USER_IMAGE',
+                    payload: newCall.image,
+                  });
+                  //   }
                 }
               }
             });
@@ -134,10 +146,13 @@ const useMainScreen = () => {
             !pc.current?.remoteDescription &&
             newCall &&
             newCall.answer &&
-            newCall.callerId === deviceId
+            newCall.callerId === deviceId &&
+            !isInCallRef.current
           ) {
-            //listenToNewCallsRef.current = false;
+            console.log('updating answer ------', name);
 
+            //listenToNewCallsRef.current = false;
+            isInCallRef.current = true;
             pc.current?.setRemoteDescription(
               new RTCSessionDescription(newCall?.answer),
             );
@@ -211,6 +226,7 @@ const useMainScreen = () => {
     try {
       setstartListenToPending(false);
       listenToNewCallsRef.current = false;
+      connecting.current = true;
 
       await setupWebRTC();
 
@@ -247,7 +263,7 @@ const useMainScreen = () => {
   const join = async () => {
     setstartListenToPending(false);
     listenToNewCallsRef.current = false;
-
+    connecting.current = true;
     setGettingCall(false);
 
     try {
@@ -285,9 +301,10 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
-    if (!listenToNewCallsRef.current) {
+    if (connecting.current) {
       listenToNewCallsRef.current = true;
-
+      connecting.current = false;
+      isInCallRef.current = false;
       dispatch({
         type: 'SET_INCOMING_USER_NAME',
         payload: '',
@@ -299,7 +316,6 @@ const useMainScreen = () => {
       setGettingCall(false);
 
       await streamCleanup();
-
       await firestoreCleanup();
       if (pc.current) {
         await pc.current?.close();
@@ -308,10 +324,10 @@ const useMainScreen = () => {
     }
   };
 
-  const declineIncomingCall = () => {
+  const declineIncomingCall = async () => {
     if (!listenToNewCallsRef.current) {
       listenToNewCallsRef.current = true;
-
+      connecting.current = false;
       dispatch({
         type: 'SET_INCOMING_USER_NAME',
         payload: '',
@@ -321,6 +337,10 @@ const useMainScreen = () => {
         payload: '',
       });
 
+      if (pc.current) {
+        pc.current?.close();
+      }
+      streamCleanup();
       setGettingCall(false);
 
       setfbRef(null);
@@ -394,6 +414,7 @@ const useMainScreen = () => {
     remoteStream,
     create,
     declineIncomingCall,
+    connecting,
     startListenToPending,
   };
 };

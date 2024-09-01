@@ -74,7 +74,7 @@ const DetailsScreen = props => {
     }
 
     props.navigation.navigate('Home');
-  }, [isNeedToUpdateCloude]);
+  }, [isNeedToUpdateCloude, name]);
 
   const chooseImage = () => {
     setshowPopupChoose(true);
