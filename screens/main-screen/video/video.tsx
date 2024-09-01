@@ -7,6 +7,7 @@ import {RTCView} from 'react-native-webrtc';
 import Waiting from '../waiting/waiting';
 import IconVideo from 'react-native-vector-icons/FontAwesome5';
 import IconVideoSwitch from 'react-native-vector-icons/Ionicons';
+import IconHideSwitch from 'react-native-vector-icons/Feather';
 import Spacer from '@hive/components/spacer/spacer';
 const Video = ({
   localStrem,
@@ -14,6 +15,9 @@ const Video = ({
   hangup,
   switchCamera,
   isFront,
+  setIsHideMe,
+  isHideMe,
+  isHideUser,
 }: IVideoProps) => {
   const showLocalStream = () => (
     <Waiting
@@ -31,13 +35,28 @@ const Video = ({
         objectFit="cover"
         style={styles.otherVideo}
       />
+      {isHideUser && <View style={[styles.otherVideo, styles.otherShade]} />}
 
       <RTCView
         streamURL={localStrem?.toURL()}
-        objectFit="contain"
+        objectFit="cover"
         style={styles.myVideo}
       />
+      {isHideMe && <View style={[styles.myVideo, styles.myShade]} />}
+
       <View style={styles.buttons}>
+        <FloatingButton
+          icon={() =>
+            isHideMe ? (
+              <IconHideSwitch size={24} color={'#000'} name={'camera'} />
+            ) : (
+              <IconHideSwitch size={24} color={'#000'} name={'camera-off'} />
+            )
+          }
+          onPress={() => setIsHideMe(!isHideMe)}
+          containerStyle={styles.switchBtn}
+        />
+        <Spacer size={12} isVertical={false} />
         <FloatingButton
           icon={() =>
             isFront ? (

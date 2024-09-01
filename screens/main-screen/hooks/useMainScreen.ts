@@ -36,6 +36,12 @@ const useMainScreen = () => {
   const [startListenToPending, setstartListenToPending] = useState(true);
   const dispatch = useDispatch();
   const [isFront, setisFront] = useState(true);
+  const [isHideMe, setIsHideMe] = useState(true);
+  const [isHideUser, setIsHideUser] = useState(true);
+
+  useEffect(() => {
+    updateHide(isHideMe);
+  }, [isHideMe]);
 
   const loadVideo = useCallback(
     async (isFront: boolean) => {
@@ -50,6 +56,7 @@ const useMainScreen = () => {
     },
     [setLocalStream],
   );
+
   const switchCamera = useCallback(async () => {
     if (isFront) {
       loadVideo(false);
@@ -190,6 +197,14 @@ const useMainScreen = () => {
               new RTCSessionDescription(newCall?.answer),
             );
           }
+
+          const callerId = newCall.callerId;
+          const calleeId = newCall.calleeId;
+          if (newCall && deviceId === callerId) {
+            setIsHideUser(newCall.isHideCallee);
+          } else {
+            setIsHideUser(newCall.isHideCaller);
+          }
         }
       });
 
@@ -285,6 +300,7 @@ const useMainScreen = () => {
           callerId: deviceId,
           callerName: name,
           image: image ? image : '',
+          isHideCaller: true,
         };
 
         myRef.set(cWithOffer);
@@ -322,6 +338,7 @@ const useMainScreen = () => {
             },
             status: 'answered',
             calleeId: deviceId,
+            isHideCallee: true,
           };
 
           fbRef.update(cWithAnswer);
@@ -329,6 +346,18 @@ const useMainScreen = () => {
       }
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const updateHide = async (isHide: boolean) => {
+    const callerId = (await fbRef?.get())?.data().callerId;
+    const calleeId = (await fbRef?.get())?.data().calleeId;
+    if (deviceId === callerId || deviceId === calleeId) {
+      const key = deviceId === callerId ? 'isHideCaller' : 'isHideCallee';
+      const updateObject = {
+        [key]: isHide,
+      };
+      fbRef?.update(updateObject);
     }
   };
 
@@ -354,6 +383,7 @@ const useMainScreen = () => {
         await pc.current?.close();
       }
       setstartListenToPending(true);
+      setIsHideMe(true);
     }
   };
 
@@ -451,6 +481,9 @@ const useMainScreen = () => {
     startListenToPending,
     switchCamera,
     isFront,
+    setIsHideMe,
+    isHideMe,
+    isHideUser,
   };
 };
 

@@ -16,11 +16,13 @@ export default StyleSheet.create({
     position: 'absolute',
     bottom: 100,
     right: 10,
+    zIndex: 2,
   },
   otherVideo: {
     position: 'absolute',
     height: '100%',
     width: '100%',
+    zIndex: 0,
   },
   subTitle: {
     color: GlobalColors.TextColors.white,
@@ -36,6 +38,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    zIndex: 4,
   },
   hangupBtn: {
     backgroundColor: GlobalColors.SystemColors.Error,
@@ -47,12 +50,11 @@ export default StyleSheet.create({
     width: 45,
     height: 45,
   },
-  shade: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+  myShade: {
+    zIndex: 3,
+    backgroundColor: GlobalColors.BgColors.Bg2,
+  },
+  otherShade: {
     zIndex: 1,
     backgroundColor: GlobalColors.BgColors.Bg2,
   },

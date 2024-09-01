@@ -19,6 +19,9 @@ const MainScreen = props => {
     startListenToPending,
     switchCamera,
     isFront,
+    setIsHideMe,
+    isHideMe,
+    isHideUser,
   } = useMainScreen();
 
   return (
@@ -47,6 +50,9 @@ const MainScreen = props => {
           remoteStrem={remoteStream}
           switchCamera={switchCamera}
           isFront={isFront}
+          isHideMe={isHideMe}
+          setIsHideMe={setIsHideMe}
+          isHideUser={isHideUser}
         />
       )}
       {!gettingCall && startListenToPending && (

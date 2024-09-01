@@ -7,6 +7,9 @@ interface IVideoProps {
   remoteStrem?: MediaStream | null;
   switchCamera: () => void;
   isFront: boolean;
+  setIsHideMe: (isHide: boolean) => void;
+  isHideMe: boolean;
+  isHideUser: boolean;
 }
 
 export default IVideoProps;
