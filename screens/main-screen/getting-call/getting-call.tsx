@@ -10,9 +10,12 @@ import {RTCView} from 'react-native-webrtc';
 import Spacer from '@hive/components/spacer/spacer';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
-  const {incomingUserName, incomingUserImage, incomingUserAge} = useSelector(
-    state => state.user,
-  );
+  const {
+    incomingUserName,
+    incomingUserImage,
+    incomingUserAge,
+    incomingUserCountry,
+  } = useSelector(state => state.user);
 
   return (
     <View style={styles.container}>
@@ -24,7 +27,9 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
       <View style={styles.shade} />
       <View style={styles.content}>
         <Text style={styles.subTitle}>
-          {`${incomingUserName}, ${incomingUserAge}` + '\n' + ' is calling you'}
+          {`${incomingUserName}, ${incomingUserAge} from ${incomingUserCountry} ` +
+            '\n' +
+            ' is calling you'}
         </Text>
 
         <Spacer size={52} />

@@ -82,6 +82,8 @@ export default StyleSheet.create({
     width: '70%',
     height: 200,
     borderRadius: 10,
+    borderWidth: 2,
+    borderColor: GlobalColors.Brand.thierd,
   },
   imageContainer: {
     width: '100%',
@@ -90,13 +92,14 @@ export default StyleSheet.create({
   },
   closeBtn: {
     position: 'absolute',
-    top: -10,
-    left: -10,
+    top: -15,
+    left: -15,
     borderRadius: 100,
     borderWidth: 1,
     borderColor: GlobalColors.TextColors.white,
     zIndex: 4,
     padding: 5,
+    backgroundColor: GlobalColors.Brand.thierd,
   },
   text: {
     color: GlobalColors.TextColors.white,

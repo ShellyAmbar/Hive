@@ -31,7 +31,7 @@ const useMainScreen = () => {
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
-  const {name, image, myAge} = useSelector(state => state.user);
+  const {name, image, myAge, myCountry} = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
   const dispatch = useDispatch();
@@ -93,9 +93,7 @@ const useMainScreen = () => {
       setDeviceId(id);
     })();
 
-    return () => {
-      hangup();
-    };
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -157,6 +155,11 @@ const useMainScreen = () => {
                     type: 'SET_INCOMING_USER_AGE',
                     payload: newCall.callerAge,
                   });
+                  dispatch({
+                    type: 'SET_INCOMING_USER_COUNTRY',
+                    payload: newCall.callerCountry,
+                  });
+
                   //   }
                 }
               }
@@ -217,6 +220,10 @@ const useMainScreen = () => {
             dispatch({
               type: 'SET_INCOMING_USER_AGE',
               payload: newCall?.calleeAge ?? '',
+            });
+            dispatch({
+              type: 'SET_INCOMING_USER_COUNTRY',
+              payload: newCall?.calleeCountry ?? '',
             });
           }
 
@@ -324,6 +331,7 @@ const useMainScreen = () => {
           callerImage: image ? image : '',
           isHideCaller: true,
           callerAge: myAge,
+          callerCountry: myCountry,
         };
 
         myRef.set(cWithOffer);
@@ -365,6 +373,7 @@ const useMainScreen = () => {
             calleeName: name,
             calleeImage: image ? image : '',
             calleeAge: myAge,
+            calleeCountry: myCountry,
           };
 
           fbRef.update(cWithAnswer);
@@ -406,6 +415,10 @@ const useMainScreen = () => {
         type: 'SET_INCOMING_USER_AGE',
         payload: 0,
       });
+      dispatch({
+        type: 'SET_INCOMING_USER_COUNTRY',
+        payload: '',
+      });
       setGettingCall(false);
 
       await streamCleanup();
@@ -434,6 +447,14 @@ const useMainScreen = () => {
       });
       dispatch({
         type: 'SET_INCOMING_USER_IMAGE',
+        payload: '',
+      });
+      dispatch({
+        type: 'SET_INCOMING_USER_AGE',
+        payload: 0,
+      });
+      dispatch({
+        type: 'SET_INCOMING_USER_COUNTRY',
         payload: '',
       });
 

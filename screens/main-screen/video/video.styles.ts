@@ -79,6 +79,7 @@ const createStyle = (isHiding: boolean) =>
         : GlobalColors.TextColors.primary,
       fontSize: 22,
       fontFamily: 'Jersey10-Regular',
+      textAlign: 'center',
     },
 
     content: {

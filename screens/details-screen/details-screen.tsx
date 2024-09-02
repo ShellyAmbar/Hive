@@ -16,7 +16,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {GlobalColors} from '@hive/styles/colors';
 import Spacer from '@hive/components/spacer/spacer';
 import Icon from 'react-native-vector-icons/AntDesign';
-
+import CountryCodePicker from 'rn-country-code-picker-modal';
 import {
   chooseImageFromGallery,
   deleteImagePath,
@@ -33,13 +33,15 @@ const DetailsScreen = props => {
     name: useName,
     image: myImage,
     myAge,
+    myCountry,
   } = useSelector(state => state.user);
   const [name, setName] = useState(useName);
   const [image, setImage] = useState<string | null>(myImage ? myImage : null);
-  const [age, setAge] = useState(myAge ? myAge : 16);
+  const [age, setAge] = useState(myAge ? myAge : -1);
   const [showPopupChoose, setshowPopupChoose] = useState(false);
   const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
   const [isErrorAge, setisErrorAge] = useState(false);
+  const [country, setCountry] = useState(myCountry ?? '');
 
   const updateImageUri = useCallback((imageUri: string | null) => {
     console.log('updateImageUri----');
@@ -68,13 +70,13 @@ const DetailsScreen = props => {
   const onStart = useCallback(async () => {
     dispatch({type: 'SET_NAME', payload: name});
     dispatch({type: 'SET_MY_AGE', payload: age});
-
+    dispatch({type: 'SET_MY_COUNTRY', payload: country});
     if (isNeedToUpdateCloude) {
       updateImageToCloude();
     }
 
     props.navigation.navigate('Home');
-  }, [isNeedToUpdateCloude, name, age]);
+  }, [isNeedToUpdateCloude, name, age, country]);
 
   const chooseImage = () => {
     setshowPopupChoose(true);
@@ -212,7 +214,7 @@ const DetailsScreen = props => {
             textInputStyle={styles.textInputText}
             inputmode="numeric"
             onDebounce={text => {
-              if (text >= 16 && text <= 100) {
+              if ((text >= 16 && text <= 100) || text === -1) {
                 setisErrorAge(false);
                 setAge(text);
               } else {
@@ -232,11 +234,28 @@ const DetailsScreen = props => {
             message={'Error, your age must be between 16 - 99'}
           />
           <Spacer size={55} />
+          <CountryCodePicker
+            onPickedCode={(code, name) => {
+              console.log('name', name);
+
+              setCountry(name);
+            }}
+            defaultCountryName={country}
+          />
+          <Spacer size={55} />
           <TouchableOpacity
-            disabled={name?.length === 0 || age === 0 || isErrorAge}
+            disabled={
+              name?.length === 0 ||
+              age === 0 ||
+              isErrorAge ||
+              country?.length === 0
+            }
             style={[
               styles.startBtn,
-              (name?.length === 0 || age === 0 || isErrorAge) &&
+              (name?.length === 0 ||
+                age === 0 ||
+                isErrorAge ||
+                country?.length === 0) &&
                 styles.disabledBtn,
             ]}
             onPress={() => {

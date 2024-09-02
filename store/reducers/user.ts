@@ -5,6 +5,8 @@ const initialState = {
   incomingUserImage: '',
   myAge: 0,
   incomingUserAge: 0,
+  myCountry: '',
+  incomingUserCountry: '',
 };
 
 const UserReducer = (state = initialState, action) => {
@@ -40,6 +42,16 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         incomingUserImage: action.payload,
+      };
+    case 'SET_MY_COUNTRY':
+      return {
+        ...state,
+        myCountry: action.payload,
+      };
+    case 'SET_INCOMING_USER_COUNTRY':
+      return {
+        ...state,
+        incomingUserCountry: action.payload,
       };
     default:
       return state;

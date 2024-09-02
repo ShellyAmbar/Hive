@@ -21,9 +21,12 @@ const Video = ({
   isHideMe,
   isHideUser,
 }: IVideoProps) => {
-  const {incomingUserName, incomingUserImage, incomingUserAge} = useSelector(
-    state => state.user,
-  );
+  const {
+    incomingUserName,
+    incomingUserImage,
+    incomingUserAge,
+    incomingUserCountry,
+  } = useSelector(state => state.user);
   let sparkAnimationRef = useRef(null);
   const styles = createstyle(isHideUser);
 
@@ -78,7 +81,7 @@ const Video = ({
           <Text
             style={
               styles.otherText
-            }>{`${incomingUserName}, ${incomingUserAge}`}</Text>
+            }>{`${incomingUserName}, ${incomingUserAge}\nfrom ${incomingUserCountry}`}</Text>
         )}
         <Spacer size={12} />
         {incomingUserImage?.length > 0 && (
