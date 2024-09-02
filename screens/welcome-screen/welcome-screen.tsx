@@ -1,8 +1,9 @@
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import styles from './welcome-screen.styles';
 import {MediaStream, RTCView} from 'react-native-webrtc';
 import VideoStreamManager from '@hive/utils/stream-util';
+import Spacer from '@hive/components/spacer/spacer';
 
 const WelcomeScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
@@ -31,11 +32,6 @@ const WelcomeScreen = props => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>DateRoulatte</Text>
-      <Text style={styles.subTitle}>
-        {'Meet new friends\nin one click away ..'}
-      </Text>
-
       {localStream?.toURL() && (
         <RTCView
           streamURL={localStream?.toURL()}
@@ -44,6 +40,17 @@ const WelcomeScreen = props => {
         />
       )}
       <View style={styles.shade} />
+      <Text style={styles.title}>Dateroulette</Text>
+      <Spacer size={22} />
+      <Text style={styles.subTitle}>
+        {'Meet new friends\nin one click away ..'}
+      </Text>
+      <Spacer size={22} />
+      <Image
+        style={styles.image}
+        source={require('@hive/assets/images/appImage.png')}
+      />
+      <Spacer size={22} />
       <TouchableOpacity
         style={styles.startBtn}
         onPress={() => {

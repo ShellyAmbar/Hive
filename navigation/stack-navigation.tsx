@@ -7,7 +7,9 @@ import DetailsScreen from '@hive/screens/details-screen/details-screen';
 const StackNavigation = () => {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator initialRouteName="Welcome">
+    <Stack.Navigator
+      screenOptions={{statusBarHidden: true}}
+      initialRouteName="Welcome">
       <Stack.Screen
         name="Welcome"
         component={WelcomeScreen}

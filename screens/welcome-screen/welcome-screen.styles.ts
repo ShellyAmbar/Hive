@@ -32,14 +32,14 @@ export default StyleSheet.create({
 
     zIndex: 3,
     fontSize: 45,
-    marginBottom: 20,
+
     fontFamily: 'Jersey10-Regular',
   },
   subTitle: {
     color: GlobalColors.Brand.thierd,
     zIndex: 3,
     fontSize: 25,
-    marginBottom: 50,
+
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
   },
@@ -58,6 +58,11 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 0,
+  },
+  image: {
+    zIndex: 3,
+    width: '80%',
+    height: 230,
   },
   shade: {
     position: 'absolute',
