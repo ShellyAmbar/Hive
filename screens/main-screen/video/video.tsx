@@ -1,6 +1,6 @@
-import {View} from 'react-native';
+import {View, Image, Text} from 'react-native';
 import React from 'react';
-import styles from './video.styles';
+import createstyle from './video.styles';
 import IVideoProps from './interfaces';
 import FloatingButton from '@hive/components/floating-button/floating-button';
 import {RTCView} from 'react-native-webrtc';
@@ -9,6 +9,8 @@ import IconVideo from 'react-native-vector-icons/FontAwesome5';
 import IconVideoSwitch from 'react-native-vector-icons/Ionicons';
 import IconHideSwitch from 'react-native-vector-icons/Feather';
 import Spacer from '@hive/components/spacer/spacer';
+import {useSelector} from 'react-redux';
+
 const Video = ({
   localStrem,
   remoteStrem,
@@ -19,6 +21,11 @@ const Video = ({
   isHideMe,
   isHideUser,
 }: IVideoProps) => {
+  const {incomingUserName, incomingUserImage} = useSelector(
+    state => state.user,
+  );
+  const styles = createstyle(isHideUser);
+
   const showLocalStream = () => (
     <Waiting
       isWaiting={true}
@@ -36,6 +43,15 @@ const Video = ({
         style={styles.otherVideo}
       />
       {isHideUser && <View style={[styles.otherVideo, styles.otherShade]} />}
+      <View style={styles.otherData}>
+        {incomingUserName && (
+          <Text style={styles.otherText}>{incomingUserName}</Text>
+        )}
+        <Spacer size={12} />
+        {incomingUserImage?.length > 0 && (
+          <Image source={{uri: incomingUserImage}} style={styles.otherImage} />
+        )}
+      </View>
 
       <RTCView
         streamURL={localStrem?.toURL()}

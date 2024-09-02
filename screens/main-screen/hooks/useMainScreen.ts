@@ -149,13 +149,14 @@ const useMainScreen = () => {
                   setstartListenToPending(false);
                   listenToNewCallsRef.current = false;
                   setGettingCall(true);
+
                   dispatch({
                     type: 'SET_INCOMING_USER_NAME',
                     payload: newCall.callerName,
                   });
                   dispatch({
                     type: 'SET_INCOMING_USER_IMAGE',
-                    payload: newCall.image,
+                    payload: newCall.callerImage,
                   });
                   //   }
                 }
@@ -205,6 +206,15 @@ const useMainScreen = () => {
             pc.current?.setRemoteDescription(
               new RTCSessionDescription(newCall?.answer),
             );
+
+            dispatch({
+              type: 'SET_INCOMING_USER_NAME',
+              payload: newCall.calleeName,
+            });
+            dispatch({
+              type: 'SET_INCOMING_USER_IMAGE',
+              payload: newCall.calleeImage,
+            });
           }
 
           const callerId = newCall.callerId;
@@ -308,7 +318,7 @@ const useMainScreen = () => {
           status: 'pending',
           callerId: deviceId,
           callerName: name,
-          image: image ? image : '',
+          callerImage: image ? image : '',
           isHideCaller: true,
         };
 
@@ -348,6 +358,8 @@ const useMainScreen = () => {
             status: 'answered',
             calleeId: deviceId,
             isHideCallee: true,
+            calleeName: name,
+            calleeImage: image ? image : '',
           };
 
           fbRef.update(cWithAnswer);
