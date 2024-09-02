@@ -14,7 +14,6 @@ import ReactiveTextInput from 'rn-reactive-text-input';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {GlobalColors} from '@hive/styles/colors';
-import Header from '@hive/components/header/header';
 import Spacer from '@hive/components/spacer/spacer';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -30,18 +29,17 @@ import DeviceInfo from 'react-native-device-info';
 const DetailsScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
   const dispatch = useDispatch();
-  const {name: useName, image: myImage} = useSelector(state => state.user);
+  const {
+    name: useName,
+    image: myImage,
+    myAge,
+  } = useSelector(state => state.user);
   const [name, setName] = useState(useName);
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState<string | null>(myImage ? myImage : null);
+  const [age, setAge] = useState(myAge ? myAge : 16);
   const [showPopupChoose, setshowPopupChoose] = useState(false);
   const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
-
-  useEffect(() => {
-    if (myImage) {
-      setImage(myImage);
-      setisNeedToUpdateCloude(false);
-    }
-  }, [myImage]);
+  const [isErrorAge, setisErrorAge] = useState(false);
 
   const updateImageUri = useCallback((imageUri: string | null) => {
     console.log('updateImageUri----');
@@ -66,15 +64,17 @@ const DetailsScreen = props => {
     }
     setisNeedToUpdateCloude(false);
   }, [name, image]);
+
   const onStart = useCallback(async () => {
     dispatch({type: 'SET_NAME', payload: name});
+    dispatch({type: 'SET_MY_AGE', payload: age});
 
     if (isNeedToUpdateCloude) {
       updateImageToCloude();
     }
 
     props.navigation.navigate('Home');
-  }, [isNeedToUpdateCloude, name]);
+  }, [isNeedToUpdateCloude, name, age]);
 
   const chooseImage = () => {
     setshowPopupChoose(true);
@@ -199,17 +199,54 @@ const DetailsScreen = props => {
               <Spacer size={50} />
             </>
           )}
+          <Text style={styles.subTitle}>What's your age?</Text>
+          <Spacer size={8} />
 
+          <ReactiveTextInput
+            textAlignVertical={'bottom'}
+            placeholder="Enter your age"
+            placeHolderColor="#FFFF"
+            defaultValue={age}
+            containerStyle={styles.numberInputContainer}
+            errorInputStyle={styles.errorStyle}
+            textInputStyle={styles.textInputText}
+            inputmode="numeric"
+            onDebounce={text => {
+              if (text >= 16 && text <= 100) {
+                setisErrorAge(false);
+                setAge(text);
+              } else {
+                setisErrorAge(true);
+              }
+            }}
+            keyboardType="numeric"
+            keyboardAppearance="default"
+            blurOnSubmit={false}
+            autoCorrect={false}
+            returnKeyType="done"
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
+            cursorColor={GlobalColors.TextColors.white}
+            isError={isErrorAge}
+            message={'Error, your age must be between 16 - 99'}
+          />
+          <Spacer size={55} />
           <TouchableOpacity
-            disabled={name?.length === 0}
-            style={[styles.startBtn, name?.length === 0 && styles.disabledBtn]}
+            disabled={name?.length === 0 || age === 0 || isErrorAge}
+            style={[
+              styles.startBtn,
+              (name?.length === 0 || age === 0 || isErrorAge) &&
+                styles.disabledBtn,
+            ]}
             onPress={() => {
               onStart();
             }}>
             <Text
               style={[
                 styles.btnText,
-                name?.length === 0 && styles.disabledText,
+                (name?.length === 0 || age === 0 || isErrorAge) &&
+                  styles.disabledText,
               ]}>
               Start
             </Text>

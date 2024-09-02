@@ -31,7 +31,7 @@ export default StyleSheet.create({
   startBtn: {
     alignSelf: 'center',
 
-    backgroundColor: GlobalColors.Shades.primary,
+    backgroundColor: GlobalColors.Brand.thierd,
 
     width: '50%',
     paddingVertical: 20,
@@ -40,10 +40,10 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   disabledBtn: {
-    backgroundColor: GlobalColors.Brand.primary,
+    backgroundColor: GlobalColors.Shades.primary,
   },
   disabledText: {
-    color: GlobalColors.Shades.primary,
+    color: GlobalColors.BgColors.Bg4,
   },
   title: {
     color: GlobalColors.TextColors.white,
@@ -62,16 +62,21 @@ export default StyleSheet.create({
     width: '100%',
   },
   textInputContainer: {
-    borderColor: GlobalColors.TextColors.white,
-    borderBottomWidth: 1,
-
     width: '90%',
   },
+  numberInputContainer: {
+    width: '70%',
+  },
   textInputText: {
+    borderColor: GlobalColors.TextColors.white,
     color: GlobalColors.TextColors.white,
     fontFamily: 'Jersey10-Regular',
     fontSize: 30,
     textAlign: 'center',
+    borderBottomWidth: 1,
+  },
+  errorStyle: {
+    backgroundColor: 'transparent',
   },
   image: {
     width: '70%',
@@ -101,7 +106,7 @@ export default StyleSheet.create({
     fontFamily: 'Jersey10-Regular',
   },
   btnText: {
-    color: GlobalColors.Brand.secondary,
+    color: GlobalColors.TextColors.white,
 
     fontSize: 20,
     textAlign: 'center',

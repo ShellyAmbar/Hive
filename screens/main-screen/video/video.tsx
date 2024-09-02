@@ -1,5 +1,5 @@
 import {View, Image, Text} from 'react-native';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import createstyle from './video.styles';
 import IVideoProps from './interfaces';
 import FloatingButton from '@hive/components/floating-button/floating-button';
@@ -10,7 +10,7 @@ import IconVideoSwitch from 'react-native-vector-icons/Ionicons';
 import IconHideSwitch from 'react-native-vector-icons/Feather';
 import Spacer from '@hive/components/spacer/spacer';
 import {useSelector} from 'react-redux';
-
+import LottieView from 'lottie-react-native';
 const Video = ({
   localStrem,
   remoteStrem,
@@ -21,10 +21,17 @@ const Video = ({
   isHideMe,
   isHideUser,
 }: IVideoProps) => {
-  const {incomingUserName, incomingUserImage} = useSelector(
+  const {incomingUserName, incomingUserImage, incomingUserAge} = useSelector(
     state => state.user,
   );
+  let sparkAnimationRef = useRef(null);
   const styles = createstyle(isHideUser);
+
+  useEffect(() => {
+    if (remoteStrem) {
+      sparkAnimationRef.current?.play();
+    }
+  }, [remoteStrem]);
 
   const showLocalStream = () => (
     <Waiting
@@ -42,10 +49,36 @@ const Video = ({
         objectFit="cover"
         style={styles.otherVideo}
       />
-      {isHideUser && <View style={[styles.otherVideo, styles.otherShade]} />}
+      {isHideUser && (
+        <View style={[styles.otherVideo, styles.otherShade]}>
+          <LottieView
+            ref={animation => {
+              sparkAnimationRef = animation;
+            }}
+            source={require('@hive/assets/lotties/sparks.json')}
+            autoPlay
+            loop
+            speed={1}
+            style={styles.otherVideo}
+          />
+          <LottieView
+            ref={animation => {
+              sparkAnimationRef = animation;
+            }}
+            source={require('@hive/assets/lotties/stars.json')}
+            autoPlay
+            loop
+            speed={1}
+            style={styles.otherVideo}
+          />
+        </View>
+      )}
       <View style={styles.otherData}>
         {incomingUserName && (
-          <Text style={styles.otherText}>{incomingUserName}</Text>
+          <Text
+            style={
+              styles.otherText
+            }>{`${incomingUserName}, ${incomingUserAge}`}</Text>
         )}
         <Spacer size={12} />
         {incomingUserImage?.length > 0 && (

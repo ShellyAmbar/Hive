@@ -3,6 +3,8 @@ const initialState = {
   incomingUserName: '',
   image: '',
   incomingUserImage: '',
+  myAge: 0,
+  incomingUserAge: 0,
 };
 
 const UserReducer = (state = initialState, action) => {
@@ -11,6 +13,18 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         name: action.payload,
+      };
+    case 'SET_MY_AGE':
+      console.log('action.payload', action.payload);
+
+      return {
+        ...state,
+        myAge: action.payload,
+      };
+    case 'SET_INCOMING_USER_AGE':
+      return {
+        ...state,
+        incomingUserAge: action.payload,
       };
     case 'SET_INCOMING_USER_NAME':
       return {

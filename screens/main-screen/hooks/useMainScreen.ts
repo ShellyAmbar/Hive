@@ -31,7 +31,7 @@ const useMainScreen = () => {
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
-  const {name, image} = useSelector(state => state.user);
+  const {name, image, myAge} = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
   const dispatch = useDispatch();
@@ -153,6 +153,10 @@ const useMainScreen = () => {
                     type: 'SET_INCOMING_USER_IMAGE',
                     payload: newCall.callerImage,
                   });
+                  dispatch({
+                    type: 'SET_INCOMING_USER_AGE',
+                    payload: newCall.callerAge,
+                  });
                   //   }
                 }
               }
@@ -209,6 +213,10 @@ const useMainScreen = () => {
             dispatch({
               type: 'SET_INCOMING_USER_IMAGE',
               payload: newCall?.calleeImage ?? '',
+            });
+            dispatch({
+              type: 'SET_INCOMING_USER_AGE',
+              payload: newCall?.calleeAge ?? '',
             });
           }
 
@@ -315,6 +323,7 @@ const useMainScreen = () => {
           callerName: name,
           callerImage: image ? image : '',
           isHideCaller: true,
+          callerAge: myAge,
         };
 
         myRef.set(cWithOffer);
@@ -355,6 +364,7 @@ const useMainScreen = () => {
             isHideCallee: true,
             calleeName: name,
             calleeImage: image ? image : '',
+            calleeAge: myAge,
           };
 
           fbRef.update(cWithAnswer);
@@ -391,6 +401,10 @@ const useMainScreen = () => {
       dispatch({
         type: 'SET_INCOMING_USER_IMAGE',
         payload: '',
+      });
+      dispatch({
+        type: 'SET_INCOMING_USER_AGE',
+        payload: 0,
       });
       setGettingCall(false);
 

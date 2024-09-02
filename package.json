@@ -18,6 +18,7 @@
     "@types/react-native-vector-icons": "^6.4.18",
     "babel-plugin-module-resolver": "^5.0.2",
     "firebase": "^10.13.0",
+    "lottie-react-native": "^6.7.2",
     "react": "18.3.1",
     "react-native": "0.75.2",
     "react-native-animated-circular-counter": "^1.0.4",
