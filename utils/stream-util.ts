@@ -34,8 +34,8 @@ class VideoStreamManager {
       const mediaStream = await mediaDevices.getUserMedia({
         audio: true,
         video: {
-          height: 640,
-          width: 480,
+          width: 640, // Adjust resolution
+          height: 480,
           frameRate: 30,
           facingMode: isFront ? 'user' : 'environment',
           deviceId: videoSourceId,
@@ -48,6 +48,10 @@ class VideoStreamManager {
       }
 
       if (typeof mediaStream !== 'boolean') return mediaStream;
+      // if (mediaStream && mediaStream.getVideoTracks().length > 0) {
+      //   return mediaStream;
+      // }
+
       return null;
     }
     return this.stream;

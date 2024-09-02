@@ -85,23 +85,18 @@ const useMainScreen = () => {
     return myRef;
   };
 
-  const loadData = useCallback(async () => {
-    try {
+  useEffect(() => {
+    (async () => {
       loadVideo(true);
 
       const id = await DeviceInfo.getUniqueId();
       setDeviceId(id);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+    })();
 
-  useEffect(() => {
-    loadData();
     return () => {
       hangup();
     };
-  }, [loadData]);
+  }, []);
 
   useEffect(() => {
     if (deviceId?.length > 0) {
@@ -209,11 +204,11 @@ const useMainScreen = () => {
 
             dispatch({
               type: 'SET_INCOMING_USER_NAME',
-              payload: newCall.calleeName,
+              payload: newCall?.calleeName ?? '',
             });
             dispatch({
               type: 'SET_INCOMING_USER_IMAGE',
-              payload: newCall.calleeImage,
+              payload: newCall?.calleeImage ?? '',
             });
           }
 
@@ -385,6 +380,7 @@ const useMainScreen = () => {
   //cleanup
   const hangup = async () => {
     if (connecting.current) {
+      console.log('hangup ------------', name);
       listenToNewCallsRef.current = true;
       connecting.current = false;
       isInCallRef.current = false;
@@ -405,10 +401,16 @@ const useMainScreen = () => {
       }
       setstartListenToPending(true);
       setIsHideMe(true);
+      if (!isFront) {
+        setisFront(true);
+        loadVideo(true);
+      }
     }
   };
 
   const declineIncomingCall = async () => {
+    console.log('declineIncomingCall ------------', name);
+
     if (!listenToNewCallsRef.current) {
       listenToNewCallsRef.current = true;
       connecting.current = false;

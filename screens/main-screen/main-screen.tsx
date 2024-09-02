@@ -29,7 +29,6 @@ const MainScreen = props => {
       <Header
         onClickBack={() => {
           props.navigation.replace('Welcome');
-          hangup();
         }}
         backButtonColor="#FFFF"
       />

@@ -23,7 +23,10 @@ const WelcomeScreen = props => {
       }
     })();
 
-    return () => {};
+    return () => {
+      const videoStreamManager = VideoStreamManager.getInstance();
+      videoStreamManager.stopStream();
+    };
   }, []);
 
   return (
@@ -33,9 +36,9 @@ const WelcomeScreen = props => {
         {'Meet new friends\nin one click away ..'}
       </Text>
 
-      {localStream && (
+      {localStream?.toURL() && (
         <RTCView
-          streamURL={localStream.toURL()}
+          streamURL={localStream?.toURL()}
           objectFit="cover"
           style={styles.video}
         />

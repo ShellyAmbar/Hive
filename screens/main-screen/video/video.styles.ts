@@ -53,11 +53,11 @@ const createStyle = (isHiding: boolean) =>
     },
     myShade: {
       zIndex: 3,
-      backgroundColor: GlobalColors.BgColors.Bg2,
+      backgroundColor: GlobalColors.BgColors.Bg9,
     },
     otherShade: {
       zIndex: 1,
-      backgroundColor: GlobalColors.BgColors.Bg2,
+      backgroundColor: GlobalColors.BgColors.Bg9,
     },
     otherData: {
       zIndex: 2,

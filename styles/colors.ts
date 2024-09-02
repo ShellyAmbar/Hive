@@ -15,6 +15,7 @@ export const GlobalColors = {
     Bg6: 'rgba(21, 21, 21, 0.1)',
     Bg7: 'rgba(21, 21, 21, 1)',
     Bg8: 'rgba(0, 0, 0, 0.98)',
+    Bg9: 'rgba(0, 0, 0, 0.8)',
   },
   TextColors: {
     primary: '#000',
