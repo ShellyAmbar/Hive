@@ -108,24 +108,25 @@ const useMainScreen = () => {
     if (deviceId?.length > 0) {
       try {
         //listen to new incoming calls that is not mine
+        console.log(
+          'limitedCountry',
+          limitedCountry,
+          'limitedAges',
+          limitedAges,
+        );
 
-        const query = isLimitedCountry
-          ? firestore()
-              .collection('meet')
-              .where('status', '==', 'pending')
-              .where('callerId', '!=', deviceId)
-              .where('callerCountry', '==', limitedCountry)
-              .where('callerAge', '<', limitedAges[1])
-              .where('callerAge', '>', limitedAges[0])
-          : firestore()
-              .collection('meet')
-              .where('status', '==', 'pending')
-              .where('callerId', '!=', deviceId)
-              .where('callerAge', '<', limitedAges[1])
-              .where('callerAge', '>', limitedAges[0]);
+        const query = firestore()
+          .collection('meet')
+          .where('status', '==', 'pending')
+          .where('callerId', '!=', deviceId)
+          .where('callerAge', '<=', limitedAges[1])
+          .where('callerAge', '>=', limitedAges[0]);
+        const filterCountry = isLimitedCountry
+          ? query.where('callerCountry', '==', limitedCountry)
+          : query;
 
-        const unsubscribe = query.onSnapshot(snap => {
-          snap.docChanges().forEach(change => {
+        const unsubscribe = filterCountry.onSnapshot(snap => {
+          snap?.docChanges().forEach(change => {
             if (change.type === 'added') {
               //on answer start call
               const newCall = change.doc.data();
@@ -196,6 +197,7 @@ const useMainScreen = () => {
 
   useEffect(() => {
     if (fbRef !== null) {
+      console.log('limitedCountry', limitedCountry, 'limitedAges', limitedAges);
       //listen to answer call and update remote
       const unSubscribeAnswer = fbRef?.onSnapshot(snap => {
         if (snap.exists) {
@@ -211,6 +213,13 @@ const useMainScreen = () => {
           }
 
           // Check if the call has been answered
+          console.log(
+            newCall?.calleeAge,
+            limitedAges[1],
+            limitedAges[0],
+            newCall?.calleeAge <= limitedAges[1] &&
+              newCall?.calleeAge >= limitedAges[0],
+          );
 
           if (
             pc.current &&
@@ -219,8 +228,8 @@ const useMainScreen = () => {
             newCall.answer &&
             newCall.callerId === deviceId &&
             !isInCallRef.current &&
-            newCall?.calleeAge < limitedAges[1] &&
-            newCall?.calleeAge > limitedAges[0] &&
+            newCall?.calleeAge <= limitedAges[1] &&
+            newCall?.calleeAge >= limitedAges[0] &&
             (isLimitedCountry
               ? limitedCountry === newCall?.calleeCountry
               : true)

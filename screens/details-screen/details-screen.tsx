@@ -64,6 +64,19 @@ const DetailsScreen = props => {
     setisNeedToUpdateCloude(true);
   }, []);
 
+  useEffect(() => {
+    console.log(
+      useName,
+      myImage,
+      myAge,
+      myCountry,
+      isLimitedCountry,
+      myLimitedCountry,
+      isLimitedAges,
+      myLimitedAges,
+    );
+  }, []);
+
   const updateImageToCloude = useCallback(async () => {
     console.log('updateImageToCloude------------');
     if (image) {
@@ -88,13 +101,25 @@ const DetailsScreen = props => {
     dispatch({type: 'SET_IS_LIMITED_COUNTRY', payload: isLimitCountry});
     dispatch({type: 'SET_LIMITED_COUNTRY', payload: limitedCountry});
     dispatch({type: 'SET_IS_LIMITED_AGES', payload: isLimitAges});
+    console.log('limitedAges', limitedAges);
+
     dispatch({type: 'SET_LIMITED_AGES', payload: limitedAges});
     if (isNeedToUpdateCloude) {
       updateImageToCloude();
     }
 
     props.navigation.navigate('Home');
-  }, [isNeedToUpdateCloude, name, age, country]);
+  }, [
+    isNeedToUpdateCloude,
+    name,
+    age,
+    country,
+    isLimitAges,
+    isLimitCountry,
+    limitedAges,
+    limitedCountry,
+    dispatch,
+  ]);
 
   const chooseImage = () => {
     setshowPopupChoose(true);
@@ -233,7 +258,7 @@ const DetailsScreen = props => {
             onDebounce={text => {
               if ((text >= 16 && text <= 100) || text === -1) {
                 setisErrorAge(false);
-                setAge(text);
+                setAge(Number(text));
               } else {
                 setisErrorAge(true);
               }
@@ -271,7 +296,7 @@ const DetailsScreen = props => {
               textUnSelectedStyle={{fontSize: 12}}
               innerViewStyle={{width: 120}}
               buttonsStyle={{width: 120}}
-              deafultSelectedIndex={0}
+              deafultSelectedIndex={isLimitCountry ? 1 : 0}
               leftText="No"
               rightText="Yes"
               onClickLeft={() => {
@@ -302,7 +327,7 @@ const DetailsScreen = props => {
               textUnSelectedStyle={{fontSize: 12}}
               innerViewStyle={{width: 120}}
               buttonsStyle={{width: 120}}
-              deafultSelectedIndex={0}
+              deafultSelectedIndex={isLimitAges ? 1 : 0}
               leftText="No"
               rightText="Yes"
               onClickLeft={() => {
