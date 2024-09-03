@@ -219,10 +219,11 @@ const useMainScreen = () => {
             newCall.answer &&
             newCall.callerId === deviceId &&
             !isInCallRef.current &&
-            (isLimitedCountry && limitedCountry === newCall.calleeCountry)(
-              newCall?.calleeAge < limitedAges[1] &&
-                newCall?.calleeAge > limitedAges[0],
-            )
+            newCall?.calleeAge < limitedAges[1] &&
+            newCall?.calleeAge > limitedAges[0] &&
+            (isLimitedCountry
+              ? limitedCountry === newCall?.calleeCountry
+              : true)
           ) {
             console.log('updating answer ------', name);
 

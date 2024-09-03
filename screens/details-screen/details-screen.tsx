@@ -267,8 +267,8 @@ const DetailsScreen = props => {
             <Text style={styles.subTitle}>limit for country?</Text>
             <ButtonSwitch
               outerViewStyle={{width: 120, height: 50}}
-              textSelectedStyle={{fontSize: 16}}
-              textUnSelectedStyle={{fontSize: 16}}
+              textSelectedStyle={{fontSize: 12}}
+              textUnSelectedStyle={{fontSize: 12}}
               innerViewStyle={{width: 120}}
               buttonsStyle={{width: 120}}
               deafultSelectedIndex={0}
@@ -298,8 +298,8 @@ const DetailsScreen = props => {
             <Text style={styles.subTitle}>limit for ages?</Text>
             <ButtonSwitch
               outerViewStyle={{width: 120, height: 50}}
-              textSelectedStyle={{fontSize: 16}}
-              textUnSelectedStyle={{fontSize: 16}}
+              textSelectedStyle={{fontSize: 12}}
+              textUnSelectedStyle={{fontSize: 12}}
               innerViewStyle={{width: 120}}
               buttonsStyle={{width: 120}}
               deafultSelectedIndex={0}
