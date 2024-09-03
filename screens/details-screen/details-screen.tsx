@@ -248,7 +248,7 @@ const DetailsScreen = props => {
 
           <ReactiveTextInput
             textAlignVertical={'bottom'}
-            placeholder="Enter your age"
+            placeholder={age ? age + '' : 'Enter your age'}
             placeHolderColor="#FFFF"
             defaultValue={age}
             containerStyle={styles.numberInputContainer}

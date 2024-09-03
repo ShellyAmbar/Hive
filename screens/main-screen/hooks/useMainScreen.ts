@@ -136,6 +136,9 @@ const useMainScreen = () => {
                 newCall.callerName,
                 newCall.callerId,
                 lastCallerIdRef.current,
+                newCall.callerIsLimitedCountry,
+                newCall.callerLimitedCountry,
+                newCall.callerLimitedAges,
               );
               if (
                 listenToNewCallsRef.current &&
@@ -144,7 +147,12 @@ const useMainScreen = () => {
                   newCall.callerId !== lastCallerIdRef.current) &&
                 newCall &&
                 newCall?.offer &&
-                !connecting.current
+                !connecting.current &&
+                (newCall.callerIsLimitedCountry
+                  ? newCall.callerLimitedCountry === myCountry
+                  : true) &&
+                myAge <= newCall.callerLimitedAges[1] &&
+                myAge >= newCall.callerLimitedAges[0]
               ) {
                 console.log(
                   'new call',
@@ -365,6 +373,9 @@ const useMainScreen = () => {
           isHideCaller: true,
           callerAge: myAge,
           callerCountry: myCountry,
+          callerIsLimitedCountry: isLimitedCountry,
+          callerLimitedCountry: limitedCountry,
+          callerLimitedAges: limitedAges,
         };
 
         myRef.set(cWithOffer);
