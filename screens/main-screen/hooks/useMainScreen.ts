@@ -132,13 +132,20 @@ const useMainScreen = () => {
               const newCall = change.doc.data();
               console.log(
                 'new call added -----',
-                name,
-                newCall.callerName,
-                newCall.callerId,
-                lastCallerIdRef.current,
-                newCall.callerIsLimitedCountry,
-                newCall.callerLimitedCountry,
-                newCall.callerLimitedAges,
+
+                'condition:',
+                listenToNewCallsRef.current &&
+                  (!lastCallerIdRef.current ||
+                    lastCallerIdRef.current === undefined ||
+                    newCall.callerId !== lastCallerIdRef.current) &&
+                  newCall &&
+                  newCall?.offer &&
+                  !connecting.current &&
+                  (newCall.callerIsLimitedCountry
+                    ? newCall.callerLimitedCountry === myCountry
+                    : true) &&
+                  myAge <= newCall.callerLimitedAges[1] &&
+                  myAge >= newCall.callerLimitedAges[0],
               );
               if (
                 listenToNewCallsRef.current &&

@@ -62,7 +62,7 @@ const Video = ({
             autoPlay
             loop
             speed={1}
-            style={styles.otherVideo}
+            style={styles.lottie}
           />
           <LottieView
             ref={animation => {
@@ -72,7 +72,7 @@ const Video = ({
             autoPlay
             loop
             speed={1}
-            style={styles.otherVideo}
+            style={styles.lottie}
           />
         </View>
       )}
@@ -94,7 +94,30 @@ const Video = ({
         objectFit="cover"
         style={styles.myVideo}
       />
-      {isHideMe && <View style={[styles.myVideo, styles.myShade]} />}
+      {isHideMe && (
+        <View style={[styles.myVideo, styles.myShade]}>
+          <LottieView
+            ref={animation => {
+              sparkAnimationRef = animation;
+            }}
+            source={require('@hive/assets/lotties/sparks.json')}
+            autoPlay
+            loop
+            speed={1}
+            style={styles.lottie}
+          />
+          <LottieView
+            ref={animation => {
+              sparkAnimationRef = animation;
+            }}
+            source={require('@hive/assets/lotties/stars.json')}
+            autoPlay
+            loop
+            speed={1}
+            style={styles.lottie}
+          />
+        </View>
+      )}
 
       <View style={styles.buttons}>
         <FloatingButton
