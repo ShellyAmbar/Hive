@@ -59,7 +59,6 @@ export default StyleSheet.create({
 
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
-    width: '100%',
   },
   textInputContainer: {
     width: '90%',
@@ -140,5 +139,11 @@ export default StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
+  },
+  horizontal: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    width: '100%',
   },
 });

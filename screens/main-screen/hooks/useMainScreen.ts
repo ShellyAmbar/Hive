@@ -31,7 +31,15 @@ const useMainScreen = () => {
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
-  const {name, image, myAge, myCountry} = useSelector(state => state.user);
+  const {
+    name,
+    image,
+    myAge,
+    myCountry,
+    isLimitedCountry,
+    limitedCountry,
+    limitedAges,
+  } = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
   const dispatch = useDispatch();
@@ -101,70 +109,81 @@ const useMainScreen = () => {
       try {
         //listen to new incoming calls that is not mine
 
-        const unsubscribe = firestore()
-          .collection('meet')
-          .where('status', '==', 'pending')
-          .where('callerId', '!=', deviceId)
-          .onSnapshot(snap => {
-            snap.docChanges().forEach(change => {
-              if (change.type === 'added') {
-                //on answer start call
-                const newCall = change.doc.data();
+        const query = isLimitedCountry
+          ? firestore()
+              .collection('meet')
+              .where('status', '==', 'pending')
+              .where('callerId', '!=', deviceId)
+              .where('callerCountry', '==', limitedCountry)
+              .where('callerAge', '<', limitedAges[1])
+              .where('callerAge', '>', limitedAges[0])
+          : firestore()
+              .collection('meet')
+              .where('status', '==', 'pending')
+              .where('callerId', '!=', deviceId)
+              .where('callerAge', '<', limitedAges[1])
+              .where('callerAge', '>', limitedAges[0]);
+
+        const unsubscribe = query.onSnapshot(snap => {
+          snap.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              //on answer start call
+              const newCall = change.doc.data();
+              console.log(
+                'new call added -----',
+                name,
+                newCall.callerName,
+                newCall.callerId,
+                lastCallerIdRef.current,
+              );
+              if (
+                listenToNewCallsRef.current &&
+                (!lastCallerIdRef.current ||
+                  lastCallerIdRef.current === undefined ||
+                  newCall.callerId !== lastCallerIdRef.current) &&
+                newCall &&
+                newCall?.offer &&
+                !connecting.current
+              ) {
                 console.log(
-                  'new call added -----',
+                  'new call',
                   name,
                   newCall.callerName,
                   newCall.callerId,
                   lastCallerIdRef.current,
                 );
-                if (
-                  listenToNewCallsRef.current &&
-                  (!lastCallerIdRef.current ||
-                    lastCallerIdRef.current === undefined ||
-                    newCall.callerId !== lastCallerIdRef.current) &&
-                  newCall &&
-                  newCall?.offer &&
-                  !connecting.current
-                ) {
-                  console.log(
-                    'new call',
-                    name,
-                    newCall.callerName,
-                    newCall.callerId,
-                    lastCallerIdRef.current,
-                  );
 
-                  setfbRef(change.doc.ref);
-                  lastCallerIdRef.current = newCall.callerId;
-                  //if there is offer for chatid set the getting call flag
+                setfbRef(change.doc.ref);
+                lastCallerIdRef.current = newCall.callerId;
+                //if there is offer for chatid set the getting call flag
 
-                  //   if (newCall && newCall?.offer && !connecting.current) {
-                  setstartListenToPending(false);
-                  listenToNewCallsRef.current = false;
-                  setGettingCall(true);
+                //   if (newCall && newCall?.offer && !connecting.current) {
+                setstartListenToPending(false);
+                listenToNewCallsRef.current = false;
+                setGettingCall(true);
 
-                  dispatch({
-                    type: 'SET_INCOMING_USER_NAME',
-                    payload: newCall.callerName,
-                  });
-                  dispatch({
-                    type: 'SET_INCOMING_USER_IMAGE',
-                    payload: newCall.callerImage,
-                  });
-                  dispatch({
-                    type: 'SET_INCOMING_USER_AGE',
-                    payload: newCall.callerAge,
-                  });
-                  dispatch({
-                    type: 'SET_INCOMING_USER_COUNTRY',
-                    payload: newCall.callerCountry,
-                  });
+                dispatch({
+                  type: 'SET_INCOMING_USER_NAME',
+                  payload: newCall.callerName,
+                });
+                dispatch({
+                  type: 'SET_INCOMING_USER_IMAGE',
+                  payload: newCall.callerImage,
+                });
+                dispatch({
+                  type: 'SET_INCOMING_USER_AGE',
+                  payload: newCall.callerAge,
+                });
+                dispatch({
+                  type: 'SET_INCOMING_USER_COUNTRY',
+                  payload: newCall.callerCountry,
+                });
 
-                  //   }
-                }
+                //   }
               }
-            });
+            }
           });
+        });
 
         return () => {
           unsubscribe && unsubscribe();
@@ -199,7 +218,11 @@ const useMainScreen = () => {
             newCall &&
             newCall.answer &&
             newCall.callerId === deviceId &&
-            !isInCallRef.current
+            !isInCallRef.current &&
+            (isLimitedCountry && limitedCountry === newCall.calleeCountry)(
+              newCall?.calleeAge < limitedAges[1] &&
+                newCall?.calleeAge > limitedAges[0],
+            )
           ) {
             console.log('updating answer ------', name);
 

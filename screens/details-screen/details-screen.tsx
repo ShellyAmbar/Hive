@@ -5,6 +5,7 @@ import {
   Keyboard,
   Image,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import styles from './details-screen.styles';
@@ -26,6 +27,9 @@ import {
 } from '@hive/utils/image-util';
 import Popup from 'rn-sliding-popup';
 import DeviceInfo from 'react-native-device-info';
+import ButtonSwitch from 'rn-switch-button';
+import MultiSlider from 'react-native-range-bar';
+
 const DetailsScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
   const dispatch = useDispatch();
@@ -34,6 +38,10 @@ const DetailsScreen = props => {
     image: myImage,
     myAge,
     myCountry,
+    isLimitedCountry,
+    limitedCountry: myLimitedCountry,
+    isLimitedAges,
+    limitedAges: myLimitedAges,
   } = useSelector(state => state.user);
   const [name, setName] = useState(useName);
   const [image, setImage] = useState<string | null>(myImage ? myImage : null);
@@ -42,7 +50,13 @@ const DetailsScreen = props => {
   const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
   const [isErrorAge, setisErrorAge] = useState(false);
   const [country, setCountry] = useState(myCountry ?? '');
+  const [limitedCountry, setLImitedCountry] = useState(
+    myLimitedCountry ?? myCountry,
+  );
+  const [isLimitCountry, setisLimitCountry] = useState(isLimitedCountry);
 
+  const [limitedAges, setLImitedAges] = useState(myLimitedAges);
+  const [isLimitAges, setisLimitAges] = useState(isLimitedAges);
   const updateImageUri = useCallback((imageUri: string | null) => {
     console.log('updateImageUri----');
 
@@ -71,6 +85,10 @@ const DetailsScreen = props => {
     dispatch({type: 'SET_NAME', payload: name});
     dispatch({type: 'SET_MY_AGE', payload: age});
     dispatch({type: 'SET_MY_COUNTRY', payload: country});
+    dispatch({type: 'SET_IS_LIMITED_COUNTRY', payload: isLimitCountry});
+    dispatch({type: 'SET_LIMITED_COUNTRY', payload: limitedCountry});
+    dispatch({type: 'SET_IS_LIMITED_AGES', payload: isLimitAges});
+    dispatch({type: 'SET_LIMITED_AGES', payload: limitedAges});
     if (isNeedToUpdateCloude) {
       updateImageToCloude();
     }
@@ -178,13 +196,13 @@ const DetailsScreen = props => {
             }}
             cursorColor={GlobalColors.TextColors.white}
           />
-          <Spacer size={40} />
+          <Spacer size={20} />
           <TouchableOpacity
             style={styles.imageBtn}
             onPress={() => chooseImage()}>
             <Text style={styles.text}>Upload a picture</Text>
           </TouchableOpacity>
-          <Spacer size={55} />
+          <Spacer size={30} />
           {image && (
             <>
               <View style={styles.image}>
@@ -202,7 +220,6 @@ const DetailsScreen = props => {
             </>
           )}
           <Text style={styles.subTitle}>What's your age?</Text>
-          <Spacer size={8} />
 
           <ReactiveTextInput
             textAlignVertical={'bottom'}
@@ -233,15 +250,85 @@ const DetailsScreen = props => {
             isError={isErrorAge}
             message={'Error, your age must be between 16 - 99'}
           />
-          <Spacer size={55} />
-          <CountryCodePicker
-            onPickedCode={(code, name) => {
-              console.log('name', name);
+          <Spacer size={32} />
+          <View style={styles.horizontal}>
+            <Text style={styles.subTitle}>Your country</Text>
+            <CountryCodePicker
+              onPickedCode={(code, name) => {
+                console.log('name', name);
 
-              setCountry(name);
-            }}
-            defaultCountryName={country}
-          />
+                setCountry(name);
+              }}
+              defaultCountryName={country}
+            />
+          </View>
+          <Spacer size={22} />
+          <View style={styles.horizontal}>
+            <Text style={styles.subTitle}>limit for country?</Text>
+            <ButtonSwitch
+              outerViewStyle={{width: 120, height: 50}}
+              textSelectedStyle={{fontSize: 16}}
+              textUnSelectedStyle={{fontSize: 16}}
+              innerViewStyle={{width: 120}}
+              buttonsStyle={{width: 120}}
+              deafultSelectedIndex={0}
+              leftText="No"
+              rightText="Yes"
+              onClickLeft={() => {
+                setisLimitCountry(false);
+              }}
+              onClickRight={() => {
+                setisLimitCountry(true);
+              }}
+            />
+          </View>
+          {isLimitCountry && (
+            <CountryCodePicker
+              onPickedCode={(code, name) => {
+                console.log('name', name);
+
+                setLImitedCountry(name);
+              }}
+              defaultCountryName={limitedCountry}
+            />
+          )}
+
+          <Spacer size={22} />
+          <View style={styles.horizontal}>
+            <Text style={styles.subTitle}>limit for ages?</Text>
+            <ButtonSwitch
+              outerViewStyle={{width: 120, height: 50}}
+              textSelectedStyle={{fontSize: 16}}
+              textUnSelectedStyle={{fontSize: 16}}
+              innerViewStyle={{width: 120}}
+              buttonsStyle={{width: 120}}
+              deafultSelectedIndex={0}
+              leftText="No"
+              rightText="Yes"
+              onClickLeft={() => {
+                setisLimitAges(false);
+                setLImitedAges([0, 100]);
+              }}
+              onClickRight={() => {
+                setisLimitAges(true);
+              }}
+            />
+          </View>
+          <Spacer size={42} />
+          {isLimitAges && (
+            <MultiSlider
+              initialMaxValue={limitedAges[1]}
+              initialMinValue={limitedAges[0]}
+              sliderWidth={Dimensions.get('window').width - 100}
+              min={0}
+              max={100}
+              step={1}
+              onValueChange={range => {
+                console.log('range', range);
+                setLImitedAges([range.min, range.max]);
+              }}
+            />
+          )}
           <Spacer size={55} />
           <TouchableOpacity
             disabled={

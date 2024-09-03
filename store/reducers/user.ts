@@ -7,10 +7,36 @@ const initialState = {
   incomingUserAge: 0,
   myCountry: '',
   incomingUserCountry: '',
+  isLimitedCountry: false,
+  limitedCountry: '',
+  isLimitedAges: false,
+  limitedAges: [0, 100],
 };
 
 const UserReducer = (state = initialState, action) => {
   switch (action.type) {
+    case 'SET_IS_LIMITED_AGES':
+      return {
+        ...state,
+        isLimitedAges: action.payload,
+      };
+    case 'SET_LIMITED_AGES':
+      return {
+        ...state,
+        limitedAges: action.payload,
+      };
+
+    case 'SET_IS_LIMITED_COUNTRY':
+      return {
+        ...state,
+        isLimitedCountry: action.payload,
+      };
+    case 'SET_LIMITED_COUNTRY':
+      return {
+        ...state,
+        limitedCountry: action.payload,
+      };
+
     case 'SET_NAME':
       return {
         ...state,

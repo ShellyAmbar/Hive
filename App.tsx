@@ -14,17 +14,20 @@ import StackNavigation from './navigation/stack-navigation';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistor, store} from './store';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 function App(): React.JSX.Element {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaView style={{flex: 1}}>
-          <StatusBar barStyle="light-content" />
-          <NavigationContainer>
-            <StackNavigation />
-          </NavigationContainer>
-        </SafeAreaView>
+        <GestureHandlerRootView style={{flex: 1}}>
+          <SafeAreaView style={{flex: 1}}>
+            <StatusBar barStyle="light-content" />
+            <NavigationContainer>
+              <StackNavigation />
+            </NavigationContainer>
+          </SafeAreaView>
+        </GestureHandlerRootView>
       </PersistGate>
     </Provider>
   );
