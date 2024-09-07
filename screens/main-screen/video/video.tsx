@@ -61,8 +61,18 @@ const Video = ({
             source={require('@hive/assets/lotties/sparks.json')}
             autoPlay
             loop
-            speed={1}
+            speed={2}
             style={styles.lottie}
+          />
+          <LottieView
+            ref={animation => {
+              sparkAnimationRef = animation;
+            }}
+            source={require('@hive/assets/lotties/sparks.json')}
+            autoPlay
+            loop
+            speed={2}
+            style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
           />
           <LottieView
             ref={animation => {
@@ -71,7 +81,7 @@ const Video = ({
             source={require('@hive/assets/lotties/stars.json')}
             autoPlay
             loop
-            speed={1}
+            speed={2}
             style={styles.lottie}
           />
         </View>
@@ -103,8 +113,18 @@ const Video = ({
             source={require('@hive/assets/lotties/sparks.json')}
             autoPlay
             loop
-            speed={1}
+            speed={2}
             style={styles.lottie}
+          />
+          <LottieView
+            ref={animation => {
+              sparkAnimationRef = animation;
+            }}
+            source={require('@hive/assets/lotties/sparks.json')}
+            autoPlay
+            loop
+            speed={2}
+            style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
           />
           <LottieView
             ref={animation => {
@@ -113,7 +133,7 @@ const Video = ({
             source={require('@hive/assets/lotties/stars.json')}
             autoPlay
             loop
-            speed={1}
+            speed={2}
             style={styles.lottie}
           />
         </View>

@@ -132,7 +132,9 @@ const useMainScreen = () => {
               const newCall = change.doc.data();
               console.log(
                 'new call added -----',
-
+                name,
+                newCall?.callerIsLimitedCountry,
+                newCall.callerId === lastCallerIdRef.current,
                 'condition:',
                 listenToNewCallsRef.current &&
                   (!lastCallerIdRef.current ||

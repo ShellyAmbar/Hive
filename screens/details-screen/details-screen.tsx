@@ -64,19 +64,6 @@ const DetailsScreen = props => {
     setisNeedToUpdateCloude(true);
   }, []);
 
-  useEffect(() => {
-    console.log(
-      useName,
-      myImage,
-      myAge,
-      myCountry,
-      isLimitedCountry,
-      myLimitedCountry,
-      isLimitedAges,
-      myLimitedAges,
-    );
-  }, []);
-
   const updateImageToCloude = useCallback(async () => {
     console.log('updateImageToCloude------------');
     if (image) {
@@ -248,7 +235,7 @@ const DetailsScreen = props => {
 
           <ReactiveTextInput
             textAlignVertical={'bottom'}
-            placeholder={age ? age + '' : 'Enter your age'}
+            placeholder={age !== -1 ? age + '' : 'Enter your age'}
             placeHolderColor="#FFFF"
             defaultValue={age}
             containerStyle={styles.numberInputContainer}
@@ -260,6 +247,7 @@ const DetailsScreen = props => {
                 setisErrorAge(false);
                 setAge(Number(text));
               } else {
+                setAge(-1);
                 setisErrorAge(true);
               }
             }}
@@ -281,7 +269,6 @@ const DetailsScreen = props => {
             <CountryCodePicker
               onPickedCode={(code, name) => {
                 console.log('name', name);
-
                 setCountry(name);
               }}
               defaultCountryName={country}
