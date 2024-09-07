@@ -27,14 +27,8 @@ const Video = ({
     incomingUserAge,
     incomingUserCountry,
   } = useSelector(state => state.user);
-  let sparkAnimationRef = useRef(null);
-  const styles = createstyle(isHideUser);
 
-  useEffect(() => {
-    if (remoteStrem) {
-      sparkAnimationRef.current?.play();
-    }
-  }, [remoteStrem]);
+  const styles = createstyle(isHideUser);
 
   const showLocalStream = () => (
     <Waiting
@@ -55,9 +49,6 @@ const Video = ({
       {isHideUser && (
         <View style={[styles.otherVideo, styles.otherShade]}>
           <LottieView
-            ref={animation => {
-              sparkAnimationRef = animation;
-            }}
             source={require('@hive/assets/lotties/sparks.json')}
             autoPlay
             loop
@@ -65,9 +56,6 @@ const Video = ({
             style={styles.lottie}
           />
           <LottieView
-            ref={animation => {
-              sparkAnimationRef = animation;
-            }}
             source={require('@hive/assets/lotties/sparks.json')}
             autoPlay
             loop
@@ -75,13 +63,17 @@ const Video = ({
             style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
           />
           <LottieView
-            ref={animation => {
-              sparkAnimationRef = animation;
-            }}
             source={require('@hive/assets/lotties/stars.json')}
             autoPlay
             loop
             speed={2}
+            style={styles.lottie}
+          />
+          <LottieView
+            source={require('@hive/assets/lotties/bubbles.json')}
+            autoPlay
+            loop
+            speed={1}
             style={styles.lottie}
           />
         </View>
@@ -107,9 +99,6 @@ const Video = ({
       {isHideMe && (
         <View style={[styles.myVideo, styles.myShade]}>
           <LottieView
-            ref={animation => {
-              sparkAnimationRef = animation;
-            }}
             source={require('@hive/assets/lotties/sparks.json')}
             autoPlay
             loop
@@ -117,9 +106,6 @@ const Video = ({
             style={styles.lottie}
           />
           <LottieView
-            ref={animation => {
-              sparkAnimationRef = animation;
-            }}
             source={require('@hive/assets/lotties/sparks.json')}
             autoPlay
             loop
@@ -127,13 +113,17 @@ const Video = ({
             style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
           />
           <LottieView
-            ref={animation => {
-              sparkAnimationRef = animation;
-            }}
             source={require('@hive/assets/lotties/stars.json')}
             autoPlay
             loop
             speed={2}
+            style={styles.lottie}
+          />
+          <LottieView
+            source={require('@hive/assets/lotties/bubbles.json')}
+            autoPlay
+            loop
+            speed={1}
             style={styles.lottie}
           />
         </View>

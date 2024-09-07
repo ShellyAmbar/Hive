@@ -58,14 +58,11 @@ const DetailsScreen = props => {
   const [limitedAges, setLImitedAges] = useState(myLimitedAges);
   const [isLimitAges, setisLimitAges] = useState(isLimitedAges);
   const updateImageUri = useCallback((imageUri: string | null) => {
-    console.log('updateImageUri----');
-
     setImage(imageUri);
     setisNeedToUpdateCloude(true);
   }, []);
 
   const updateImageToCloude = useCallback(async () => {
-    console.log('updateImageToCloude------------');
     if (image) {
       await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
       const imageUri = await dounloadImageFromStorage(
@@ -88,7 +85,6 @@ const DetailsScreen = props => {
     dispatch({type: 'SET_IS_LIMITED_COUNTRY', payload: isLimitCountry});
     dispatch({type: 'SET_LIMITED_COUNTRY', payload: limitedCountry});
     dispatch({type: 'SET_IS_LIMITED_AGES', payload: isLimitAges});
-    console.log('limitedAges', limitedAges);
 
     dispatch({type: 'SET_LIMITED_AGES', payload: limitedAges});
     if (isNeedToUpdateCloude) {
@@ -194,11 +190,13 @@ const DetailsScreen = props => {
             defaultValue={name}
             containerStyle={styles.textInputContainer}
             textInputStyle={styles.textInputText}
-            textContentType="familyName"
+            textContentType="givenName"
             onDebounce={text => {
               setName(text);
             }}
-            keyboardType="email-address"
+            focusable
+            autoFocus={true}
+            keyboardType="url"
             keyboardAppearance="default"
             blurOnSubmit={false}
             autoCorrect={false}
@@ -235,23 +233,27 @@ const DetailsScreen = props => {
 
           <ReactiveTextInput
             textAlignVertical={'bottom'}
-            placeholder={age !== -1 ? age + '' : 'Enter your age'}
+            placeholder={'Enter your age'}
             placeHolderColor="#FFFF"
             defaultValue={age}
             containerStyle={styles.numberInputContainer}
             errorInputStyle={styles.errorStyle}
-            textInputStyle={styles.textInputText}
-            inputmode="numeric"
+            textInputStyle={styles.textInputNumber}
+            textContentType="birthdateMonth"
             onDebounce={text => {
-              if ((text >= 16 && text <= 100) || text === -1) {
+              console.log('onDebounce', text);
+
+              if (
+                (Number(text) >= 16 && Number(text) <= 100) ||
+                Number(text) === -1
+              ) {
                 setisErrorAge(false);
                 setAge(Number(text));
               } else {
-                setAge(-1);
                 setisErrorAge(true);
               }
             }}
-            keyboardType="numeric"
+            keyboardType="number-pad"
             keyboardAppearance="default"
             blurOnSubmit={false}
             autoCorrect={false}
@@ -268,7 +270,6 @@ const DetailsScreen = props => {
             <Text style={styles.subTitle}>Your country</Text>
             <CountryCodePicker
               onPickedCode={(code, name) => {
-                console.log('name', name);
                 setCountry(name);
               }}
               defaultCountryName={country}
@@ -297,8 +298,6 @@ const DetailsScreen = props => {
           {isLimitCountry && (
             <CountryCodePicker
               onPickedCode={(code, name) => {
-                console.log('name', name);
-
                 setLImitedCountry(name);
               }}
               defaultCountryName={limitedCountry}
@@ -336,7 +335,6 @@ const DetailsScreen = props => {
               max={100}
               step={1}
               onValueChange={range => {
-                console.log('range', range);
                 setLImitedAges([range.min, range.max]);
               }}
             />

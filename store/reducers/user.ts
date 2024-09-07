@@ -3,7 +3,7 @@ const initialState = {
   incomingUserName: '',
   image: '',
   incomingUserImage: '',
-  myAge: 0,
+  myAge: -1,
   incomingUserAge: 0,
   myCountry: '',
   incomingUserCountry: '',
@@ -43,8 +43,6 @@ const UserReducer = (state = initialState, action) => {
         name: action.payload,
       };
     case 'SET_MY_AGE':
-      console.log('action.payload', action.payload);
-
       return {
         ...state,
         myAge: action.payload,

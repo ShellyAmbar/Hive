@@ -13,6 +13,7 @@ import firestore, {
 } from '@react-native-firebase/firestore';
 import DeviceInfo from 'react-native-device-info';
 import {useDispatch, useSelector} from 'react-redux';
+import {AppState} from 'react-native';
 
 const peerConstraints = {
   iceServers: [
@@ -46,6 +47,8 @@ const useMainScreen = () => {
   const [isFront, setisFront] = useState(true);
   const [isHideMe, setIsHideMe] = useState(true);
   const [isHideUser, setIsHideUser] = useState(true);
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
     updateHide(isHideMe);
@@ -101,26 +104,35 @@ const useMainScreen = () => {
       setDeviceId(id);
     })();
 
-    return () => {};
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      if (nextAppState === 'inactive' || nextAppState === 'background') {
+        console.log('App has come to the back!');
+        hangup();
+        declineIncomingCall();
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+    });
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   useEffect(() => {
     if (deviceId?.length > 0) {
       try {
         //listen to new incoming calls that is not mine
-        console.log(
-          'limitedCountry',
-          limitedCountry,
-          'limitedAges',
-          limitedAges,
-        );
 
         const query = firestore()
           .collection('meet')
+          .orderBy('date', 'asc')
           .where('status', '==', 'pending')
           .where('callerId', '!=', deviceId)
           .where('callerAge', '<=', limitedAges[1])
           .where('callerAge', '>=', limitedAges[0]);
+
         const filterCountry = isLimitedCountry
           ? query.where('callerCountry', '==', limitedCountry)
           : query;
@@ -130,30 +142,30 @@ const useMainScreen = () => {
             if (change.type === 'added') {
               //on answer start call
               const newCall = change.doc.data();
-              console.log(
-                'new call added -----',
-                name,
-                newCall?.callerIsLimitedCountry,
-                newCall.callerId === lastCallerIdRef.current,
-                'condition:',
-                listenToNewCallsRef.current &&
-                  (!lastCallerIdRef.current ||
-                    lastCallerIdRef.current === undefined ||
-                    newCall.callerId !== lastCallerIdRef.current) &&
-                  newCall &&
-                  newCall?.offer &&
-                  !connecting.current &&
-                  (newCall.callerIsLimitedCountry
-                    ? newCall.callerLimitedCountry === myCountry
-                    : true) &&
-                  myAge <= newCall.callerLimitedAges[1] &&
-                  myAge >= newCall.callerLimitedAges[0],
-              );
+              // console.log(
+              //   'new call added -----',
+              //   name,
+              //   newCall?.callerIsLimitedCountry,
+              //   newCall.callerId === lastCallerIdRef.current,
+              //   'condition:',
+              //   listenToNewCallsRef.current &&
+              //     (!lastCallerIdRef.current ||
+              //       lastCallerIdRef.current === undefined ||
+              //       newCall.callerId !== lastCallerIdRef.current) &&
+              //     newCall &&
+              //     newCall?.offer &&
+              //     !connecting.current &&
+              //     (newCall.callerIsLimitedCountry
+              //       ? newCall.callerLimitedCountry === myCountry
+              //       : true) &&
+              //     myAge <= newCall.callerLimitedAges[1] &&
+              //     myAge >= newCall.callerLimitedAges[0],
+              // );
               if (
                 listenToNewCallsRef.current &&
-                (!lastCallerIdRef.current ||
-                  lastCallerIdRef.current === undefined ||
-                  newCall.callerId !== lastCallerIdRef.current) &&
+                // (!lastCallerIdRef.current ||
+                //   lastCallerIdRef.current === undefined ||
+                //   newCall.callerId !== lastCallerIdRef.current) &&
                 newCall &&
                 newCall?.offer &&
                 !connecting.current &&
@@ -163,14 +175,6 @@ const useMainScreen = () => {
                 myAge <= newCall.callerLimitedAges[1] &&
                 myAge >= newCall.callerLimitedAges[0]
               ) {
-                console.log(
-                  'new call',
-                  name,
-                  newCall.callerName,
-                  newCall.callerId,
-                  lastCallerIdRef.current,
-                );
-
                 setfbRef(change.doc.ref);
                 lastCallerIdRef.current = newCall.callerId;
                 //if there is offer for chatid set the getting call flag
@@ -214,7 +218,6 @@ const useMainScreen = () => {
 
   useEffect(() => {
     if (fbRef !== null) {
-      console.log('limitedCountry', limitedCountry, 'limitedAges', limitedAges);
       //listen to answer call and update remote
       const unSubscribeAnswer = fbRef?.onSnapshot(snap => {
         if (snap.exists) {
@@ -230,13 +233,6 @@ const useMainScreen = () => {
           }
 
           // Check if the call has been answered
-          console.log(
-            newCall?.calleeAge,
-            limitedAges[1],
-            limitedAges[0],
-            newCall?.calleeAge <= limitedAges[1] &&
-              newCall?.calleeAge >= limitedAges[0],
-          );
 
           if (
             pc.current &&
@@ -251,8 +247,6 @@ const useMainScreen = () => {
               ? limitedCountry === newCall?.calleeCountry
               : true)
           ) {
-            console.log('updating answer ------', name);
-
             //listenToNewCallsRef.current = false;
             isInCallRef.current = true;
             pc.current?.setRemoteDescription(
@@ -278,7 +272,7 @@ const useMainScreen = () => {
           }
 
           const callerId = newCall.callerId;
-          const calleeId = newCall.calleeId;
+
           if (newCall && deviceId === callerId) {
             setIsHideUser(newCall.isHideCallee);
           } else {
@@ -385,6 +379,7 @@ const useMainScreen = () => {
           callerIsLimitedCountry: isLimitedCountry,
           callerLimitedCountry: limitedCountry,
           callerLimitedAges: limitedAges,
+          date: Date.now(),
         };
 
         myRef.set(cWithOffer);
@@ -452,7 +447,6 @@ const useMainScreen = () => {
   //cleanup
   const hangup = async () => {
     if (connecting.current) {
-      console.log('hangup ------------', name);
       listenToNewCallsRef.current = true;
       connecting.current = false;
       isInCallRef.current = false;
@@ -489,8 +483,6 @@ const useMainScreen = () => {
   };
 
   const declineIncomingCall = async () => {
-    console.log('declineIncomingCall ------------', name);
-
     if (!listenToNewCallsRef.current) {
       listenToNewCallsRef.current = true;
       connecting.current = false;

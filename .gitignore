@@ -24,7 +24,7 @@ DerivedData
 
 .env
 .env.development
-.env.production
+
 
 # Android/IntelliJ
 #

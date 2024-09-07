@@ -69,6 +69,14 @@ export default StyleSheet.create({
   textInputText: {
     borderColor: GlobalColors.TextColors.white,
     color: GlobalColors.TextColors.white,
+    fontSize: 25,
+    textAlign: 'center',
+    borderBottomWidth: 1,
+    fontFamily: 'Jersey10-Regular',
+  },
+  textInputNumber: {
+    borderColor: GlobalColors.TextColors.white,
+    color: GlobalColors.TextColors.white,
     fontFamily: 'Jersey10-Regular',
     fontSize: 30,
     textAlign: 'center',

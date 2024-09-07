@@ -50,7 +50,7 @@ const WelcomeScreen = props => {
         style={styles.image}
         source={require('@hive/assets/images/appImage.png')}
       />
-      <Spacer size={22} />
+      <Spacer size={42} />
       <TouchableOpacity
         style={styles.startBtn}
         onPress={() => {
