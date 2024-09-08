@@ -219,8 +219,6 @@ const DetailsScreen = props => {
             textInputStyle={styles.textInputNumber}
             textContentType="birthdateMonth"
             onDebounce={text => {
-              console.log(Number(text));
-
               if ((Number(text) >= 16 && Number(text) <= 100) || text === '') {
                 setisErrorAge(false);
                 if (Number(text) !== 0 || text.length > 0) {

@@ -9,7 +9,6 @@ const initialState = {
   incomingUserAge: 0,
   myCountry: '',
   incomingUserCountry: '',
-  incomingUserId: null,
   myUserId: null,
   isMyLimitedCountry: false,
   myLimitedCountry: '',
@@ -58,14 +57,7 @@ const userSlice = createSlice({
     setIncomingUserCountry(state, action) {
       state.incomingUserCountry = action.payload;
     },
-    setIncomingUserId(state, action) {
-      console.log(
-        'setIncomingUserId in user ---------------- ',
-        action.payload,
-      );
 
-      state.incomingUserId = action.payload;
-    },
     setMyUserId(state, action) {
       state.myUserId = action.payload;
     },
@@ -74,7 +66,6 @@ const userSlice = createSlice({
 
 export const {
   setMyUserId,
-  setIncomingUserId,
   setIncomingUserCountry,
   setMyAge,
   setMyCountry,

@@ -17,12 +17,10 @@ import useStream from '@hive/hooks/useStream';
 import {
   setIncomingUserAge,
   setIncomingUserCountry,
-  setIncomingUserId,
   setIncomingUserImage,
   setIncomingUserName,
   setMyUserId,
 } from '@hive/store/reducers/user';
-import {persistor} from '@hive/store';
 import {getData, storeData} from '@hive/utils/asyncstorage';
 
 const peerConstraints = {
@@ -51,7 +49,7 @@ const useMainScreen = () => {
     isMyLimitedCountry: isLimitedCountry,
     myLimitedCountry: limitedCountry,
     myLimitedAges: limitedAges,
-    incomingUserId,
+
     myUserId,
   } = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
@@ -68,21 +66,10 @@ const useMainScreen = () => {
   const {localStream, loadVideo} = useStream({
     onBackground: async () => {
       // Persist manually when app goes to background
-      const incomingUserIdFromStorage = await getData('incomingUserId');
-
-      console.log(
-        'onBackground -----',
-        incomingUserIdFromStorage,
-        'isInCallRef.current',
-        isInCallRef.current,
-      );
 
       if (isInCallRef.current) {
-        console.log('isInCallRef.current ---- hangup');
-
         hangup();
       } else {
-        console.log('declineIncomingCall');
         if (isGettingCall.current) {
           declineIncomingCall();
         } else {
@@ -90,9 +77,7 @@ const useMainScreen = () => {
         }
       }
     },
-    onFront: () => {
-      console.log('onFront ---------', incomingUserId);
-    },
+    onFront: () => {},
   });
 
   const switchCamera = useCallback(async () => {
@@ -152,19 +137,6 @@ const useMainScreen = () => {
             if (change.type === 'added') {
               //on answer start call
               const newCall = change.doc.data();
-              console.log(
-                'incoming ----',
-                newCall.callerName,
-                listenToNewCallsRef.current,
-                !connecting.current,
-                newCall.callerLimitedAges,
-                newCall.callerIsLimitedCountry,
-                myAge <= newCall.callerLimitedAges[1],
-                myAge >= newCall.callerLimitedAges[0],
-                newCall.callerIsLimitedCountry
-                  ? newCall.callerLimitedCountry === myCountry
-                  : true,
-              );
 
               if (
                 listenToNewCallsRef.current &&
@@ -194,9 +166,7 @@ const useMainScreen = () => {
                 dispatch(setIncomingUserImage(newCall.callerImage));
                 dispatch(setIncomingUserAge(newCall.callerAge));
                 dispatch(setIncomingUserCountry(newCall.callerCountry));
-                console.log('SET_INCOMING_USER_ID -----', newCall.callerId);
 
-                dispatch(setIncomingUserId(newCall.callerId));
                 storeData('incomingUserId', newCall.callerId);
 
                 //   }
@@ -265,14 +235,6 @@ const useMainScreen = () => {
             setIsHideUser(newCall.isHideCaller);
           }
         } else {
-          console.log(
-            name,
-            'isInCallRef.current',
-            isInCallRef.current,
-            'gettingCall',
-            isGettingCall.current,
-          );
-
           if (isInCallRef.current) {
             hangup();
           } else {
@@ -283,38 +245,8 @@ const useMainScreen = () => {
         }
       });
 
-      //hangup call when other hanguped and i'm the caller
-
-      // const subscribeDelete = fbRef
-      //   ?.collection('callee')
-      //   .onSnapshot(snapshot => {
-      //     snapshot?.docChanges().forEach(change => {
-      //       if (change.type === 'removed' && snapshot.size === 0) {
-      //         console.log("change.type === 'removed'", name);
-
-      //         hangup();
-      //       }
-      //     });
-      //   });
-      // // hangup call when other hanguped and he is the caller
-
-      // const subscribeDeleteCaller = fbRef
-      //   ?.collection('caller')
-      //   .onSnapshot(snapshot => {
-      //     snapshot?.docChanges().forEach(change => {
-      //       if (change.type === 'removed' && snapshot.size === 0) {
-      //         console.log(
-      //           "change.type === 'removed',declineIncomingCall ",
-      //           name,
-      //         );
-      //         declineIncomingCall();
-      //       }
-      //     });
-      //   });
       return () => {
-        //  subscribeDelete && subscribeDelete();
         unSubscribeAnswer && unSubscribeAnswer();
-        //  subscribeDeleteCaller && subscribeDeleteCaller();
       };
     }
   }, [fbRef]);
@@ -341,8 +273,6 @@ const useMainScreen = () => {
             await remoteStream.addTrack(track);
           });
 
-          console.log('remote', remoteStream.toURL().length);
-
           setRemoteStream(remoteStream);
         };
       }
@@ -357,7 +287,6 @@ const useMainScreen = () => {
       listenToNewCallsRef.current = false;
       connecting.current = true;
 
-      dispatch(setIncomingUserId(null));
       storeData('incomingUserId', null);
       await setupWebRTC();
 
@@ -460,8 +389,6 @@ const useMainScreen = () => {
   //cleanup
   const hangup = async () => {
     if (connecting.current) {
-      console.log('hangup -------', name);
-
       listenToNewCallsRef.current = true;
       connecting.current = false;
       isInCallRef.current = false;
@@ -496,7 +423,7 @@ const useMainScreen = () => {
       dispatch(setIncomingUserImage(''));
       dispatch(setIncomingUserAge(0));
       dispatch(setIncomingUserCountry(''));
-      dispatch(setIncomingUserId(null));
+
       storeData('incomingUserId', null);
 
       if (pc.current) {
@@ -516,7 +443,6 @@ const useMainScreen = () => {
     setRemoteStream(null);
   };
   const firestoreCleanup = async () => {
-    console.log('fbRef!== null', firebaseRef.current !== null);
     if (firebaseRef.current) {
       try {
         const incomingUserIdFromStorage = await getData('incomingUserId');
@@ -527,21 +453,14 @@ const useMainScreen = () => {
         );
 
         if (incomingUserIdFromStorage) {
-          console.log(
-            'incomingUserId -----',
-            incomingUserIdFromStorage,
-            `chatId-${incomingUserIdFromStorage}`,
-          );
-
           await doc(
             firestore(),
             'meet',
             `chatId-${incomingUserIdFromStorage}`,
           ).delete();
-          dispatch(setIncomingUserId(null));
+
           storeData('incomingUserId', null);
         } else {
-          console.log('deviceId -----', myUserId, `chatId-${myUserId}`);
           await doc(firestore(), 'meet', `chatId-${myUserId}`).delete();
         }
 
