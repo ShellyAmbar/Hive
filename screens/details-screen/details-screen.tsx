@@ -103,19 +103,22 @@ const DetailsScreen = props => {
     dispatch,
   ]);
 
-  useEffect(() => {
-    (async () => {
-      const videoStreamManager = VideoStreamManager.getInstance();
+  const loadVideo = useCallback(
+    async (isFront: boolean) => {
       try {
-        const videoStream = await videoStreamManager.getStream(false, true);
+        const videoStreamManager = VideoStreamManager.getInstance();
+        const videoStream = await videoStreamManager.getStream(false, isFront);
 
         setLocalStream(videoStream);
-      } catch (error) {
-        console.error('Failed to get stream:', error);
+      } catch (e) {
+        console.log(e);
       }
-    })();
+    },
+    [setLocalStream],
+  );
 
-    return () => {};
+  useEffect(() => {
+    loadVideo(true);
   }, []);
 
   const popup = () => {

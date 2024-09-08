@@ -25,10 +25,7 @@ const WelcomeScreen = props => {
       }
     })();
 
-    return () => {
-      const videoStreamManager = VideoStreamManager.getInstance();
-      videoStreamManager.stopStream();
-    };
+    return () => {};
   }, []);
 
   return (

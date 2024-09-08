@@ -108,6 +108,10 @@ const useMainScreen = () => {
       if (nextAppState === 'inactive' || nextAppState === 'background') {
         hangup();
         declineIncomingCall();
+        const videoStreamManager = VideoStreamManager.getInstance();
+        videoStreamManager.stopStream();
+      } else if (nextAppState === 'active') {
+        loadVideo(true);
       }
 
       appState.current = nextAppState;
@@ -116,6 +120,8 @@ const useMainScreen = () => {
 
     return () => {
       subscription.remove();
+      const videoStreamManager = VideoStreamManager.getInstance();
+      videoStreamManager.stopStream();
     };
   }, []);
 
