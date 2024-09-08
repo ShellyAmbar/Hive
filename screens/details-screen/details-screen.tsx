@@ -19,16 +19,15 @@ import Spacer from '@hive/components/spacer/spacer';
 import Icon from 'react-native-vector-icons/AntDesign';
 import CountryCodePicker from 'rn-country-code-picker-modal';
 import {
-  chooseImageFromGallery,
   deleteImagePath,
   dounloadImageFromStorage,
-  takePicture,
   uploadImageToCloude,
 } from '@hive/utils/image-util';
-import Popup from 'rn-sliding-popup';
+
 import DeviceInfo from 'react-native-device-info';
 import ButtonSwitch from 'rn-switch-button';
 import MultiSlider from 'react-native-range-bar';
+import PopupPicture from './popup-picture/popup-picture';
 
 const DetailsScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
@@ -104,10 +103,6 @@ const DetailsScreen = props => {
     dispatch,
   ]);
 
-  const chooseImage = () => {
-    setshowPopupChoose(true);
-  };
-
   useEffect(() => {
     (async () => {
       const videoStreamManager = VideoStreamManager.getInstance();
@@ -125,42 +120,29 @@ const DetailsScreen = props => {
 
   const popup = () => {
     return (
-      <Popup
-        isCancelable={true}
-        isVisible={showPopupChoose}
-        onClickClose={() => {
+      <PopupPicture
+        onPressClose={() => {
           setshowPopupChoose(false);
-        }}>
-        <View>
-          <TouchableOpacity
-            style={styles.btnChoose}
-            onPress={() => {
-              setshowPopupChoose(false);
-              chooseImageFromGallery(
-                uri => {
-                  updateImageUri(uri);
-                },
-                err => {},
-              );
-            }}>
-            <Text style={styles.textChoose}>{'Upload from library'}</Text>
-          </TouchableOpacity>
-          <Spacer size={12} />
-          <TouchableOpacity
-            style={styles.btnChoose}
-            onPress={() => {
-              setshowPopupChoose(false);
-              takePicture(
-                uri => {
-                  updateImageUri(uri);
-                },
-                err => {},
-              );
-            }}>
-            <Text style={styles.textChoose}>{'Take new image'}</Text>
-          </TouchableOpacity>
-        </View>
-      </Popup>
+        }}
+        onPressTakePicture={uri => {
+          if (uri?.length > 0) {
+            updateImageUri(uri);
+            setshowPopupChoose(false);
+          }
+        }}
+        onPressUploadFromGalery={uri => {
+          if (uri?.length > 0) {
+            updateImageUri(uri);
+            setshowPopupChoose(false);
+          }
+        }}
+        onError={e => {
+          setshowPopupChoose(false);
+          console.log(e);
+        }}
+        isVisible={showPopupChoose}
+        setVisible={setshowPopupChoose}
+      />
     );
   };
   return (
@@ -209,7 +191,7 @@ const DetailsScreen = props => {
           <Spacer size={20} />
           <TouchableOpacity
             style={styles.imageBtn}
-            onPress={() => chooseImage()}>
+            onPress={() => setshowPopupChoose(true)}>
             <Text style={styles.text}>Upload a picture</Text>
           </TouchableOpacity>
           <Spacer size={30} />
@@ -323,21 +305,24 @@ const DetailsScreen = props => {
               }}
             />
           </View>
-          <Spacer size={42} />
+          <Spacer size={28} />
           {isLimitAges && (
-            <MultiSlider
-              initialMaxValue={limitedAges[1]}
-              initialMinValue={limitedAges[0]}
-              sliderWidth={Dimensions.get('window').width - 100}
-              min={0}
-              max={100}
-              step={1}
-              onValueChange={range => {
-                setLImitedAges([range.min, range.max]);
-              }}
-            />
+            <>
+              <MultiSlider
+                initialMaxValue={limitedAges[1]}
+                initialMinValue={limitedAges[0]}
+                sliderWidth={Dimensions.get('window').width - 100}
+                min={0}
+                max={100}
+                step={1}
+                onValueChange={range => {
+                  setLImitedAges([range.min, range.max]);
+                }}
+              />
+              <Spacer size={12} />
+            </>
           )}
-          <Spacer size={55} />
+
           <TouchableOpacity
             disabled={
               name?.length === 0 ||

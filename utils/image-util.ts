@@ -54,9 +54,11 @@ const deleteImagePath = async (imageId: string, userId: string) => {
     const imagePath = getImagePathOnCloude(imageId, userId);
     // Create a reference to the file to delete
     const storageRef = storegeRef(storage, imagePath);
-
-    // Delete the file
-    await deleteObject(storageRef);
+    const uri = await getDownloadURL(storageRef);
+    //check if file exist
+    if (uri) {
+      await deleteObject(storageRef);
+    }
 
     console.log('Image deleted successfully.');
   } catch (error) {

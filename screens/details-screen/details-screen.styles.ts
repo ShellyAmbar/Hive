@@ -139,15 +139,7 @@ export default StyleSheet.create({
     zIndex: 1,
     backgroundColor: GlobalColors.BgColors.Bg2,
   },
-  btnChoose: {
-    paddingVertical: 10,
-  },
-  textChoose: {
-    color: GlobalColors.Brand.primary,
-    fontSize: 20,
-    textAlign: 'center',
-    fontFamily: 'Jersey10-Regular',
-  },
+
   horizontal: {
     flexDirection: 'row',
     alignItems: 'center',
