@@ -106,7 +106,6 @@ const useMainScreen = () => {
 
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (nextAppState === 'inactive' || nextAppState === 'background') {
-        console.log('App has come to the back!');
         hangup();
         declineIncomingCall();
       }

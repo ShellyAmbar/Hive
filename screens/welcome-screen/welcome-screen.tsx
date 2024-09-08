@@ -4,6 +4,7 @@ import styles from './welcome-screen.styles';
 import {MediaStream, RTCView} from 'react-native-webrtc';
 import VideoStreamManager from '@hive/utils/stream-util';
 import Spacer from '@hive/components/spacer/spacer';
+import LottieView from 'lottie-react-native';
 
 const WelcomeScreen = props => {
   const [localStream, setLocalStream] = useState<null | MediaStream>();
@@ -58,6 +59,27 @@ const WelcomeScreen = props => {
         }}>
         <Text style={styles.btnText}>Start</Text>
       </TouchableOpacity>
+      <LottieView
+        source={require('@hive/assets/lotties/sparks.json')}
+        autoPlay
+        loop
+        speed={1}
+        style={styles.lottie}
+      />
+      <LottieView
+        source={require('@hive/assets/lotties/bubbles.json')}
+        autoPlay
+        loop
+        speed={1}
+        style={styles.lottie}
+      />
+      <LottieView
+        source={require('@hive/assets/lotties/stars.json')}
+        autoPlay
+        loop
+        speed={1}
+        style={styles.lottie}
+      />
     </View>
   );
 };
