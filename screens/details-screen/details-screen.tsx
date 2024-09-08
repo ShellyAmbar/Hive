@@ -6,6 +6,7 @@ import {
   Image,
   ScrollView,
   Dimensions,
+  AppState,
 } from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
 import styles from './details-screen.styles';
@@ -28,23 +29,32 @@ import DeviceInfo from 'react-native-device-info';
 import ButtonSwitch from 'rn-switch-button';
 import MultiSlider from 'react-native-range-bar';
 import PopupPicture from './popup-picture/popup-picture';
-
+import useStream from '@hive/hooks/useStream';
+import {
+  setMyAge,
+  setMyCountry,
+  setMyLimitedCountry,
+  setMyImage,
+  setMyName,
+  setIsMyLimitedCountry,
+  setIsMyLimitedAges,
+  setMyLimitedAges,
+} from '@hive/store/reducers/user';
 const DetailsScreen = props => {
-  const [localStream, setLocalStream] = useState<null | MediaStream>();
   const dispatch = useDispatch();
   const {
-    name: useName,
-    image: myImage,
+    myName,
+    myImage,
     myAge,
     myCountry,
-    isLimitedCountry,
-    limitedCountry: myLimitedCountry,
-    isLimitedAges,
-    limitedAges: myLimitedAges,
+    isMyLimitedCountry,
+    myLimitedCountry,
+    isMyLimitedAges,
+    myLimitedAges,
   } = useSelector(state => state.user);
-  const [name, setName] = useState(useName);
+  const [name, setName] = useState(myName);
   const [image, setImage] = useState<string | null>(myImage ? myImage : null);
-  const [age, setAge] = useState(myAge ? myAge : -1);
+  const [age, setAge] = useState(myAge ? myAge : 0);
   const [showPopupChoose, setshowPopupChoose] = useState(false);
   const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
   const [isErrorAge, setisErrorAge] = useState(false);
@@ -52,10 +62,13 @@ const DetailsScreen = props => {
   const [limitedCountry, setLImitedCountry] = useState(
     myLimitedCountry ?? myCountry,
   );
-  const [isLimitCountry, setisLimitCountry] = useState(isLimitedCountry);
+  const [isLimitCountry, setisLimitCountry] = useState(isMyLimitedCountry);
 
   const [limitedAges, setLImitedAges] = useState(myLimitedAges);
-  const [isLimitAges, setisLimitAges] = useState(isLimitedAges);
+  const [isLimitAges, setisLimitAges] = useState(isMyLimitedAges);
+
+  const {localStream} = useStream({});
+
   const updateImageUri = useCallback((imageUri: string | null) => {
     setImage(imageUri);
     setisNeedToUpdateCloude(true);
@@ -68,24 +81,24 @@ const DetailsScreen = props => {
         DeviceInfo.getDeviceId(),
         name,
       );
-
-      dispatch({type: 'SET_IMAGE', payload: imageUri});
+      dispatch(setMyImage(imageUri));
     } else {
       await deleteImagePath(DeviceInfo.getDeviceId(), name);
-      dispatch({type: 'SET_IMAGE', payload: null});
+      dispatch(setMyImage(null));
     }
     setisNeedToUpdateCloude(false);
   }, [name, image]);
 
   const onStart = useCallback(async () => {
-    dispatch({type: 'SET_NAME', payload: name});
-    dispatch({type: 'SET_MY_AGE', payload: age});
-    dispatch({type: 'SET_MY_COUNTRY', payload: country});
-    dispatch({type: 'SET_IS_LIMITED_COUNTRY', payload: isLimitCountry});
-    dispatch({type: 'SET_LIMITED_COUNTRY', payload: limitedCountry});
-    dispatch({type: 'SET_IS_LIMITED_AGES', payload: isLimitAges});
+    dispatch(setMyName(name));
+    dispatch(setMyAge(age));
+    dispatch(setMyCountry(country));
+    dispatch(setIsMyLimitedCountry(isLimitCountry));
+    dispatch(setMyLimitedCountry(limitedCountry));
+    dispatch(setIsMyLimitedAges(isLimitAges));
 
-    dispatch({type: 'SET_LIMITED_AGES', payload: limitedAges});
+    dispatch(setMyLimitedAges(limitedAges));
+
     if (isNeedToUpdateCloude) {
       updateImageToCloude();
     }
@@ -102,24 +115,6 @@ const DetailsScreen = props => {
     limitedCountry,
     dispatch,
   ]);
-
-  const loadVideo = useCallback(
-    async (isFront: boolean) => {
-      try {
-        const videoStreamManager = VideoStreamManager.getInstance();
-        const videoStream = await videoStreamManager.getStream(false, isFront);
-
-        setLocalStream(videoStream);
-      } catch (e) {
-        console.log(e);
-      }
-    },
-    [setLocalStream],
-  );
-
-  useEffect(() => {
-    loadVideo(true);
-  }, []);
 
   const popup = () => {
     return (
@@ -179,8 +174,6 @@ const DetailsScreen = props => {
             onDebounce={text => {
               setName(text);
             }}
-            focusable
-            autoFocus={true}
             keyboardType="url"
             keyboardAppearance="default"
             blurOnSubmit={false}
@@ -218,20 +211,21 @@ const DetailsScreen = props => {
 
           <ReactiveTextInput
             textAlignVertical={'bottom'}
-            placeholder={'Enter your age'}
+            placeholder={age !== 0 ? '' : 'Enter your age'}
             placeHolderColor="#FFFF"
-            defaultValue={age}
+            defaultValue={age !== 0 ? age + '' : ''}
             containerStyle={styles.numberInputContainer}
             errorInputStyle={styles.errorStyle}
             textInputStyle={styles.textInputNumber}
             textContentType="birthdateMonth"
             onDebounce={text => {
-              if (
-                (Number(text) >= 16 && Number(text) <= 100) ||
-                Number(text) === -1
-              ) {
+              console.log(Number(text));
+
+              if ((Number(text) >= 16 && Number(text) <= 100) || text === '') {
                 setisErrorAge(false);
-                setAge(Number(text));
+                if (Number(text) !== 0 || text.length > 0) {
+                  setAge(Number(text));
+                }
               } else {
                 setisErrorAge(true);
               }

@@ -1,32 +1,18 @@
 import {View, Text, TouchableOpacity, Image} from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import styles from './welcome-screen.styles';
-import {MediaStream, RTCView} from 'react-native-webrtc';
-import VideoStreamManager from '@hive/utils/stream-util';
+import {RTCView} from 'react-native-webrtc';
+
 import Spacer from '@hive/components/spacer/spacer';
 import LottieView from 'lottie-react-native';
+import useStream from '@hive/hooks/useStream';
 
 const WelcomeScreen = props => {
-  const [localStream, setLocalStream] = useState<null | MediaStream>();
-
   const onStart = () => {
     props.navigation.replace('Details');
   };
 
-  useEffect(() => {
-    (async () => {
-      const videoStreamManager = VideoStreamManager.getInstance();
-      try {
-        const videoStream = await videoStreamManager.getStream(false, true);
-
-        setLocalStream(videoStream);
-      } catch (error) {
-        console.error('Failed to get stream:', error);
-      }
-    })();
-
-    return () => {};
-  }, []);
+  const {localStream} = useStream({});
 
   return (
     <View style={styles.container}>

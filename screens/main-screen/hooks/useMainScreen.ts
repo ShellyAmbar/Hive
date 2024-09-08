@@ -7,13 +7,23 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 
-import VideoStreamManager from '@hive/utils/stream-util';
 import firestore, {
+  doc,
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 import DeviceInfo from 'react-native-device-info';
 import {useDispatch, useSelector} from 'react-redux';
-import {AppState} from 'react-native';
+import useStream from '@hive/hooks/useStream';
+import {
+  setIncomingUserAge,
+  setIncomingUserCountry,
+  setIncomingUserId,
+  setIncomingUserImage,
+  setIncomingUserName,
+  setMyUserId,
+} from '@hive/store/reducers/user';
+import {persistor} from '@hive/store';
+import {getData, storeData} from '@hive/utils/asyncstorage';
 
 const peerConstraints = {
   iceServers: [
@@ -23,23 +33,26 @@ const peerConstraints = {
   ],
 };
 const useMainScreen = () => {
-  const [localStream, setLocalStream] = useState<null | MediaStream>();
   const [remoteStream, setRemoteStream] = useState<null | MediaStream>();
   const [gettingCall, setGettingCall] = useState(false);
+  const isGettingCall = useRef(false);
   const listenToNewCallsRef = useRef(true);
   const isInCallRef = useRef(false);
   const lastCallerIdRef = useRef(null);
   const pc = useRef<RTCPeerConnection>();
   const connecting = useRef(false);
   const [fbRef, setfbRef] = useState(null);
+  const firebaseRef = useRef(null);
   const {
-    name,
-    image,
+    myName: name,
+    myImage: image,
     myAge,
     myCountry,
-    isLimitedCountry,
-    limitedCountry,
-    limitedAges,
+    isMyLimitedCountry: isLimitedCountry,
+    myLimitedCountry: limitedCountry,
+    myLimitedAges: limitedAges,
+    incomingUserId,
+    myUserId,
   } = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
@@ -47,27 +60,40 @@ const useMainScreen = () => {
   const [isFront, setisFront] = useState(true);
   const [isHideMe, setIsHideMe] = useState(true);
   const [isHideUser, setIsHideUser] = useState(true);
-  const appState = useRef(AppState.currentState);
-  const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
   useEffect(() => {
     updateHide(isHideMe);
   }, [isHideMe]);
 
-  const loadVideo = useCallback(
-    async (isFront: boolean) => {
-      try {
-        const videoStreamManager = VideoStreamManager.getInstance();
-        const videoStream = await videoStreamManager.getStream(false, isFront);
+  const {localStream, loadVideo} = useStream({
+    onBackground: async () => {
+      // Persist manually when app goes to background
+      const incomingUserIdFromStorage = await getData('incomingUserId');
 
-        setLocalStream(videoStream);
-        return videoStream;
-      } catch (e) {
-        console.log(e);
+      console.log(
+        'onBackground -----',
+        incomingUserIdFromStorage,
+        'isInCallRef.current',
+        isInCallRef.current,
+      );
+
+      if (isInCallRef.current) {
+        console.log('isInCallRef.current ---- hangup');
+
+        hangup();
+      } else {
+        console.log('declineIncomingCall');
+        if (isGettingCall.current) {
+          declineIncomingCall();
+        } else {
+          hangup();
+        }
       }
     },
-    [setLocalStream],
-  );
+    onFront: () => {
+      console.log('onFront ---------', incomingUserId);
+    },
+  });
 
   const switchCamera = useCallback(async () => {
     const newStream = await loadVideo(isFront ? false : true);
@@ -98,31 +124,10 @@ const useMainScreen = () => {
 
   useEffect(() => {
     (async () => {
-      loadVideo(true);
-
       const id = await DeviceInfo.getUniqueId();
       setDeviceId(id);
+      dispatch(setMyUserId(id));
     })();
-
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (nextAppState === 'inactive' || nextAppState === 'background') {
-        hangup();
-        declineIncomingCall();
-        const videoStreamManager = VideoStreamManager.getInstance();
-        videoStreamManager.stopStream();
-      } else if (nextAppState === 'active') {
-        loadVideo(true);
-      }
-
-      appState.current = nextAppState;
-      setAppStateVisible(appState.current);
-    });
-
-    return () => {
-      subscription.remove();
-      const videoStreamManager = VideoStreamManager.getInstance();
-      videoStreamManager.stopStream();
-    };
   }, []);
 
   useEffect(() => {
@@ -147,25 +152,20 @@ const useMainScreen = () => {
             if (change.type === 'added') {
               //on answer start call
               const newCall = change.doc.data();
-              // console.log(
-              //   'new call added -----',
-              //   name,
-              //   newCall?.callerIsLimitedCountry,
-              //   newCall.callerId === lastCallerIdRef.current,
-              //   'condition:',
-              //   listenToNewCallsRef.current &&
-              //     (!lastCallerIdRef.current ||
-              //       lastCallerIdRef.current === undefined ||
-              //       newCall.callerId !== lastCallerIdRef.current) &&
-              //     newCall &&
-              //     newCall?.offer &&
-              //     !connecting.current &&
-              //     (newCall.callerIsLimitedCountry
-              //       ? newCall.callerLimitedCountry === myCountry
-              //       : true) &&
-              //     myAge <= newCall.callerLimitedAges[1] &&
-              //     myAge >= newCall.callerLimitedAges[0],
-              // );
+              console.log(
+                'incoming ----',
+                newCall.callerName,
+                listenToNewCallsRef.current,
+                !connecting.current,
+                newCall.callerLimitedAges,
+                newCall.callerIsLimitedCountry,
+                myAge <= newCall.callerLimitedAges[1],
+                myAge >= newCall.callerLimitedAges[0],
+                newCall.callerIsLimitedCountry
+                  ? newCall.callerLimitedCountry === myCountry
+                  : true,
+              );
+
               if (
                 listenToNewCallsRef.current &&
                 // (!lastCallerIdRef.current ||
@@ -181,6 +181,7 @@ const useMainScreen = () => {
                 myAge >= newCall.callerLimitedAges[0]
               ) {
                 setfbRef(change.doc.ref);
+                firebaseRef.current = change.doc.ref;
                 lastCallerIdRef.current = newCall.callerId;
                 //if there is offer for chatid set the getting call flag
 
@@ -188,23 +189,15 @@ const useMainScreen = () => {
                 setstartListenToPending(false);
                 listenToNewCallsRef.current = false;
                 setGettingCall(true);
+                isGettingCall.current = true;
+                dispatch(setIncomingUserName(newCall.callerName));
+                dispatch(setIncomingUserImage(newCall.callerImage));
+                dispatch(setIncomingUserAge(newCall.callerAge));
+                dispatch(setIncomingUserCountry(newCall.callerCountry));
+                console.log('SET_INCOMING_USER_ID -----', newCall.callerId);
 
-                dispatch({
-                  type: 'SET_INCOMING_USER_NAME',
-                  payload: newCall.callerName,
-                });
-                dispatch({
-                  type: 'SET_INCOMING_USER_IMAGE',
-                  payload: newCall.callerImage,
-                });
-                dispatch({
-                  type: 'SET_INCOMING_USER_AGE',
-                  payload: newCall.callerAge,
-                });
-                dispatch({
-                  type: 'SET_INCOMING_USER_COUNTRY',
-                  payload: newCall.callerCountry,
-                });
+                dispatch(setIncomingUserId(newCall.callerId));
+                storeData('incomingUserId', newCall.callerId);
 
                 //   }
               }
@@ -258,22 +251,10 @@ const useMainScreen = () => {
               new RTCSessionDescription(newCall?.answer),
             );
 
-            dispatch({
-              type: 'SET_INCOMING_USER_NAME',
-              payload: newCall?.calleeName ?? '',
-            });
-            dispatch({
-              type: 'SET_INCOMING_USER_IMAGE',
-              payload: newCall?.calleeImage ?? '',
-            });
-            dispatch({
-              type: 'SET_INCOMING_USER_AGE',
-              payload: newCall?.calleeAge ?? '',
-            });
-            dispatch({
-              type: 'SET_INCOMING_USER_COUNTRY',
-              payload: newCall?.calleeCountry ?? '',
-            });
+            dispatch(setIncomingUserName(newCall?.calleeName ?? ''));
+            dispatch(setIncomingUserImage(newCall?.calleeImage ?? ''));
+            dispatch(setIncomingUserAge(newCall?.calleeAge));
+            dispatch(setIncomingUserCountry(newCall?.calleeCountry));
           }
 
           const callerId = newCall.callerId;
@@ -283,34 +264,57 @@ const useMainScreen = () => {
           } else {
             setIsHideUser(newCall.isHideCaller);
           }
+        } else {
+          console.log(
+            name,
+            'isInCallRef.current',
+            isInCallRef.current,
+            'gettingCall',
+            isGettingCall.current,
+          );
+
+          if (isInCallRef.current) {
+            hangup();
+          } else {
+            if (isGettingCall.current) {
+              declineIncomingCall();
+            }
+          }
         }
       });
 
       //hangup call when other hanguped and i'm the caller
-      const subscribeDelete = fbRef
-        ?.collection('callee')
-        .onSnapshot(snapshot => {
-          snapshot?.docChanges().forEach(change => {
-            if (change.type === 'removed') {
-              hangup();
-            }
-          });
-        });
-      // hangup call when other hanguped and he is the caller
 
-      const subscribeDeleteCaller = fbRef
-        ?.collection('caller')
-        .onSnapshot(snapshot => {
-          snapshot?.docChanges().forEach(change => {
-            if (change.type === 'removed' && snapshot.size === 0) {
-              declineIncomingCall();
-            }
-          });
-        });
+      // const subscribeDelete = fbRef
+      //   ?.collection('callee')
+      //   .onSnapshot(snapshot => {
+      //     snapshot?.docChanges().forEach(change => {
+      //       if (change.type === 'removed' && snapshot.size === 0) {
+      //         console.log("change.type === 'removed'", name);
+
+      //         hangup();
+      //       }
+      //     });
+      //   });
+      // // hangup call when other hanguped and he is the caller
+
+      // const subscribeDeleteCaller = fbRef
+      //   ?.collection('caller')
+      //   .onSnapshot(snapshot => {
+      //     snapshot?.docChanges().forEach(change => {
+      //       if (change.type === 'removed' && snapshot.size === 0) {
+      //         console.log(
+      //           "change.type === 'removed',declineIncomingCall ",
+      //           name,
+      //         );
+      //         declineIncomingCall();
+      //       }
+      //     });
+      //   });
       return () => {
-        subscribeDelete && subscribeDelete();
+        //  subscribeDelete && subscribeDelete();
         unSubscribeAnswer && unSubscribeAnswer();
-        subscribeDeleteCaller && subscribeDeleteCaller();
+        //  subscribeDeleteCaller && subscribeDeleteCaller();
       };
     }
   }, [fbRef]);
@@ -320,12 +324,9 @@ const useMainScreen = () => {
       pc.current = new RTCPeerConnection(peerConstraints);
       //get voice and video stream
 
-      const videoStreamManager = VideoStreamManager.getInstance();
-
-      const stream = await videoStreamManager.getStream(false, true);
+      const stream = await loadVideo(true);
 
       if (stream) {
-        setLocalStream(stream);
         stream.getTracks().forEach(track => {
           pc.current?.addTrack(track, stream);
         });
@@ -336,9 +337,11 @@ const useMainScreen = () => {
         pc.current.ontrack = event => {
           // Grab the remote track from the connected participant.
           const remoteStream = new MediaStream();
-          event.streams[0].getTracks().forEach(track => {
-            remoteStream.addTrack(track);
+          event.streams[0].getTracks().forEach(async track => {
+            await remoteStream.addTrack(track);
           });
+
+          console.log('remote', remoteStream.toURL().length);
 
           setRemoteStream(remoteStream);
         };
@@ -354,11 +357,14 @@ const useMainScreen = () => {
       listenToNewCallsRef.current = false;
       connecting.current = true;
 
+      dispatch(setIncomingUserId(null));
+      storeData('incomingUserId', null);
       await setupWebRTC();
 
       const myRef = await getFirebaseRef();
 
       setfbRef(myRef);
+      firebaseRef.current = myRef;
 
       // exchange the ICE candidates between the caller and the callee
       await collectionIceCandidates(myRef, 'caller', 'callee');
@@ -398,6 +404,8 @@ const useMainScreen = () => {
     listenToNewCallsRef.current = false;
     connecting.current = true;
     setGettingCall(false);
+    isGettingCall.current = false;
+    isInCallRef.current = true;
 
     try {
       const offer = (await fbRef.get())?.data()?.offer;
@@ -452,31 +460,23 @@ const useMainScreen = () => {
   //cleanup
   const hangup = async () => {
     if (connecting.current) {
+      console.log('hangup -------', name);
+
       listenToNewCallsRef.current = true;
       connecting.current = false;
       isInCallRef.current = false;
-      dispatch({
-        type: 'SET_INCOMING_USER_NAME',
-        payload: '',
-      });
-      dispatch({
-        type: 'SET_INCOMING_USER_IMAGE',
-        payload: '',
-      });
-      dispatch({
-        type: 'SET_INCOMING_USER_AGE',
-        payload: 0,
-      });
-      dispatch({
-        type: 'SET_INCOMING_USER_COUNTRY',
-        payload: '',
-      });
-      setGettingCall(false);
+      dispatch(setIncomingUserName(''));
+      dispatch(setIncomingUserImage(''));
+      dispatch(setIncomingUserAge(0));
+      dispatch(setIncomingUserCountry(''));
 
-      await streamCleanup();
-      await firestoreCleanup();
+      setGettingCall(false);
+      isGettingCall.current = false;
+
+      streamCleanup();
+      firestoreCleanup();
       if (pc.current) {
-        await pc.current?.close();
+        pc.current?.close();
       }
       setstartListenToPending(true);
       setIsHideMe(true);
@@ -491,60 +491,65 @@ const useMainScreen = () => {
     if (!listenToNewCallsRef.current) {
       listenToNewCallsRef.current = true;
       connecting.current = false;
-      dispatch({
-        type: 'SET_INCOMING_USER_NAME',
-        payload: '',
-      });
-      dispatch({
-        type: 'SET_INCOMING_USER_IMAGE',
-        payload: '',
-      });
-      dispatch({
-        type: 'SET_INCOMING_USER_AGE',
-        payload: 0,
-      });
-      dispatch({
-        type: 'SET_INCOMING_USER_COUNTRY',
-        payload: '',
-      });
+
+      dispatch(setIncomingUserName(''));
+      dispatch(setIncomingUserImage(''));
+      dispatch(setIncomingUserAge(0));
+      dispatch(setIncomingUserCountry(''));
+      dispatch(setIncomingUserId(null));
+      storeData('incomingUserId', null);
 
       if (pc.current) {
         pc.current?.close();
       }
       streamCleanup();
       setGettingCall(false);
+      isGettingCall.current = false;
 
       setfbRef(null);
+      firebaseRef.current = null;
       setstartListenToPending(true);
     }
   };
 
   const streamCleanup = async () => {
-    // if (localStream) {
-    //   localStream.getTracks().forEach(t => t.stop());
-    //   // Stop all video tracks
-    //   localStream.getVideoTracks().forEach(track => track.stop());
-    //   // Stop all audio tracks
-    //   localStream.getAudioTracks().forEach(track => track.stop());
-    //   localStream.release();
-    // }
-
-    // setLocalStream(null);
     setRemoteStream(null);
   };
   const firestoreCleanup = async () => {
-    if (fbRef) {
-      const calleeCandidate = await fbRef.collection('callee').get();
-      calleeCandidate.forEach(async candidate => {
-        await candidate.ref.delete();
-      });
+    console.log('fbRef!== null', firebaseRef.current !== null);
+    if (firebaseRef.current) {
+      try {
+        const incomingUserIdFromStorage = await getData('incomingUserId');
+        console.log(
+          'incomingUserId hangup',
+          incomingUserIdFromStorage,
+          myUserId,
+        );
 
-      const callerCandidate = await fbRef.collection('caller').get();
-      callerCandidate.forEach(async candidate => {
-        await candidate.ref.delete();
-      });
-      fbRef.delete();
-      setfbRef(null);
+        if (incomingUserIdFromStorage) {
+          console.log(
+            'incomingUserId -----',
+            incomingUserIdFromStorage,
+            `chatId-${incomingUserIdFromStorage}`,
+          );
+
+          await doc(
+            firestore(),
+            'meet',
+            `chatId-${incomingUserIdFromStorage}`,
+          ).delete();
+          dispatch(setIncomingUserId(null));
+          storeData('incomingUserId', null);
+        } else {
+          console.log('deviceId -----', myUserId, `chatId-${myUserId}`);
+          await doc(firestore(), 'meet', `chatId-${myUserId}`).delete();
+        }
+
+        setfbRef(null);
+        firebaseRef.current = null;
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 

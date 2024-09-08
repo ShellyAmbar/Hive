@@ -27,7 +27,7 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
       <View style={styles.shade} />
       <View style={styles.content}>
         <Text style={styles.subTitle}>
-          {`${incomingUserName}, ${incomingUserAge} from ${incomingUserCountry} ` +
+          {`${incomingUserName},\n ${incomingUserAge} from ${incomingUserCountry} ` +
             '\n' +
             ' is calling you'}
         </Text>

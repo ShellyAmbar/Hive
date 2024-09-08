@@ -27,7 +27,7 @@ export default StyleSheet.create({
   subTitle: {
     color: GlobalColors.TextColors.white,
 
-    fontSize: 30,
+    fontSize: 25,
 
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',

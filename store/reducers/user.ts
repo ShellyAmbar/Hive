@@ -1,85 +1,91 @@
+import {createSlice} from '@reduxjs/toolkit';
+
 const initialState = {
-  name: '',
+  myName: '',
   incomingUserName: '',
-  image: '',
+  myImage: '',
   incomingUserImage: '',
-  myAge: -1,
+  myAge: 0,
   incomingUserAge: 0,
   myCountry: '',
   incomingUserCountry: '',
-  isLimitedCountry: false,
-  limitedCountry: '',
-  isLimitedAges: false,
-  limitedAges: [0, 100],
+  incomingUserId: null,
+  myUserId: null,
+  isMyLimitedCountry: false,
+  myLimitedCountry: '',
+  isMyLimitedAges: false,
+  myLimitedAges: [0, 100],
 };
 
-const UserReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'SET_IS_LIMITED_AGES':
-      return {
-        ...state,
-        isLimitedAges: action.payload,
-      };
-    case 'SET_LIMITED_AGES':
-      return {
-        ...state,
-        limitedAges: action.payload,
-      };
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {
+    setMyLimitedAges(state, action) {
+      state.myLimitedAges = action.payload;
+    },
+    setIsMyLimitedAges(state, action) {
+      state.isMyLimitedAges = action.payload;
+    },
+    setMyLimitedCountry(state, action) {
+      state.myLimitedCountry = action.payload;
+    },
+    setIsMyLimitedCountry(state, action) {
+      state.isMyLimitedCountry = action.payload;
+    },
 
-    case 'SET_IS_LIMITED_COUNTRY':
-      return {
-        ...state,
-        isLimitedCountry: action.payload,
-      };
-    case 'SET_LIMITED_COUNTRY':
-      return {
-        ...state,
-        limitedCountry: action.payload,
-      };
+    setMyName(state, action) {
+      state.myName = action.payload;
+    },
+    setMyAge(state, action) {
+      state.myAge = action.payload;
+    },
+    setIncomingUserAge(state, action) {
+      state.incomingUserAge = action.payload;
+    },
+    setIncomingUserName(state, action) {
+      state.incomingUserName = action.payload;
+    },
+    setMyImage(state, action) {
+      state.myImage = action.payload;
+    },
+    setIncomingUserImage(state, action) {
+      state.incomingUserImage = action.payload;
+    },
+    setMyCountry(state, action) {
+      state.myCountry = action.payload;
+    },
+    setIncomingUserCountry(state, action) {
+      state.incomingUserCountry = action.payload;
+    },
+    setIncomingUserId(state, action) {
+      console.log(
+        'setIncomingUserId in user ---------------- ',
+        action.payload,
+      );
 
-    case 'SET_NAME':
-      return {
-        ...state,
-        name: action.payload,
-      };
-    case 'SET_MY_AGE':
-      return {
-        ...state,
-        myAge: action.payload,
-      };
-    case 'SET_INCOMING_USER_AGE':
-      return {
-        ...state,
-        incomingUserAge: action.payload,
-      };
-    case 'SET_INCOMING_USER_NAME':
-      return {
-        ...state,
-        incomingUserName: action.payload,
-      };
-    case 'SET_IMAGE':
-      return {
-        ...state,
-        image: action.payload,
-      };
-    case 'SET_INCOMING_USER_IMAGE':
-      return {
-        ...state,
-        incomingUserImage: action.payload,
-      };
-    case 'SET_MY_COUNTRY':
-      return {
-        ...state,
-        myCountry: action.payload,
-      };
-    case 'SET_INCOMING_USER_COUNTRY':
-      return {
-        ...state,
-        incomingUserCountry: action.payload,
-      };
-    default:
-      return state;
-  }
-};
+      state.incomingUserId = action.payload;
+    },
+    setMyUserId(state, action) {
+      state.myUserId = action.payload;
+    },
+  },
+});
 
-export default UserReducer;
+export const {
+  setMyUserId,
+  setIncomingUserId,
+  setIncomingUserCountry,
+  setMyAge,
+  setMyCountry,
+  setIncomingUserAge,
+  setIncomingUserImage,
+  setIncomingUserName,
+  setIsMyLimitedCountry,
+  setIsMyLimitedAges,
+  setMyLimitedAges,
+  setMyImage,
+  setMyLimitedCountry,
+  setMyName,
+} = userSlice.actions;
+export default userSlice.reducer;
