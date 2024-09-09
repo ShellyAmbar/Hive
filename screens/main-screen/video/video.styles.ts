@@ -42,6 +42,14 @@ const createStyle = (isHiding: boolean) =>
       fontFamily: 'Jersey10-Regular',
       marginBottom: 50,
     },
+    actionsButton: {
+      position: 'absolute',
+
+      zIndex: 3,
+
+      bottom: 100,
+      right: 50,
+    },
     buttons: {
       position: 'absolute',
       bottom: 20,

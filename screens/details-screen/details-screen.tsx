@@ -6,18 +6,17 @@ import {
   Image,
   ScrollView,
   Dimensions,
-  AppState,
 } from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import styles from './details-screen.styles';
-import {MediaStream, RTCView} from 'react-native-webrtc';
-import VideoStreamManager from '@hive/utils/stream-util';
+import {RTCView} from 'react-native-webrtc';
+
 import ReactiveTextInput from 'rn-reactive-text-input';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {GlobalColors} from '@hive/styles/colors';
 import Spacer from '@hive/components/spacer/spacer';
-import Icon from 'react-native-vector-icons/AntDesign';
+
 import CountryCodePicker from 'rn-country-code-picker-modal';
 import {
   deleteImagePath,
@@ -29,93 +28,236 @@ import DeviceInfo from 'react-native-device-info';
 import ButtonSwitch from 'rn-switch-button';
 import MultiSlider from 'react-native-range-bar';
 import PopupPicture from './popup-picture/popup-picture';
-import useStream from '@hive/hooks/useStream';
-import {
-  setMyAge,
-  setMyCountry,
-  setMyLimitedCountry,
-  setMyImage,
-  setMyName,
-  setIsMyLimitedCountry,
-  setIsMyLimitedAges,
-  setMyLimitedAges,
-} from '@hive/store/reducers/user';
+// import useStream from '@hive/hooks/useStream';
+// import {
+//   setMyAge,
+//   setMyCountry,
+//   setMyLimitedCountry,
+//   setMyImage,
+//   setMyName,
+//   setIsMyLimitedCountry,
+//   setIsMyLimitedAges,
+//   setMyLimitedAges,
+//   Gender,
+//   setMyGender,
+//   setMyOtherGender,
+//   setIsMyLimitedUserGender,
+// } from '@hive/store/reducers/user';
+import Picker from './picker/picker';
+import useDetailsScreen from './hooks/useDetailsScreen';
 const DetailsScreen = props => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
+  // const {
+  //   myName,
+  //   myImage,
+  //   myAge,
+  //   myCountry,
+  //   isMyLimitedCountry,
+  //   myLimitedCountry,
+  //   isMyLimitedAges,
+  //   myLimitedAges,
+  //   myGender,
+  //   myOtherGender,
+  //   isMyLimitedUserGender,
+  // } = useSelector(state => state.user);
+  // const [name, setName] = useState(myName);
+  // const [image, setImage] = useState<string | null>(myImage ? myImage : null);
+  // const [age, setAge] = useState(myAge ? myAge : 0);
+  // const [showPopupChoose, setshowPopupChoose] = useState(false);
+  // const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
+  // const [isErrorAge, setisErrorAge] = useState(false);
+  // const [country, setCountry] = useState(myCountry ?? '');
+  // const [limitedCountry, setLImitedCountry] = useState(
+  //   myLimitedCountry ?? myCountry,
+  // );
+  // const [isLimitCountry, setisLimitCountry] = useState(isMyLimitedCountry);
+
+  // const [limitedAges, setLImitedAges] = useState(myLimitedAges);
+  // const [isLimitAges, setisLimitAges] = useState(isMyLimitedAges);
+  // const [gender, setGender] = useState(myGender);
+  // const [otherGender, setOtherGender] = useState(myOtherGender);
+  // const [isLimitUserGender, setIsLimitUserGender] = useState(
+  //   isMyLimitedUserGender,
+  // );
+  // const [defaultSelectedMyGenderIndex, setDefaultSelectedMyGenderIndex] =
+  //   useState(0);
+  // const [defaultSelectedOtherGenderIndex, setDefaultSelectedOtherGenderIndex] =
+  //   useState(0);
+
+  // const {localStream} = useStream({});
+  // const myGenderitemList = useMemo(
+  //   () => [
+  //     {
+  //       id: 0,
+  //       text: Gender.WOMEN,
+  //       onClick: () => {
+  //         setGender(Gender.WOMEN);
+  //       },
+  //     },
+  //     {
+  //       id: 1,
+  //       text: Gender.MEN,
+  //       onClick: () => {
+  //         setGender(Gender.MEN);
+  //       },
+  //     },
+  //     {
+  //       id: 2,
+  //       text: Gender.TRANS,
+  //       onClick: () => {
+  //         setGender(Gender.TRANS);
+  //       },
+  //     },
+  //     {
+  //       id: 3,
+  //       text: Gender.OTHER,
+  //       onClick: () => {
+  //         setGender(Gender.OTHER);
+  //       },
+  //     },
+  //   ],
+  //   [],
+  // );
+  // const otherGenderItemList = useMemo(
+  //   () => [
+  //     {
+  //       id: 0,
+  //       text: 'All',
+  //       onClick: () => {
+  //         setIsLimitUserGender(false);
+  //       },
+  //     },
+  //     {
+  //       id: 1,
+  //       text: Gender.WOMEN,
+  //       onClick: () => {
+  //         setOtherGender(Gender.WOMEN);
+  //         setIsLimitUserGender(true);
+  //       },
+  //     },
+  //     {
+  //       id: 2,
+  //       text: Gender.MEN,
+  //       onClick: () => {
+  //         setOtherGender(Gender.MEN);
+  //         setIsLimitUserGender(true);
+  //       },
+  //     },
+  //     {
+  //       id: 3,
+  //       text: Gender.TRANS,
+  //       onClick: () => {
+  //         setOtherGender(Gender.TRANS);
+  //         setIsLimitUserGender(true);
+  //       },
+  //     },
+  //     {
+  //       id: 4,
+  //       text: Gender.OTHER,
+  //       onClick: () => {
+  //         setOtherGender(Gender.OTHER);
+  //         setIsLimitUserGender(true);
+  //       },
+  //     },
+  //   ],
+  //   [],
+  // );
+
+  // const updateDefaultIndexes = useCallback(() => {
+  //   const myGenderIndex = myGenderitemList.findIndex(
+  //     item => item.text === myGender,
+  //   );
+  //   const otherGenderIndex = otherGenderItemList.findIndex(
+  //     item => item.text.toString() === myOtherGender,
+  //   );
+
+  //   setDefaultSelectedMyGenderIndex(myGenderIndex);
+  //   setDefaultSelectedOtherGenderIndex(otherGenderIndex);
+  // }, [myGender, myOtherGender, myGenderitemList, otherGenderItemList]);
+
+  // useEffect(() => {
+  //   updateDefaultIndexes();
+  // }, [updateDefaultIndexes]);
+
+  // const updateImageUri = useCallback((imageUri: string | null) => {
+  //   setImage(imageUri);
+  //   setisNeedToUpdateCloude(true);
+  // }, []);
+
+  // const updateImageToCloude = useCallback(async () => {
+  //   if (image) {
+  //     await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
+  //     const imageUri = await dounloadImageFromStorage(
+  //       DeviceInfo.getDeviceId(),
+  //       name,
+  //     );
+  //     dispatch(setMyImage(imageUri));
+  //   } else {
+  //     await deleteImagePath(DeviceInfo.getDeviceId(), name);
+  //     dispatch(setMyImage(null));
+  //   }
+  //   setisNeedToUpdateCloude(false);
+  // }, [name, image]);
+
+  // const onStart = useCallback(async () => {
+  //   dispatch(setMyName(name));
+  //   dispatch(setMyAge(age));
+  //   dispatch(setMyCountry(country));
+  //   dispatch(setIsMyLimitedCountry(isLimitCountry));
+  //   dispatch(setMyLimitedCountry(limitedCountry));
+  //   dispatch(setIsMyLimitedAges(isLimitAges));
+  //   dispatch(setMyGender(gender));
+  //   dispatch(setMyOtherGender(otherGender));
+  //   dispatch(setIsMyLimitedUserGender(isLimitUserGender));
+  //   dispatch(setMyLimitedAges(limitedAges));
+
+  //   // if (isNeedToUpdateCloude) {
+  //   //   updateImageToCloude();
+  //   // }
+
+  //   props.navigation.navigate('Home');
+  // }, [
+  //   name,
+  //   age,
+  //   country,
+  //   isLimitAges,
+  //   isLimitCountry,
+  //   limitedAges,
+  //   limitedCountry,
+  //   dispatch,
+  //   gender,
+  //   otherGender,
+  //   isLimitUserGender,
+  //   props.navigation,
+  // ]);
   const {
-    myName,
-    myImage,
-    myAge,
-    myCountry,
-    isMyLimitedCountry,
-    myLimitedCountry,
-    isMyLimitedAges,
-    myLimitedAges,
-  } = useSelector(state => state.user);
-  const [name, setName] = useState(myName);
-  const [image, setImage] = useState<string | null>(myImage ? myImage : null);
-  const [age, setAge] = useState(myAge ? myAge : 0);
-  const [showPopupChoose, setshowPopupChoose] = useState(false);
-  const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
-  const [isErrorAge, setisErrorAge] = useState(false);
-  const [country, setCountry] = useState(myCountry ?? '');
-  const [limitedCountry, setLImitedCountry] = useState(
-    myLimitedCountry ?? myCountry,
-  );
-  const [isLimitCountry, setisLimitCountry] = useState(isMyLimitedCountry);
-
-  const [limitedAges, setLImitedAges] = useState(myLimitedAges);
-  const [isLimitAges, setisLimitAges] = useState(isMyLimitedAges);
-
-  const {localStream} = useStream({});
-
-  const updateImageUri = useCallback((imageUri: string | null) => {
-    setImage(imageUri);
-    setisNeedToUpdateCloude(true);
-  }, []);
-
-  const updateImageToCloude = useCallback(async () => {
-    if (image) {
-      await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
-      const imageUri = await dounloadImageFromStorage(
-        DeviceInfo.getDeviceId(),
-        name,
-      );
-      dispatch(setMyImage(imageUri));
-    } else {
-      await deleteImagePath(DeviceInfo.getDeviceId(), name);
-      dispatch(setMyImage(null));
-    }
-    setisNeedToUpdateCloude(false);
-  }, [name, image]);
-
-  const onStart = useCallback(async () => {
-    dispatch(setMyName(name));
-    dispatch(setMyAge(age));
-    dispatch(setMyCountry(country));
-    dispatch(setIsMyLimitedCountry(isLimitCountry));
-    dispatch(setMyLimitedCountry(limitedCountry));
-    dispatch(setIsMyLimitedAges(isLimitAges));
-
-    dispatch(setMyLimitedAges(limitedAges));
-
-    if (isNeedToUpdateCloude) {
-      updateImageToCloude();
-    }
-
-    props.navigation.navigate('Home');
-  }, [
-    isNeedToUpdateCloude,
+    setshowPopupChoose,
+    updateImageUri,
+    showPopupChoose,
+    localStream,
     name,
+    setName,
     age,
+    setAge,
+    setisErrorAge,
+    isErrorAge,
+    defaultSelectedMyGenderIndex,
+    defaultSelectedOtherGenderIndex,
+    myGenderitemList,
+    otherGenderItemList,
     country,
-    isLimitAges,
+    setCountry,
+    setisLimitCountry,
     isLimitCountry,
-    limitedAges,
+    setLImitedCountry,
     limitedCountry,
-    dispatch,
-  ]);
-
+    isLimitAges,
+    setisLimitAges,
+    setLImitedAges,
+    limitedAges,
+    onStart,
+    isMissingData,
+  } = useDetailsScreen(props);
   const popup = () => {
     return (
       <PopupPicture
@@ -154,7 +296,7 @@ const DetailsScreen = props => {
         />
       )}
       <View style={styles.shade} />
-      <ScrollView style={styles.scroll}>
+      <ScrollView keyboardShouldPersistTaps="handled" style={styles.scroll}>
         <View style={styles.content}>
           <Spacer size={30} />
           <Text style={styles.title}>Tell us about you..</Text>
@@ -185,7 +327,7 @@ const DetailsScreen = props => {
             cursorColor={GlobalColors.TextColors.white}
           />
           <Spacer size={20} />
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.imageBtn}
             onPress={() => setshowPopupChoose(true)}>
             <Text style={styles.text}>Upload a picture</Text>
@@ -206,7 +348,7 @@ const DetailsScreen = props => {
 
               <Spacer size={50} />
             </>
-          )}
+          )} */}
           <Text style={styles.subTitle}>What's your age?</Text>
 
           <ReactiveTextInput
@@ -223,6 +365,8 @@ const DetailsScreen = props => {
                 setisErrorAge(false);
                 if (Number(text) !== 0 || text.length > 0) {
                   setAge(Number(text));
+                } else {
+                  setisErrorAge(true);
                 }
               } else {
                 setisErrorAge(true);
@@ -240,6 +384,22 @@ const DetailsScreen = props => {
             isError={isErrorAge}
             message={'Error, your age must be between 16 - 99'}
           />
+          <Spacer size={22} />
+          <View style={styles.horizontal}>
+            <Text style={styles.subTitle}>Your gender:</Text>
+            <Picker
+              defaultSelectedId={defaultSelectedMyGenderIndex}
+              dataInput={myGenderitemList}
+            />
+          </View>
+          <Spacer size={22} />
+          <View style={styles.horizontal}>
+            <Text style={styles.subTitle}>You want to see:</Text>
+            <Picker
+              defaultSelectedId={defaultSelectedOtherGenderIndex}
+              dataInput={otherGenderItemList}
+            />
+          </View>
           <Spacer size={32} />
           <View style={styles.horizontal}>
             <Text style={styles.subTitle}>Your country</Text>
@@ -319,29 +479,13 @@ const DetailsScreen = props => {
           )}
 
           <TouchableOpacity
-            disabled={
-              name?.length === 0 ||
-              age === 0 ||
-              isErrorAge ||
-              country?.length === 0
-            }
-            style={[
-              styles.startBtn,
-              (name?.length === 0 ||
-                age === 0 ||
-                isErrorAge ||
-                country?.length === 0) &&
-                styles.disabledBtn,
-            ]}
+            disabled={isMissingData}
+            style={[styles.startBtn, isMissingData && styles.disabledBtn]}
             onPress={() => {
               onStart();
             }}>
             <Text
-              style={[
-                styles.btnText,
-                (name?.length === 0 || age === 0 || isErrorAge) &&
-                  styles.disabledText,
-              ]}>
+              style={[styles.btnText, isMissingData && styles.disabledText]}>
               Start
             </Text>
           </TouchableOpacity>

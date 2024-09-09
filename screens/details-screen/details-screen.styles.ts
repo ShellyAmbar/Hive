@@ -78,7 +78,7 @@ export default StyleSheet.create({
     borderColor: GlobalColors.TextColors.white,
     color: GlobalColors.TextColors.white,
     fontFamily: 'Jersey10-Regular',
-    fontSize: 30,
+    fontSize: 25,
     textAlign: 'center',
     borderBottomWidth: 1,
   },

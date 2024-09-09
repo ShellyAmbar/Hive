@@ -17,7 +17,6 @@ const persistConfig = {
   storage: AsyncStorage, // Use AsyncStorage for persistence
   timeout: null, // Increase this timeout if necessary
   debug: true, // Enable debug mode for redux-persist
-  whitelist: ['user'],
 };
 
 // Create a persisted reducer

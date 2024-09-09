@@ -1,5 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
 
+export const Gender = {
+  WOMEN: 'Women',
+  MEN: 'Men',
+  TRANS: 'Trans',
+  OTHER: 'Other',
+};
 const initialState = {
   myName: '',
   incomingUserName: '',
@@ -14,6 +20,10 @@ const initialState = {
   myLimitedCountry: '',
   isMyLimitedAges: false,
   myLimitedAges: [0, 100],
+  myGender: Gender.MEN,
+  myOtherGender: Gender.MEN,
+  incomingUserGender: Gender.MEN,
+  isMyLimitedUserGender: false,
 };
 
 const userSlice = createSlice({
@@ -61,6 +71,18 @@ const userSlice = createSlice({
     setMyUserId(state, action) {
       state.myUserId = action.payload;
     },
+    setMyGender(state, action) {
+      console.log('setMyGender - ', action.payload);
+
+      state.myGender = action.payload;
+    },
+    setMyOtherGender(state, action) {
+      console.log('setMyOtherGender - ', action.payload);
+      state.myOtherGender = action.payload;
+    },
+    setIsMyLimitedUserGender(state, action) {
+      state.isMyLimitedUserGender = action.payload;
+    },
   },
 });
 
@@ -78,5 +100,8 @@ export const {
   setMyImage,
   setMyLimitedCountry,
   setMyName,
+  setMyGender,
+  setMyOtherGender,
+  setIsMyLimitedUserGender,
 } = userSlice.actions;
 export default userSlice.reducer;
