@@ -1,5 +1,16 @@
 import {createSlice} from '@reduxjs/toolkit';
 
+export enum EAnimation {
+  NONE,
+  ROCKET,
+  HEARTS,
+  FLAMES,
+  LIKES,
+  CONFETTI,
+  UNICORN,
+  FLOWERS,
+}
+
 export const Gender = {
   WOMEN: 'Women',
   MEN: 'Men',
