@@ -15,6 +15,7 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
     incomingUserImage,
     incomingUserAge,
     incomingUserCountry,
+    incomingUserGender,
   } = useSelector(state => state.user);
 
   return (
@@ -27,7 +28,7 @@ const GettingCall = ({hangup, join, localStream}: IGettingCall) => {
       <View style={styles.shade} />
       <View style={styles.content}>
         <Text style={styles.subTitle}>
-          {`${incomingUserName},\n ${incomingUserAge} from ${incomingUserCountry} ` +
+          {`${incomingUserName},\n ${incomingUserAge}, ${incomingUserGender} from ${incomingUserCountry} ` +
             '\n' +
             ' is calling you'}
         </Text>

@@ -141,12 +141,15 @@ const useDetailsScreen = props => {
   );
 
   const updateDefaultIndexes = useCallback(() => {
+    let otherGenderIndex = 0;
     const myGenderIndex = myGenderitemList.findIndex(
       item => item.text === myGender,
     );
-    const otherGenderIndex = otherGenderItemList.findIndex(
-      item => item.text.toString() === myOtherGender,
-    );
+    if (isMyLimitedUserGender) {
+      otherGenderIndex = otherGenderItemList.findIndex(
+        item => item.text.toString() === myOtherGender,
+      );
+    }
 
     setDefaultSelectedMyGenderIndex(myGenderIndex);
     setDefaultSelectedOtherGenderIndex(otherGenderIndex);

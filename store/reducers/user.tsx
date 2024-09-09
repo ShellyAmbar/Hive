@@ -83,6 +83,9 @@ const userSlice = createSlice({
     setIsMyLimitedUserGender(state, action) {
       state.isMyLimitedUserGender = action.payload;
     },
+    setIncomingUserGender(state, action) {
+      state.incomingUserGender = action.payload;
+    },
   },
 });
 
@@ -103,5 +106,6 @@ export const {
   setMyGender,
   setMyOtherGender,
   setIsMyLimitedUserGender,
+  setIncomingUserGender,
 } = userSlice.actions;
 export default userSlice.reducer;

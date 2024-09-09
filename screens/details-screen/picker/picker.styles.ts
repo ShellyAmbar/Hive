@@ -21,7 +21,7 @@ export default StyleSheet.create({
   },
   saperator: {
     height: 1,
-    width: '100%',
+    width: '80%',
     backgroundColor: GlobalColors.Border,
     marginVertical: 10,
   },
@@ -31,7 +31,7 @@ export default StyleSheet.create({
     marginRight: 10,
   },
   textItem: {
-    fontSize: 12,
+    fontSize: 14,
     color: GlobalColors.Brand.secondary,
     paddingVertical: 5,
     paddingHorizontal: 5,

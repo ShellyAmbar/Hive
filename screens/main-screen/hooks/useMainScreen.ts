@@ -19,6 +19,7 @@ import {
   setIncomingUserCountry,
   setIncomingUserImage,
   setIncomingUserName,
+  setIncomingUserGender,
   setMyUserId,
 } from '@hive/store/reducers/user';
 import {getData, storeData} from '@hive/utils/asyncstorage';
@@ -49,8 +50,10 @@ const useMainScreen = () => {
     isMyLimitedCountry: isLimitedCountry,
     myLimitedCountry: limitedCountry,
     myLimitedAges: limitedAges,
-
     myUserId,
+    myGender,
+    myOtherGender,
+    isMyLimitedUserGender,
   } = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
@@ -132,11 +135,36 @@ const useMainScreen = () => {
           ? query.where('callerCountry', '==', limitedCountry)
           : query;
 
-        const unsubscribe = filterCountry.onSnapshot(snap => {
+        // callerGender: myGender,
+        // callerOtherUserGender: myOtherGender,
+        // callerIsLimitedUserGender: isMyLimitedUserGender,
+
+        const filterGender = isMyLimitedUserGender
+          ? filterCountry.where('callerGender', '==', myOtherGender)
+          : filterCountry;
+
+        console.log(
+          'isMyLimitedUserGender',
+          isMyLimitedUserGender,
+          'myOtherGender',
+          myOtherGender,
+          'myGender',
+          myGender,
+        );
+
+        const unsubscribe = filterGender.onSnapshot(snap => {
           snap?.docChanges().forEach(change => {
             if (change.type === 'added') {
               //on answer start call
               const newCall = change.doc.data();
+
+              console.log(
+                'newCall.callerIsLimitedCountry',
+                newCall.callerIsLimitedCountry,
+                newCall.callerLimitedCountry,
+                'newCall.callerGender',
+                newCall.callerGender,
+              );
 
               if (
                 listenToNewCallsRef.current &&
@@ -148,6 +176,9 @@ const useMainScreen = () => {
                 !connecting.current &&
                 (newCall.callerIsLimitedCountry
                   ? newCall.callerLimitedCountry === myCountry
+                  : true) &&
+                (newCall.callerIsLimitedUserGender
+                  ? newCall.callerOtherUserGender === myGender
                   : true) &&
                 myAge <= newCall.callerLimitedAges[1] &&
                 myAge >= newCall.callerLimitedAges[0]
@@ -166,6 +197,7 @@ const useMainScreen = () => {
                 dispatch(setIncomingUserImage(newCall.callerImage));
                 dispatch(setIncomingUserAge(newCall.callerAge));
                 dispatch(setIncomingUserCountry(newCall.callerCountry));
+                dispatch(setIncomingUserGender(newCall.callerGender));
 
                 storeData('incomingUserId', newCall.callerId);
 
@@ -320,6 +352,9 @@ const useMainScreen = () => {
           callerLimitedCountry: limitedCountry,
           callerLimitedAges: limitedAges,
           date: Date.now(),
+          callerGender: myGender,
+          callerOtherUserGender: myOtherGender,
+          callerIsLimitedUserGender: isMyLimitedUserGender,
         };
 
         myRef.set(cWithOffer);
@@ -364,6 +399,9 @@ const useMainScreen = () => {
             calleeImage: image ? image : '',
             calleeAge: myAge,
             calleeCountry: myCountry,
+            calleeGender: myGender,
+            calleeOtherUserGender: myOtherGender,
+            calleeIsLimitedUserGender: isMyLimitedUserGender,
           };
 
           fbRef.update(cWithAnswer);
@@ -388,6 +426,8 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
+    console.log('hangup -----------', deviceId, name);
+
     if (connecting.current) {
       listenToNewCallsRef.current = true;
       connecting.current = false;
