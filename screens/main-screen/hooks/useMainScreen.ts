@@ -21,6 +21,8 @@ import {
   setIncomingUserName,
   setIncomingUserGender,
   setMyUserId,
+  setIsShowMyAnimation,
+  setMySelectedAnimation,
 } from '@hive/store/reducers/user';
 import {getData, storeData} from '@hive/utils/asyncstorage';
 
@@ -54,6 +56,8 @@ const useMainScreen = () => {
     myGender,
     myOtherGender,
     isMyLimitedUserGender,
+    otherUserSelectedAnimation,
+    isShowOtherUserAnimation,
   } = useSelector(state => state.user);
   const [deviceId, setDeviceId] = useState('');
   const [startListenToPending, setstartListenToPending] = useState(true);
@@ -61,6 +65,15 @@ const useMainScreen = () => {
   const [isFront, setisFront] = useState(true);
   const [isHideMe, setIsHideMe] = useState(true);
   const [isHideUser, setIsHideUser] = useState(true);
+
+  useEffect(() => {
+    const updateWithAnimationObj = {
+      selectedAnimation: otherUserSelectedAnimation,
+      isShowAnimation: isShowOtherUserAnimation,
+      animationSenderId: deviceId,
+    };
+    fbRef?.update(updateWithAnimationObj);
+  }, [otherUserSelectedAnimation, isShowOtherUserAnimation, fbRef, deviceId]);
 
   useEffect(() => {
     updateHide(isHideMe);
@@ -258,13 +271,22 @@ const useMainScreen = () => {
             dispatch(setIncomingUserAge(newCall?.calleeAge));
             dispatch(setIncomingUserCountry(newCall?.calleeCountry));
           }
-
+          // hide users
           const callerId = newCall.callerId;
 
           if (newCall && deviceId === callerId) {
             setIsHideUser(newCall.isHideCallee);
           } else {
             setIsHideUser(newCall.isHideCaller);
+          }
+
+          //add animation
+
+          if (newCall.isShowAnimation && newCall.selectedAnimation) {
+            if (newCall.animationSenderId !== deviceId) {
+              dispatch(setIsShowMyAnimation(true));
+              dispatch(setMySelectedAnimation(newCall.selectedAnimation));
+            }
           }
         } else {
           if (isInCallRef.current) {

@@ -107,6 +107,9 @@ const createStyle = (isHiding: boolean) =>
       flex: 1,
       zIndex: 3,
     },
+    animation: {
+      zIndex: 5,
+    },
   });
 
 export default createStyle;

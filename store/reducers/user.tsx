@@ -35,6 +35,10 @@ const initialState = {
   myOtherGender: Gender.MEN,
   incomingUserGender: Gender.MEN,
   isMyLimitedUserGender: false,
+  mySelectedAnimation: EAnimation.NONE,
+  isShowMyAnimation: false,
+  otherUserSelectedAnimation: EAnimation.NONE,
+  isShowOtherUserAnimation: false,
 };
 
 const userSlice = createSlice({
@@ -97,6 +101,25 @@ const userSlice = createSlice({
     setIncomingUserGender(state, action) {
       state.incomingUserGender = action.payload;
     },
+    setMySelectedAnimation(state, action) {
+      console.log('setMySelectedAnimation', action.payload);
+      state.mySelectedAnimation = action.payload;
+    },
+
+    setIsShowMyAnimation(state, action) {
+      console.log('setIsShowMyAnimation', action.payload);
+      state.isShowMyAnimation = action.payload;
+    },
+    setOtherUserSelectedAnimation(state, action) {
+      console.log('setOtherUserSelectedAnimation', action.payload);
+      state.otherUserSelectedAnimation = action.payload;
+    },
+
+    setIsShowOtherUserAnimation(state, action) {
+      console.log('setIsShowOtherUserAnimation', action.payload);
+
+      state.isShowOtherUserAnimation = action.payload;
+    },
   },
 });
 
@@ -118,5 +141,9 @@ export const {
   setMyOtherGender,
   setIsMyLimitedUserGender,
   setIncomingUserGender,
+  setIsShowMyAnimation,
+  setMySelectedAnimation,
+  setIsShowOtherUserAnimation,
+  setOtherUserSelectedAnimation,
 } = userSlice.actions;
 export default userSlice.reducer;

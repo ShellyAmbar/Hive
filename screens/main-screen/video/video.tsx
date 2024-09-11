@@ -34,6 +34,10 @@ const Video = ({
     incomingUserImage,
     incomingUserAge,
     incomingUserCountry,
+    isShowOtherUserAnimation,
+    isShowMyAnimation,
+    getOtherUserAnimationSourceFromType,
+    getMyAnimationSourceFromType,
   } = useVideo();
 
   const styles = createstyle(isHideUser);
@@ -54,6 +58,16 @@ const Video = ({
         objectFit="cover"
         style={styles.otherVideo}
       />
+      {isShowOtherUserAnimation && getOtherUserAnimationSourceFromType() && (
+        <LottieView
+          source={getOtherUserAnimationSourceFromType()}
+          autoPlay
+          loop
+          speed={1}
+          style={[styles.otherVideo, styles.animation]}
+        />
+      )}
+
       {isHideUser && (
         <View style={[styles.otherVideo, styles.otherShade]}>
           <LottieView
@@ -104,6 +118,16 @@ const Video = ({
         objectFit="cover"
         style={styles.myVideo}
       />
+      {isShowMyAnimation && getMyAnimationSourceFromType() && (
+        <LottieView
+          source={getMyAnimationSourceFromType()}
+          autoPlay
+          loop
+          speed={1}
+          style={[styles.myVideo, styles.animation]}
+        />
+      )}
+
       {isHideMe && (
         <View style={[styles.myVideo, styles.myShade]}>
           <LottieView
@@ -143,6 +167,7 @@ const Video = ({
             id: 0,
             style: {
               backgroundColor: GlobalColors.Brand.secondary,
+              zIndex: 6,
             },
             icon: () => <AntDesign name="plus" size={20} color="#FFFF" />,
           }}
@@ -193,7 +218,7 @@ const Video = ({
 
   return (
     <View style={styles.container}>
-      {(remoteStrem === null || remoteStrem === undefined) && showBothStreams()}
+      {(remoteStrem === null || remoteStrem === undefined) && showLocalStream()}
       {localStrem !== undefined &&
         remoteStrem !== undefined &&
         localStrem !== null &&
