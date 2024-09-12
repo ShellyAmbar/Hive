@@ -88,12 +88,9 @@ const userSlice = createSlice({
       state.myUserId = action.payload;
     },
     setMyGender(state, action) {
-      console.log('setMyGender - ', action.payload);
-
       state.myGender = action.payload;
     },
     setMyOtherGender(state, action) {
-      console.log('setMyOtherGender - ', action.payload);
       state.myOtherGender = action.payload;
     },
     setIsMyLimitedUserGender(state, action) {
@@ -103,22 +100,17 @@ const userSlice = createSlice({
       state.incomingUserGender = action.payload;
     },
     setMySelectedAnimation(state, action) {
-      console.log('setMySelectedAnimation', action.payload);
       state.mySelectedAnimation = action.payload;
     },
 
     setIsShowMyAnimation(state, action) {
-      console.log('setIsShowMyAnimation', action.payload);
       state.isShowMyAnimation = action.payload;
     },
     setOtherUserSelectedAnimation(state, action) {
-      console.log('setOtherUserSelectedAnimation', action.payload);
       state.otherUserSelectedAnimation = action.payload;
     },
 
     setIsShowOtherUserAnimation(state, action) {
-      console.log('setIsShowOtherUserAnimation', action.payload);
-
       state.isShowOtherUserAnimation = action.payload;
     },
   },

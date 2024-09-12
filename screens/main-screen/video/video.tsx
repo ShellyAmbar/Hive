@@ -54,115 +54,127 @@ const Video = ({
 
   const showBothStreams = () => (
     <>
-      <RTCView
-        streamURL={remoteStrem?.toURL()}
-        objectFit="cover"
-        style={styles.otherVideo}
-      />
-      {isShowOtherUserAnimation &&
-        getAnimationSourceFromType(otherUserSelectedAnimation) && (
-          <LottieView
-            source={getAnimationSourceFromType(otherUserSelectedAnimation)}
-            autoPlay
-            loop
-            speed={1}
-            style={[styles.otherVideo, styles.otherAnimation]}
-          />
+      <View style={styles.otherVideo}>
+        <RTCView
+          streamURL={remoteStrem?.toURL()}
+          objectFit="cover"
+          style={styles.fitInside}
+        />
+
+        {isHideUser && (
+          <View style={[styles.fitInside, styles.otherShade]}>
+            <LottieView
+              source={require('@hive/assets/lotties/sparks.json')}
+              autoPlay
+              loop
+              speed={2}
+              style={styles.lottie}
+            />
+            <LottieView
+              source={require('@hive/assets/lotties/sparks.json')}
+              autoPlay
+              loop
+              speed={2}
+              style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
+            />
+            <LottieView
+              source={require('@hive/assets/lotties/stars.json')}
+              autoPlay
+              loop
+              speed={2}
+              style={styles.lottie}
+            />
+            <LottieView
+              source={require('@hive/assets/lotties/bubbles.json')}
+              autoPlay
+              loop
+              speed={1}
+              style={styles.lottie}
+            />
+          </View>
         )}
 
-      {isHideUser && (
-        <View style={[styles.otherVideo, styles.otherShade]}>
-          <LottieView
-            source={require('@hive/assets/lotties/sparks.json')}
-            autoPlay
-            loop
-            speed={2}
-            style={styles.lottie}
-          />
-          <LottieView
-            source={require('@hive/assets/lotties/sparks.json')}
-            autoPlay
-            loop
-            speed={2}
-            style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
-          />
-          <LottieView
-            source={require('@hive/assets/lotties/stars.json')}
-            autoPlay
-            loop
-            speed={2}
-            style={styles.lottie}
-          />
-          <LottieView
-            source={require('@hive/assets/lotties/bubbles.json')}
-            autoPlay
-            loop
-            speed={1}
-            style={styles.lottie}
-          />
+        {isShowOtherUserAnimation &&
+          getAnimationSourceFromType(otherUserSelectedAnimation) && (
+            <LottieView
+              source={getAnimationSourceFromType(otherUserSelectedAnimation)}
+              autoPlay
+              loop
+              speed={1}
+              resizeMode="cover"
+              style={[styles.fitInside, styles.otherAnimation]}
+            />
+          )}
+        <View style={styles.otherData}>
+          {incomingUserName && (
+            <Text
+              style={
+                styles.otherText
+              }>{`${incomingUserName}, ${incomingUserAge}\nfrom ${incomingUserCountry}`}</Text>
+          )}
+          <Spacer size={12} />
+          {incomingUserImage?.length > 0 && (
+            <Image
+              source={{uri: incomingUserImage}}
+              style={styles.otherImage}
+            />
+          )}
         </View>
-      )}
-      <View style={styles.otherData}>
-        {incomingUserName && (
-          <Text
-            style={
-              styles.otherText
-            }>{`${incomingUserName}, ${incomingUserAge}\nfrom ${incomingUserCountry}`}</Text>
-        )}
-        <Spacer size={12} />
-        {incomingUserImage?.length > 0 && (
-          <Image source={{uri: incomingUserImage}} style={styles.otherImage} />
-        )}
       </View>
 
-      <RTCView
-        streamURL={localStrem?.toURL()}
-        objectFit="cover"
-        style={styles.myVideo}
-      />
-      {isShowMyAnimation && getAnimationSourceFromType(mySelectedAnimation) && (
-        <LottieView
-          source={getAnimationSourceFromType(mySelectedAnimation)}
-          autoPlay
-          loop
-          speed={1}
-          style={[styles.myVideo, styles.myAnimation]}
+      {/*  saperator ------------------ */}
+
+      <View style={styles.myVideo}>
+        <RTCView
+          streamURL={localStrem?.toURL()}
+          objectFit="cover"
+          style={styles.fitInside}
         />
-      )}
+        {isShowMyAnimation &&
+          getAnimationSourceFromType(mySelectedAnimation) && (
+            <LottieView
+              source={getAnimationSourceFromType(mySelectedAnimation)}
+              autoPlay
+              loop
+              speed={1}
+              resizeMode="cover"
+              style={[styles.fitInside, styles.myAnimation]}
+            />
+          )}
 
-      {isHideMe && (
-        <View style={[styles.myVideo, styles.myShade]}>
-          <LottieView
-            source={require('@hive/assets/lotties/sparks.json')}
-            autoPlay
-            loop
-            speed={2}
-            style={styles.lottie}
-          />
-          <LottieView
-            source={require('@hive/assets/lotties/sparks.json')}
-            autoPlay
-            loop
-            speed={2}
-            style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
-          />
-          <LottieView
-            source={require('@hive/assets/lotties/stars.json')}
-            autoPlay
-            loop
-            speed={2}
-            style={styles.lottie}
-          />
-          <LottieView
-            source={require('@hive/assets/lotties/bubbles.json')}
-            autoPlay
-            loop
-            speed={1}
-            style={styles.lottie}
-          />
-        </View>
-      )}
-
+        {isHideMe && (
+          <View style={[styles.fitInside, styles.myShade]}>
+            <LottieView
+              source={require('@hive/assets/lotties/sparks.json')}
+              autoPlay
+              loop
+              speed={2}
+              style={styles.lottie}
+            />
+            <LottieView
+              source={require('@hive/assets/lotties/sparks.json')}
+              autoPlay
+              loop
+              speed={2}
+              style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
+            />
+            <LottieView
+              source={require('@hive/assets/lotties/stars.json')}
+              autoPlay
+              loop
+              speed={2}
+              style={styles.lottie}
+            />
+            <LottieView
+              source={require('@hive/assets/lotties/bubbles.json')}
+              autoPlay
+              loop
+              speed={1}
+              style={styles.lottie}
+            />
+          </View>
+        )}
+      </View>
       <View style={styles.buttons}>
         <ActionsFloatingButton
           mainButton={{

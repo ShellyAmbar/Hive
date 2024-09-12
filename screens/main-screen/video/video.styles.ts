@@ -19,6 +19,7 @@ const createStyle = (isHiding: boolean) =>
       right: 0,
       left: 0,
       zIndex: 2,
+      overflow: 'hidden',
     },
     otherVideo: {
       position: 'absolute',
@@ -27,6 +28,15 @@ const createStyle = (isHiding: boolean) =>
       right: 0,
       left: 0,
       zIndex: 2,
+      overflow: 'hidden',
+    },
+    fitInside: {
+      position: 'absolute',
+
+      top: 0,
+      right: 0,
+      left: 0,
+      bottom: 0,
     },
     lottie: {
       top: 0,

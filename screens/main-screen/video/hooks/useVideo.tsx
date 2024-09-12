@@ -40,8 +40,6 @@ const useVideo = () => {
 
   const selectAnimation = useCallback(
     (animationType: EAnimation) => {
-      console.log('selectAnimation', animationType);
-
       dispatch(setIsShowOtherUserAnimation(true));
       dispatch(setOtherUserSelectedAnimation(animationType));
 

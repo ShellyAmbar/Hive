@@ -160,8 +160,6 @@ const DetailsScreen = props => {
                 setisErrorAge(false);
                 if (Number(text) !== 0 || text.length > 0) {
                   setAge(Number(text));
-                } else {
-                  setisErrorAge(true);
                 }
               } else {
                 setisErrorAge(true);

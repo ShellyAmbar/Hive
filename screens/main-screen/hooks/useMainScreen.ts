@@ -156,28 +156,11 @@ const useMainScreen = () => {
           ? filterCountry.where('callerGender', '==', myOtherGender)
           : filterCountry;
 
-        console.log(
-          'isMyLimitedUserGender',
-          isMyLimitedUserGender,
-          'myOtherGender',
-          myOtherGender,
-          'myGender',
-          myGender,
-        );
-
         const unsubscribe = filterGender.onSnapshot(snap => {
           snap?.docChanges().forEach(change => {
             if (change.type === 'added') {
               //on answer start call
               const newCall = change.doc.data();
-
-              console.log(
-                'newCall.callerIsLimitedCountry',
-                newCall.callerIsLimitedCountry,
-                newCall.callerLimitedCountry,
-                'newCall.callerGender',
-                newCall.callerGender,
-              );
 
               if (
                 listenToNewCallsRef.current &&
@@ -448,8 +431,6 @@ const useMainScreen = () => {
 
   //cleanup
   const hangup = async () => {
-    console.log('hangup -----------', deviceId, name);
-
     if (connecting.current) {
       listenToNewCallsRef.current = true;
       connecting.current = false;
