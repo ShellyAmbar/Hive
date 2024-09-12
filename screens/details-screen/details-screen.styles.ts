@@ -54,9 +54,7 @@ export default StyleSheet.create({
   },
   subTitle: {
     color: GlobalColors.Brand.thierd,
-
     fontSize: 20,
-
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',
   },
@@ -111,6 +109,12 @@ export default StyleSheet.create({
   text: {
     color: GlobalColors.TextColors.white,
 
+    fontSize: 16,
+    textAlign: 'center',
+    fontFamily: 'Jersey10-Regular',
+  },
+  pickerText: {
+    color: GlobalColors.Brand.secondary,
     fontSize: 16,
     textAlign: 'center',
     fontFamily: 'Jersey10-Regular',

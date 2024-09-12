@@ -9,6 +9,7 @@ type Item = {
 type PickerProps = {
   dataInput: Item[];
   textStyle?: TextStyle;
+  itemTextStyle?: TextStyle;
   containerStyle?: ViewStyle;
   defaultSelectedId: number;
 };

@@ -6,10 +6,10 @@ const usePicker = (defaultSelectedItemIndex: number, data: Item[]) => {
 
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   useEffect(() => {
-    console.log('defaultSelectedItemIndex --', defaultSelectedItemIndex);
-
-    setSelectedItem(data[defaultSelectedItemIndex]);
-  }, [defaultSelectedItemIndex]);
+    data?.length > 0 &&
+      data[defaultSelectedItemIndex] &&
+      setSelectedItem(data[defaultSelectedItemIndex]);
+  }, [data, defaultSelectedItemIndex]);
 
   return {
     isOpen,

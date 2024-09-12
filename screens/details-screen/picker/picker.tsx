@@ -11,6 +11,7 @@ const Picker = ({
   textStyle,
   containerStyle,
   defaultSelectedId = 0,
+  itemTextStyle,
 }: PickerProps) => {
   const {
     isOpen,
@@ -22,7 +23,7 @@ const Picker = ({
 
   const renderItem = ({item}: {item: Item}) => {
     return (
-      <View style={Style.vertical}>
+      <View key={item.id} style={[Style.vertical, {...itemTextStyle}]}>
         <TouchableOpacity
           style={Style.item}
           onPress={() => {
