@@ -44,9 +44,6 @@ const createStyle = (isHiding: boolean) =>
     },
     actionsButton: {
       position: 'absolute',
-
-      zIndex: 3,
-
       bottom: 100,
       right: 50,
     },
@@ -57,7 +54,7 @@ const createStyle = (isHiding: boolean) =>
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',
-      zIndex: 3,
+      zIndex: 6,
     },
     hangupBtn: {
       backgroundColor: GlobalColors.SystemColors.Error,
@@ -78,7 +75,7 @@ const createStyle = (isHiding: boolean) =>
       backgroundColor: GlobalColors.BgColors.Bg9,
     },
     otherData: {
-      zIndex: 4,
+      zIndex: 5,
       position: 'absolute',
       top: 0,
       right: 0,
@@ -103,12 +100,11 @@ const createStyle = (isHiding: boolean) =>
       textAlign: 'center',
     },
 
-    content: {
-      flex: 1,
-      zIndex: 3,
+    otherAnimation: {
+      zIndex: 4,
     },
-    animation: {
-      zIndex: 5,
+    myAnimation: {
+      zIndex: 4,
     },
   });
 

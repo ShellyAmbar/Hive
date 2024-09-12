@@ -2,7 +2,10 @@ import {useCallback, useEffect, useMemo, useState} from 'react';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {GlobalColors} from '@hive/styles/colors';
 import {useDispatch, useSelector} from 'react-redux';
 import {EAnimation} from '@hive/store/reducers/user';
@@ -86,10 +89,10 @@ const useVideo = () => {
     },
     {
       id: 5,
-      icon: () => <Material name="party-popper" size={20} color="#FFFF" />,
+      icon: () => <Material name="hand-wave-outline" size={20} color="#FFFF" />,
 
       onClick: () => {
-        selectAnimation(EAnimation.CONFETTI);
+        selectAnimation(EAnimation.HEY);
       },
       style: {backgroundColor: GlobalColors.Brand.secondary},
     },
@@ -103,60 +106,57 @@ const useVideo = () => {
     },
     {
       id: 7,
-      icon: () => <Ionicons name="flower-outline" size={20} color="#FFFF" />,
+      icon: () => <FontAwesome name="money" size={20} color="#FFFF" />,
       onClick: () => {
-        selectAnimation(EAnimation.FLOWERS);
+        selectAnimation(EAnimation.MONEY);
+      },
+      style: {backgroundColor: GlobalColors.Brand.secondary},
+    },
+    {
+      id: 8,
+      icon: () => (
+        <FontAwesome5 name="kiss-wink-heart" size={20} color="#FFFF" />
+      ),
+      onClick: () => {
+        selectAnimation(EAnimation.KISS);
       },
       style: {backgroundColor: GlobalColors.Brand.secondary},
     },
   ];
 
-  const getMyAnimationSourceFromType = useCallback(() => {
-    switch (mySelectedAnimation) {
-      case EAnimation.ROCKET:
-        return require('@hive/assets/lotties/animations/missile.json');
-      case EAnimation.CONFETTI:
-        return require('@hive/assets/lotties/animations/cofetti.json');
-      case EAnimation.FLAMES:
-        return require('@hive/assets/lotties/animations/flames.json');
-      case EAnimation.FLOWERS:
-        return require('@hive/assets/lotties/animations/flowers.json');
-      case EAnimation.HEARTS:
-        return require('@hive/assets/lotties/animations/hearts.json');
-      case EAnimation.LIKES:
-        return require('@hive/assets/lotties/animations/likes.json');
-      case EAnimation.UNICORN:
-        return require('@hive/assets/lotties/animations/unicorn.json');
-      default:
-        return null;
-    }
-  }, [mySelectedAnimation]);
-  const getOtherUserAnimationSourceFromType = useCallback(() => {
-    switch (otherUserSelectedAnimation) {
-      case EAnimation.ROCKET:
-        return require('@hive/assets/lotties/animations/missile.json');
-      case EAnimation.CONFETTI:
-        return require('@hive/assets/lotties/animations/cofetti.json');
-      case EAnimation.FLAMES:
-        return require('@hive/assets/lotties/animations/flames.json');
-      case EAnimation.FLOWERS:
-        return require('@hive/assets/lotties/animations/flowers.json');
-      case EAnimation.HEARTS:
-        return require('@hive/assets/lotties/animations/hearts.json');
-      case EAnimation.LIKES:
-        return require('@hive/assets/lotties/animations/likes.json');
-      case EAnimation.UNICORN:
-        return require('@hive/assets/lotties/animations/unicorn.json');
-      default:
-        return null;
-    }
-  }, [otherUserSelectedAnimation]);
+  const getAnimationSourceFromType = useCallback(
+    (animationType: EAnimation) => {
+      switch (animationType) {
+        case EAnimation.ROCKET:
+          return require('@hive/assets/lotties/animations/missile.json');
+        case EAnimation.HEY:
+          return require('@hive/assets/lotties/animations/hey.json');
+        case EAnimation.FLAMES:
+          return require('@hive/assets/lotties/animations/flames.json');
+        case EAnimation.MONEY:
+          return require('@hive/assets/lotties/animations/money.json');
+        case EAnimation.KISS:
+          return require('@hive/assets/lotties/animations/kiss.json');
+        case EAnimation.HEARTS:
+          return require('@hive/assets/lotties/animations/hearts.json');
+        case EAnimation.LIKES:
+          return require('@hive/assets/lotties/animations/likes.json');
+        case EAnimation.UNICORN:
+          return require('@hive/assets/lotties/animations/unicorn.json');
+        default:
+          return null;
+      }
+    },
+    [],
+  );
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      unSelectMyAnimation();
-      clearTimeout(timeout);
-    }, 5000);
+    if (isShowMyAnimation) {
+      const timeout = setTimeout(() => {
+        unSelectMyAnimation();
+        clearTimeout(timeout);
+      }, 5000);
+    }
   }, [mySelectedAnimation, isShowMyAnimation, unSelectMyAnimation]);
 
   return {
@@ -167,8 +167,9 @@ const useVideo = () => {
     incomingUserCountry,
     isShowOtherUserAnimation,
     isShowMyAnimation,
-    getOtherUserAnimationSourceFromType,
-    getMyAnimationSourceFromType,
+    getAnimationSourceFromType,
+    otherUserSelectedAnimation,
+    mySelectedAnimation,
   };
 };
 

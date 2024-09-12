@@ -36,8 +36,9 @@ const Video = ({
     incomingUserCountry,
     isShowOtherUserAnimation,
     isShowMyAnimation,
-    getOtherUserAnimationSourceFromType,
-    getMyAnimationSourceFromType,
+    getAnimationSourceFromType,
+    otherUserSelectedAnimation,
+    mySelectedAnimation,
   } = useVideo();
 
   const styles = createstyle(isHideUser);
@@ -58,15 +59,16 @@ const Video = ({
         objectFit="cover"
         style={styles.otherVideo}
       />
-      {isShowOtherUserAnimation && getOtherUserAnimationSourceFromType() && (
-        <LottieView
-          source={getOtherUserAnimationSourceFromType()}
-          autoPlay
-          loop
-          speed={1}
-          style={[styles.otherVideo, styles.animation]}
-        />
-      )}
+      {isShowOtherUserAnimation &&
+        getAnimationSourceFromType(otherUserSelectedAnimation) && (
+          <LottieView
+            source={getAnimationSourceFromType(otherUserSelectedAnimation)}
+            autoPlay
+            loop
+            speed={1}
+            style={[styles.otherVideo, styles.otherAnimation]}
+          />
+        )}
 
       {isHideUser && (
         <View style={[styles.otherVideo, styles.otherShade]}>
@@ -118,13 +120,13 @@ const Video = ({
         objectFit="cover"
         style={styles.myVideo}
       />
-      {isShowMyAnimation && getMyAnimationSourceFromType() && (
+      {isShowMyAnimation && getAnimationSourceFromType(mySelectedAnimation) && (
         <LottieView
-          source={getMyAnimationSourceFromType()}
+          source={getAnimationSourceFromType(mySelectedAnimation)}
           autoPlay
           loop
           speed={1}
-          style={[styles.myVideo, styles.animation]}
+          style={[styles.myVideo, styles.myAnimation]}
         />
       )}
 
@@ -167,11 +169,10 @@ const Video = ({
             id: 0,
             style: {
               backgroundColor: GlobalColors.Brand.secondary,
-              zIndex: 6,
             },
             icon: () => <AntDesign name="plus" size={20} color="#FFFF" />,
           }}
-          animateMainButton={true}
+          animateMainButton={!isShowOtherUserAnimation}
           style={styles.actionsButton}
           actionButtons={actionButtons}
         />
@@ -193,13 +194,13 @@ const Video = ({
               <IconVideoSwitch
                 size={24}
                 color={'#000'}
-                name={'camera-reverse-outline'}
+                name={'camera-outline'}
               />
             ) : (
               <IconVideoSwitch
                 size={24}
                 color={'#000'}
-                name={'camera-outline'}
+                name={'camera-reverse-outline'}
               />
             )
           }

@@ -6,9 +6,10 @@ export enum EAnimation {
   HEARTS,
   FLAMES,
   LIKES,
-  CONFETTI,
+  HEY,
   UNICORN,
-  FLOWERS,
+  MONEY,
+  KISS,
 }
 
 export const Gender = {
