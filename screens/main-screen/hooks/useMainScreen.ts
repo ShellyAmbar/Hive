@@ -144,13 +144,10 @@ const useMainScreen = () => {
           .where('callerAge', '<=', limitedAges[1])
           .where('callerAge', '>=', limitedAges[0]);
 
-        const filterCountry = isLimitedCountry
-          ? query.where('callerCountry', '==', limitedCountry)
-          : query;
-
-        // callerGender: myGender,
-        // callerOtherUserGender: myOtherGender,
-        // callerIsLimitedUserGender: isMyLimitedUserGender,
+        const filterCountry =
+          isLimitedCountry && limitedCountry?.length > 0
+            ? query.where('callerCountry', '==', limitedCountry)
+            : query;
 
         const filterGender = isMyLimitedUserGender
           ? filterCountry.where('callerGender', '==', myOtherGender)
@@ -170,7 +167,8 @@ const useMainScreen = () => {
                 newCall &&
                 newCall?.offer &&
                 !connecting.current &&
-                (newCall.callerIsLimitedCountry
+                (newCall.callerIsLimitedCountry &&
+                newCall.callerLimitedCountry?.length > 0
                   ? newCall.callerLimitedCountry === myCountry
                   : true) &&
                 (newCall.callerIsLimitedUserGender
