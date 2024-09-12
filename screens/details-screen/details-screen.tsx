@@ -73,7 +73,7 @@ const DetailsScreen = props => {
         }}
         onError={e => {
           setshowPopupChoose(false);
-          console.log(e);
+          // console.log(e);
         }}
         isVisible={showPopupChoose}
         setVisible={setshowPopupChoose}

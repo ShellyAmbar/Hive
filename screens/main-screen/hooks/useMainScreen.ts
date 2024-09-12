@@ -205,7 +205,7 @@ const useMainScreen = () => {
           unsubscribe && unsubscribe();
         };
       } catch (e) {
-        console.log('error---', e);
+        // console.log('error---', e);
       }
     }
   }, [deviceId, startListenToPending]);
@@ -312,7 +312,7 @@ const useMainScreen = () => {
         };
       }
     } catch (e) {
-      console.log('error', e);
+      // console.log('error', e);
     }
   };
 
@@ -363,7 +363,7 @@ const useMainScreen = () => {
         myRef.set(cWithOffer);
       }
     } catch (e) {
-      console.log(e);
+      //  console.log(e);
     }
   };
   const join = async () => {
@@ -411,7 +411,7 @@ const useMainScreen = () => {
         }
       }
     } catch (e) {
-      console.log(e);
+      //  console.log(e);
     }
   };
 
@@ -487,11 +487,6 @@ const useMainScreen = () => {
     if (firebaseRef.current) {
       try {
         const incomingUserIdFromStorage = await getData('incomingUserId');
-        console.log(
-          'incomingUserId hangup',
-          incomingUserIdFromStorage,
-          myUserId,
-        );
 
         if (incomingUserIdFromStorage) {
           await doc(
@@ -508,7 +503,7 @@ const useMainScreen = () => {
         setfbRef(null);
         firebaseRef.current = null;
       } catch (e) {
-        console.log(e);
+        //  console.log(e);
       }
     }
   };
@@ -538,7 +533,7 @@ const useMainScreen = () => {
         });
       });
     } catch (e) {
-      console.log(e);
+      //  console.log(e);
     }
   };
 

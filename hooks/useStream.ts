@@ -22,7 +22,7 @@ const useStream = ({
         setLocalStream(videoStream);
         return videoStream;
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     },
     [setLocalStream],
