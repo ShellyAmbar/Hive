@@ -64,12 +64,7 @@ export default StyleSheet.create({
     right: 0,
     zIndex: 0,
   },
-  image: {
-    zIndex: 3,
-    width: '60%',
-    height: 200,
-    borderRadius: 100,
-  },
+
   shade: {
     position: 'absolute',
     top: 0,
@@ -78,13 +73,5 @@ export default StyleSheet.create({
     right: 0,
     zIndex: 1,
     backgroundColor: GlobalColors.BgColors.Bg2,
-  },
-  lottie: {
-    position: 'absolute',
-    zIndex: 2,
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
   },
 });

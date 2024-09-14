@@ -1,9 +1,8 @@
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 import styles from './welcome-screen.styles';
 
 import Spacer from '@hive/components/spacer/spacer';
-import LottieView from 'lottie-react-native';
 import Video, {VideoRef} from 'react-native-video';
 const WelcomeScreen = props => {
   const onStart = () => {
