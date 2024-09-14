@@ -5,6 +5,7 @@ export default StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
+    backgroundColor: GlobalColors.BgColors.Bg9,
   },
   content: {
     justifyContent: 'center',
@@ -149,5 +150,13 @@ export default StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly',
     width: '100%',
+  },
+  lottie: {
+    position: 'absolute',
+    zIndex: 2,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });

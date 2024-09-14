@@ -24,12 +24,13 @@ import MultiSlider from 'react-native-range-bar';
 // import Picker from './picker/picker';
 import Picker from 'react-native-picker-dropdown-select';
 import useDetailsScreen from './hooks/useDetailsScreen';
+import LottieView from 'lottie-react-native';
 const DetailsScreen = props => {
   const {
     // setshowPopupChoose,
     // updateImageUri,
     // showPopupChoose,
-    localStream,
+
     name,
     setName,
     age,
@@ -83,14 +84,22 @@ const DetailsScreen = props => {
   return (
     <View style={styles.container}>
       {/* {showPopupChoose && popup()} */}
-      {localStream && (
-        <RTCView
-          streamURL={localStream.toURL()}
-          objectFit="cover"
-          style={styles.video}
-        />
-      )}
-      <View style={styles.shade} />
+
+      <LottieView
+        source={require('@hive/assets/lotties/sparks.json')}
+        autoPlay
+        loop
+        speed={1}
+        style={styles.lottie}
+      />
+      <LottieView
+        source={require('@hive/assets/lotties/bubbles.json')}
+        autoPlay
+        loop
+        speed={1}
+        style={styles.lottie}
+      />
+
       <ScrollView keyboardShouldPersistTaps="handled" style={styles.scroll}>
         <View style={styles.content}>
           <Spacer size={30} />

@@ -1,12 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  deleteImagePath,
-  dounloadImageFromStorage,
-  uploadImageToCloude,
-} from '@hive/utils/image-util';
 
-import DeviceInfo from 'react-native-device-info';
-import useStream from '@hive/hooks/useStream';
 import {
   setMyAge,
   setMyCountry,
@@ -59,7 +52,6 @@ const useDetailsScreen = props => {
   const [defaultSelectedOtherGenderIndex, setDefaultSelectedOtherGenderIndex] =
     useState(0);
 
-  const {localStream} = useStream({});
   const myGenderitemList = useMemo(
     () => [
       {
@@ -226,7 +218,7 @@ const useDetailsScreen = props => {
     // setshowPopupChoose,
     // updateImageUri,
     //  showPopupChoose,
-    localStream,
+
     name,
     setName,
     age,

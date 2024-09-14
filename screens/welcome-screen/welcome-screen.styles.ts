@@ -5,10 +5,15 @@ export default StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: GlobalColors.BgColors.Bg2,
+    backgroundColor: GlobalColors.BgColors.Bg9,
+  },
+  content: {
+    flex: 1,
+    zIndex: 1,
+    paddingHorizontal: 20,
+
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
   },
   startBtn: {
     alignSelf: 'center',
