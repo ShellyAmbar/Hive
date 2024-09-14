@@ -7,51 +7,54 @@ import {persistor} from '@hive/store';
 const useStream = ({
   onBackground,
   onFront,
+  isListenToAppState = false,
 }: {
   onBackground?: () => void;
   onFront?: () => void;
+  isListenToAppState?: boolean;
 }) => {
   const [localStream, setLocalStream] = useState<null | MediaStream>(null);
 
-  const loadVideo = useCallback(
-    async (isFront: boolean) => {
-      try {
-        const videoStreamManager = VideoStreamManager.getInstance();
-        const videoStream = await videoStreamManager.getStream(false, isFront);
+  const loadVideo = useCallback(async (isFront: boolean) => {
+    try {
+      const videoStreamManager = VideoStreamManager.getInstance();
+      const videoStream = await videoStreamManager.getStream(false, isFront);
 
-        setLocalStream(videoStream);
-        return videoStream;
-      } catch (e) {
-        // console.log(e);
-      }
-    },
-    [setLocalStream],
-  );
+      setLocalStream(videoStream);
+      return videoStream;
+    } catch (e) {
+      // console.log(e);
+    }
+  }, []);
 
   useEffect(() => {
     loadVideo(true);
-    const subscription = AppState.addEventListener(
-      'change',
-      async nextAppState => {
-        if (nextAppState === 'background') {
-          persistor.persist();
-          persistor.flush();
-          const videoStreamManager = VideoStreamManager.getInstance();
-          videoStreamManager.stopStream();
-          onBackground && onBackground();
-        } else if (nextAppState === 'active') {
-          loadVideo(true);
-          onFront && onFront();
-        }
-      },
-    );
+    if (isListenToAppState) {
+      const subscription = AppState.addEventListener(
+        'change',
+        async nextAppState => {
+          if (nextAppState === 'background') {
+            console.log('background');
 
-    return () => {
-      subscription.remove();
-      const videoStreamManager = VideoStreamManager.getInstance();
-      videoStreamManager.stopStream();
-    };
-  }, [loadVideo]);
+            persistor.persist();
+            persistor.flush();
+            const videoStreamManager = VideoStreamManager.getInstance();
+            videoStreamManager.stopStream();
+            onBackground && onBackground();
+          } else if (nextAppState === 'active') {
+            console.log('active');
+
+            loadVideo(true);
+            onFront && onFront();
+          }
+        },
+      );
+
+      return () => {
+        subscription.remove();
+      };
+    }
+  }, []);
 
   return {
     localStream,

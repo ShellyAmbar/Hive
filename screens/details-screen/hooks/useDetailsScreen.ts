@@ -11,7 +11,7 @@ import {
   setMyAge,
   setMyCountry,
   setMyLimitedCountry,
-  setMyImage,
+  //setMyImage,
   setMyName,
   setIsMyLimitedCountry,
   setIsMyLimitedAges,
@@ -38,15 +38,13 @@ const useDetailsScreen = props => {
     isMyLimitedUserGender,
   } = useSelector(state => state.user);
   const [name, setName] = useState(myName);
-  const [image, setImage] = useState<string | null>(myImage ? myImage : null);
+  // const [image, setImage] = useState<string | null>(myImage ? myImage : null);
   const [age, setAge] = useState(myAge ? myAge : 0);
-  const [showPopupChoose, setshowPopupChoose] = useState(false);
-  const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
+  // const [showPopupChoose, setshowPopupChoose] = useState(false);
+  // const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
   const [isErrorAge, setisErrorAge] = useState(false);
   const [country, setCountry] = useState(myCountry ?? '');
-  const [limitedCountry, setLImitedCountry] = useState(
-    myLimitedCountry ?? myCountry,
-  );
+  const [limitedCountry, setLImitedCountry] = useState(myLimitedCountry);
   const [isLimitCountry, setisLimitCountry] = useState(isMyLimitedCountry);
 
   const [limitedAges, setLImitedAges] = useState(myLimitedAges);
@@ -153,31 +151,37 @@ const useDetailsScreen = props => {
 
     setDefaultSelectedMyGenderIndex(myGenderIndex);
     setDefaultSelectedOtherGenderIndex(otherGenderIndex);
-  }, [myGender, myOtherGender, myGenderitemList, otherGenderItemList]);
+  }, [
+    myGender,
+    myOtherGender,
+    myGenderitemList,
+    otherGenderItemList,
+    isMyLimitedUserGender,
+  ]);
 
   useEffect(() => {
     updateDefaultIndexes();
-  }, [updateDefaultIndexes]);
-
-  const updateImageUri = useCallback((imageUri: string | null) => {
-    setImage(imageUri);
-    setisNeedToUpdateCloude(true);
   }, []);
 
-  const updateImageToCloude = useCallback(async () => {
-    if (image) {
-      await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
-      const imageUri = await dounloadImageFromStorage(
-        DeviceInfo.getDeviceId(),
-        name,
-      );
-      dispatch(setMyImage(imageUri));
-    } else {
-      await deleteImagePath(DeviceInfo.getDeviceId(), name);
-      dispatch(setMyImage(null));
-    }
-    setisNeedToUpdateCloude(false);
-  }, [name, image, dispatch]);
+  // const updateImageUri = useCallback((imageUri: string | null) => {
+  //   setImage(imageUri);
+  //   setisNeedToUpdateCloude(true);
+  // }, []);
+
+  // const updateImageToCloude = useCallback(async () => {
+  //   if (image) {
+  //     await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
+  //     const imageUri = await dounloadImageFromStorage(
+  //       DeviceInfo.getDeviceId(),
+  //       name,
+  //     );
+  //     dispatch(setMyImage(imageUri));
+  //   } else {
+  //     await deleteImagePath(DeviceInfo.getDeviceId(), name);
+  //     dispatch(setMyImage(null));
+  //   }
+  //   setisNeedToUpdateCloude(false);
+  // }, [name, image, dispatch]);
 
   const isMissingData =
     name?.length === 0 ||
@@ -202,7 +206,7 @@ const useDetailsScreen = props => {
     //   updateImageToCloude();
     // }
 
-    props.navigation.navigate('Home');
+    props.navigation.replace('Home');
   }, [
     name,
     age,
@@ -219,9 +223,9 @@ const useDetailsScreen = props => {
   ]);
 
   return {
-    setshowPopupChoose,
-    updateImageUri,
-    showPopupChoose,
+    // setshowPopupChoose,
+    // updateImageUri,
+    //  showPopupChoose,
     localStream,
     name,
     setName,

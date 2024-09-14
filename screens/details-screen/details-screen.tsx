@@ -19,16 +19,16 @@ import CountryCodePicker from 'rn-country-code-picker-modal';
 
 import ButtonSwitch from 'rn-switch-button';
 import MultiSlider from 'react-native-range-bar';
-import PopupPicture from './popup-picture/popup-picture';
+// import PopupPicture from './popup-picture/popup-picture';
 
 // import Picker from './picker/picker';
 import Picker from 'react-native-picker-dropdown-select';
 import useDetailsScreen from './hooks/useDetailsScreen';
 const DetailsScreen = props => {
   const {
-    setshowPopupChoose,
-    updateImageUri,
-    showPopupChoose,
+    // setshowPopupChoose,
+    // updateImageUri,
+    // showPopupChoose,
     localStream,
     name,
     setName,
@@ -53,36 +53,36 @@ const DetailsScreen = props => {
     onStart,
     isMissingData,
   } = useDetailsScreen(props);
-  const popup = () => {
-    return (
-      <PopupPicture
-        onPressClose={() => {
-          setshowPopupChoose(false);
-        }}
-        onPressTakePicture={uri => {
-          if (uri?.length > 0) {
-            updateImageUri(uri);
-            setshowPopupChoose(false);
-          }
-        }}
-        onPressUploadFromGalery={uri => {
-          if (uri?.length > 0) {
-            updateImageUri(uri);
-            setshowPopupChoose(false);
-          }
-        }}
-        onError={e => {
-          setshowPopupChoose(false);
-          // console.log(e);
-        }}
-        isVisible={showPopupChoose}
-        setVisible={setshowPopupChoose}
-      />
-    );
-  };
+  // const popup = () => {
+  //   return (
+  //     <PopupPicture
+  //       onPressClose={() => {
+  //         setshowPopupChoose(false);
+  //       }}
+  //       onPressTakePicture={uri => {
+  //         if (uri?.length > 0) {
+  //           updateImageUri(uri);
+  //           setshowPopupChoose(false);
+  //         }
+  //       }}
+  //       onPressUploadFromGalery={uri => {
+  //         if (uri?.length > 0) {
+  //           updateImageUri(uri);
+  //           setshowPopupChoose(false);
+  //         }
+  //       }}
+  //       onError={e => {
+  //         setshowPopupChoose(false);
+  //         // console.log(e);
+  //       }}
+  //       isVisible={showPopupChoose}
+  //       setVisible={setshowPopupChoose}
+  //     />
+  //   );
+  // };
   return (
     <View style={styles.container}>
-      {showPopupChoose && popup()}
+      {/* {showPopupChoose && popup()} */}
       {localStream && (
         <RTCView
           streamURL={localStream.toURL()}

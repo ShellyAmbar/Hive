@@ -7338,10 +7338,10 @@ rn-actions-floating-button@^1.1.2:
   resolved "https://registry.npmjs.org/rn-actions-floating-button/-/rn-actions-floating-button-1.1.2.tgz"
   integrity sha512-N1kCYfVK0Hsp6FXd0J0Wj1C5PysUc2MwcNMsW26Fe0ncPSpKpDIqa+i+jvniyE0B9CvAKzxEOOukr7Jt4SfYOQ==
 
-rn-country-code-picker-modal@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.npmjs.org/rn-country-code-picker-modal/-/rn-country-code-picker-modal-1.2.0.tgz"
-  integrity sha512-pIStjxFeJm3uRDPxYtP27CzUOPvQE1f5tapAhiOgUfF0UziQk7v3wh0uZNMZpZyN9J0Szw1S3IAMK88hZmWgxA==
+rn-country-code-picker-modal@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/rn-country-code-picker-modal/-/rn-country-code-picker-modal-1.2.4.tgz"
+  integrity sha512-pDSQIS9bRcGet2iRyB1e+Ikr/YKuVbJojDuxj88pahS8bESYF0Zgqu2ExXd831w/P494jHlSTmPjTeDsYVEvKw==
 
 rn-reactive-text-input@^1.1.3:
   version "1.1.3"
@@ -7353,10 +7353,10 @@ rn-sliding-popup@^1.1.8:
   resolved "https://registry.npmjs.org/rn-sliding-popup/-/rn-sliding-popup-1.1.8.tgz"
   integrity sha512-cZ6d3358bD/c7ZxY1lK1n9crnMkcEuX2FaWZLp00wsRkLBF8fXC7Nm5JY/ymOFxidIoxI2K8jn1OEVLdNMiukw==
 
-rn-switch-button@^1.0.9:
-  version "1.0.9"
-  resolved "https://registry.npmjs.org/rn-switch-button/-/rn-switch-button-1.0.9.tgz"
-  integrity sha512-KZ4L9DtAuVcJRiud2WLgoky3w39mbRBV5sRs/BO9zPgoi3qPkgMmY/01s/HrBaeVYqkiVJ0lm7b00cbn1dEjtg==
+rn-switch-button@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.npmjs.org/rn-switch-button/-/rn-switch-button-1.1.0.tgz"
+  integrity sha512-NzjkchObbiAjOpc/y0HpmOHtt+09nFWyaC6foH5gQqAS/3ufae8PukL3gP6vx5bY/Lkzxh+TjPPubJQl7Kq7fQ==
 
 run-parallel@^1.1.9:
   version "1.2.0"

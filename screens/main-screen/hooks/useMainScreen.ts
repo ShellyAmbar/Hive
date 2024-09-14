@@ -94,6 +94,7 @@ const useMainScreen = () => {
       }
     },
     onFront: () => {},
+    isListenToAppState: true,
   });
 
   const switchCamera = useCallback(async () => {
