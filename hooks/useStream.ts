@@ -34,7 +34,7 @@ const useStream = ({
         'change',
         async nextAppState => {
           if (nextAppState === 'background') {
-            console.log('background');
+            // console.log('background');
 
             persistor.persist();
             persistor.flush();
@@ -42,7 +42,7 @@ const useStream = ({
             videoStreamManager.stopStream();
             onBackground && onBackground();
           } else if (nextAppState === 'active') {
-            console.log('active');
+            // console.log('active');
 
             loadVideo(true);
             onFront && onFront();
