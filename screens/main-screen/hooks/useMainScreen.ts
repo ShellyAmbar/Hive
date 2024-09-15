@@ -25,6 +25,11 @@ import {
   setMySelectedAnimation,
 } from '@hive/store/reducers/user';
 import {getData, storeData} from '@hive/utils/asyncstorage';
+import {
+  CollectionReference,
+  DocumentData,
+  DocumentReference,
+} from 'firebase/firestore';
 
 const peerConstraints = {
   iceServers: [
@@ -238,8 +243,11 @@ const useMainScreen = () => {
             !isInCallRef.current &&
             newCall?.calleeAge <= limitedAges[1] &&
             newCall?.calleeAge >= limitedAges[0] &&
-            (isLimitedCountry
+            (isLimitedCountry && limitedCountry?.length > 0
               ? limitedCountry === newCall?.calleeCountry
+              : true) &&
+            (isMyLimitedUserGender
+              ? myOtherGender === newCall?.calleeGender
               : true)
           ) {
             //listenToNewCallsRef.current = false;
@@ -361,7 +369,7 @@ const useMainScreen = () => {
           callerIsLimitedUserGender: isMyLimitedUserGender,
         };
 
-        myRef.set(cWithOffer);
+        myRef.set(cWithOffer).then(() => {});
       }
     } catch (e) {
       //  console.log(e);
@@ -490,15 +498,17 @@ const useMainScreen = () => {
         const incomingUserIdFromStorage = await getData('incomingUserId');
 
         if (incomingUserIdFromStorage) {
-          await doc(
-            firestore(),
-            'meet',
-            `chatId-${incomingUserIdFromStorage}`,
-          ).delete();
+          const ref = firestore()
+            .collection('meet')
+            .doc(`chatId-${incomingUserIdFromStorage}`);
+
+          await deleteCollections(ref, incomingUserIdFromStorage);
 
           storeData('incomingUserId', null);
         } else {
-          await doc(firestore(), 'meet', `chatId-${myUserId}`).delete();
+          const ref = firestore().collection('meet').doc(`chatId-${myUserId}`);
+
+          await deleteCollections(ref, myUserId);
         }
 
         setfbRef(null);
@@ -506,6 +516,22 @@ const useMainScreen = () => {
       } catch (e) {
         //  console.log(e);
       }
+    }
+  };
+
+  const deleteCollections = async (ref, docId) => {
+    if (ref) {
+      const calleeCandidate = await ref?.collection('callee')?.get();
+      const callerCandidate = await ref?.collection('caller')?.get();
+      calleeCandidate?.forEach(async candidate => {
+        await candidate?.ref?.delete();
+      });
+      callerCandidate?.forEach(async candidate => {
+        await candidate?.ref?.delete();
+      });
+      await doc(firestore(), 'meet', `chatId-${docId}`)
+        ?.delete()
+        .then(() => {});
     }
   };
 

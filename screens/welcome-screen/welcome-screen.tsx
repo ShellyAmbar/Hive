@@ -19,7 +19,7 @@ const WelcomeScreen = props => {
     <View style={styles.container}>
       <Video
         // Can be a URL or a local file.
-        source={require('@hive/assets/videos/promo.mp4')}
+        source={require('@hive/assets/videos/promotion.mp4')}
         // Store reference
         ref={videoRef}
         style={styles.video}
