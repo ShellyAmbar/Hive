@@ -105,7 +105,7 @@ const DetailsScreen = props => {
           <Spacer size={30} />
           <Text style={styles.title}>Tell us about you..</Text>
           <Spacer size={30} />
-          <Text style={styles.subTitle}>
+          <Text style={[styles.subTitle, {color: GlobalColors.Brand.fourth}]}>
             We would like to know you better and increase your calls
           </Text>
           <Spacer size={8} />
@@ -208,8 +208,9 @@ const DetailsScreen = props => {
           </View>
           <Spacer size={32} />
           <View style={styles.horizontal}>
-            <Text style={styles.subTitle}>Your country</Text>
+            <Text style={styles.subTitle}>Your country:</Text>
             <CountryCodePicker
+              pickerStyle={{flex: 1}}
               textStyle={styles.text}
               onPickedCode={(code, name) => {
                 setCountry(name);
@@ -271,6 +272,8 @@ const DetailsScreen = props => {
           {isLimitAges && (
             <>
               <MultiSlider
+                primaryColor={GlobalColors.Brand.fourth}
+                seconderyColor={GlobalColors.BgColors.Bg1}
                 initialMaxValue={limitedAges[1]}
                 initialMinValue={limitedAges[0]}
                 sliderWidth={Dimensions.get('window').width - 100}

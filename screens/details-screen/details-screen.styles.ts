@@ -54,10 +54,11 @@ export default StyleSheet.create({
     fontFamily: 'Jersey10-Regular',
   },
   subTitle: {
-    color: GlobalColors.Brand.thierd,
+    color: GlobalColors.TextColors.white,
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: 'left',
     fontFamily: 'Jersey10-Regular',
+    flex: 1,
   },
   textInputContainer: {
     width: '90%',
