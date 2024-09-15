@@ -72,6 +72,6 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 1,
-    backgroundColor: GlobalColors.BgColors.Bg2,
+    backgroundColor: GlobalColors.BgColors.Bg10,
   },
 });
