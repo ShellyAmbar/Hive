@@ -19,6 +19,7 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     zIndex: 3,
   },
+  scrollScontent: {paddingBottom: 200},
   imageBtn: {
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -31,14 +32,23 @@ export default StyleSheet.create({
   },
   startBtn: {
     alignSelf: 'center',
-
     backgroundColor: GlobalColors.Brand.thierd,
-
     width: '50%',
     paddingVertical: 20,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 24,
+    zIndex: 100,
+  },
+  gradiant: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 150,
+    bottom: 0,
+    zIndex: 99,
   },
   disabledBtn: {
     backgroundColor: GlobalColors.Shades.primary,

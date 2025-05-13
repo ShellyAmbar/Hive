@@ -175,12 +175,16 @@ const useDetailsScreen = props => {
   //   setisNeedToUpdateCloude(false);
   // }, [name, image, dispatch]);
 
-  const isMissingData =
-    name?.length === 0 ||
-    age.length === 0 ||
-    age === 0 ||
-    isErrorAge ||
-    country?.length === 0;
+  const isMissingData = useMemo(() => {
+    return (
+      name?.length === 0 ||
+      age.length === 0 ||
+      age === 0 ||
+      isErrorAge ||
+      country?.length === 0 ||
+      (isLimitCountry && limitedCountry.length === 0)
+    );
+  }, [name, country, isErrorAge, age, limitedCountry, isLimitCountry]);
 
   const onStart = useCallback(async () => {
     dispatch(setMyName(name));

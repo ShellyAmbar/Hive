@@ -9,14 +9,10 @@ import {
 } from 'react-native';
 import React from 'react';
 import styles from './details-screen.styles';
-import {RTCView} from 'react-native-webrtc';
-
 import ReactiveTextInput from 'rn-reactive-text-input';
 import {GlobalColors} from '@hive/styles/colors';
 import Spacer from '@hive/components/spacer/spacer';
-
 import CountryCodePicker from 'rn-country-code-picker-modal';
-
 import ButtonSwitch from 'rn-switch-button';
 import MultiSlider from 'react-native-range-bar';
 // import PopupPicture from './popup-picture/popup-picture';
@@ -25,6 +21,7 @@ import MultiSlider from 'react-native-range-bar';
 import Picker from 'react-native-picker-dropdown-select';
 import useDetailsScreen from './hooks/useDetailsScreen';
 import LottieView from 'lottie-react-native';
+import LinearGradient from 'react-native-linear-gradient';
 const DetailsScreen = props => {
   const {
     // setshowPopupChoose,
@@ -100,7 +97,10 @@ const DetailsScreen = props => {
         style={styles.lottie}
       />
 
-      <ScrollView keyboardShouldPersistTaps="handled" style={styles.scroll}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollScontent}>
         <View style={styles.content}>
           <Spacer size={30} />
           <Text style={styles.title}>Tell us about you..</Text>
@@ -287,21 +287,20 @@ const DetailsScreen = props => {
               <Spacer size={12} />
             </>
           )}
-
-          <TouchableOpacity
-            disabled={isMissingData}
-            style={[styles.startBtn, isMissingData && styles.disabledBtn]}
-            onPress={() => {
-              onStart();
-            }}>
-            <Text
-              style={[styles.btnText, isMissingData && styles.disabledText]}>
-              Start
-            </Text>
-          </TouchableOpacity>
-          <Spacer size={30} />
         </View>
       </ScrollView>
+      <LinearGradient colors={['transparent', 'black']} style={styles.gradiant}>
+        <TouchableOpacity
+          disabled={isMissingData}
+          style={[styles.startBtn, isMissingData && styles.disabledBtn]}
+          onPress={() => {
+            onStart();
+          }}>
+          <Text style={[styles.btnText, isMissingData && styles.disabledText]}>
+            Start
+          </Text>
+        </TouchableOpacity>
+      </LinearGradient>
     </View>
   );
 };
