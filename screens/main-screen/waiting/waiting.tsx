@@ -1,12 +1,12 @@
-import {View, Text} from 'react-native';
-import React, {useState} from 'react';
+import { View, Text } from 'react-native';
+import React, { useState } from 'react';
 import Loading from 'react-native-animated-loading-dots';
-import {MediaStream, RTCView} from 'react-native-webrtc';
+import { MediaStream, RTCView } from 'react-native-webrtc';
 import styles from './waiting.styles';
 
 import FloatingButton from '@hive/components/floating-button/floating-button';
 import CircularTimer from 'react-native-animated-circular-counter';
-import {GlobalColors} from '@hive/styles/colors';
+import { GlobalColors } from '@hive/styles/colors';
 import IconVideo from 'react-native-vector-icons/FontAwesome5';
 const Waiting = ({
   hangup,
@@ -21,7 +21,6 @@ const Waiting = ({
   title: string;
   localStream?: null | MediaStream;
 }) => {
-  const [showCountDown, setShowCountDown] = useState(true);
   return (
     <>
       {localStream && (
@@ -40,10 +39,9 @@ const Waiting = ({
             height={60}
             width={80}
             onFinish={() => {
-              setShowCountDown(false);
               create && create();
             }}
-            textStyle={{fontSize: 12}}
+            textStyle={{ fontSize: 12 }}
             progressColor={GlobalColors.Brand.secondary}
             circleColor="white"
             isCountDown={true}
@@ -58,7 +56,8 @@ const Waiting = ({
             dotSize={20}
             dotSpacing={8}
             duration={300}
-            dotStyle={{borderRadius: 30}}
+            colors={[GlobalColors.BgColors.Bg16, GlobalColors.BgColors.Bg17, GlobalColors.BgColors.Bg18, GlobalColors.BgColors.Bg19]}
+            dotStyle={{ borderRadius: 30 }}
             animationType="UP_AND_DOWN"
           />
         )}

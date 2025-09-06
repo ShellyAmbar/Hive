@@ -1,20 +1,19 @@
-import {View, Image, Text} from 'react-native';
+import { View, Image, Text } from 'react-native';
 import React from 'react';
 import createstyle from './video.styles';
 import IVideoProps from './interfaces';
 import FloatingButton from '@hive/components/floating-button/floating-button';
-import {RTCView} from 'react-native-webrtc';
+import { RTCView } from 'react-native-webrtc';
 import Waiting from '../waiting/waiting';
 import IconVideo from 'react-native-vector-icons/FontAwesome5';
 import IconVideoSwitch from 'react-native-vector-icons/Ionicons';
 import IconHideSwitch from 'react-native-vector-icons/Feather';
 import Spacer from '@hive/components/spacer/spacer';
-import {useSelector} from 'react-redux';
 import LottieView from 'lottie-react-native';
 
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {GlobalColors} from '@hive/styles/colors';
+import { GlobalColors } from '@hive/styles/colors';
 import ActionsFloatingButton from 'rn-actions-floating-button';
 import useVideo from './hooks/useVideo';
 
@@ -75,7 +74,7 @@ const Video = ({
               autoPlay
               loop
               speed={2}
-              style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
+              style={[styles.lottie, { transform: [{ rotate: '90deg' }] }]}
             />
             <LottieView
               source={require('@hive/assets/lotties/stars.json')}
@@ -115,7 +114,7 @@ const Video = ({
           <Spacer size={12} />
           {incomingUserImage?.length > 0 && (
             <Image
-              source={{uri: incomingUserImage}}
+              source={{ uri: incomingUserImage }}
               style={styles.otherImage}
             />
           )}
@@ -156,7 +155,7 @@ const Video = ({
               autoPlay
               loop
               speed={2}
-              style={[styles.lottie, {transform: [{rotate: '90deg'}]}]}
+              style={[styles.lottie, { transform: [{ rotate: '90deg' }] }]}
             />
             <LottieView
               source={require('@hive/assets/lotties/stars.json')}
@@ -180,7 +179,7 @@ const Video = ({
           mainButton={{
             id: 0,
             style: {
-              backgroundColor: GlobalColors.Brand.secondary,
+              backgroundColor: GlobalColors.BgColors.Bg11,
             },
             icon: () => <AntDesign name="plus" size={20} color="#FFFF" />,
           }}
@@ -191,9 +190,9 @@ const Video = ({
         <FloatingButton
           icon={() =>
             isHideMe ? (
-              <IconHideSwitch size={24} color={'#000'} name={'camera'} />
+              <IconHideSwitch size={24} color={GlobalColors.TextColors.white} name={'camera'} />
             ) : (
-              <IconHideSwitch size={24} color={'#000'} name={'camera-off'} />
+              <IconHideSwitch size={24} color={GlobalColors.TextColors.white} name={'camera-off'} />
             )
           }
           onPress={() => setIsHideMe(!isHideMe)}
@@ -205,13 +204,13 @@ const Video = ({
             isFront ? (
               <IconVideoSwitch
                 size={24}
-                color={'#000'}
-                name={'camera-outline'}
+                color={GlobalColors.TextColors.white}
+                name={'camera-reverse'}
               />
             ) : (
               <IconVideoSwitch
                 size={24}
-                color={'#000'}
+                color={GlobalColors.TextColors.white}
                 name={'camera-reverse-outline'}
               />
             )

@@ -1,5 +1,5 @@
-import {GlobalColors} from '@hive/styles/colors';
-import {StyleSheet} from 'react-native';
+import { GlobalColors } from '@hive/styles/colors';
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {

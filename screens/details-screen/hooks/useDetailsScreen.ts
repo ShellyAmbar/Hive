@@ -1,4 +1,4 @@
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import {
   setMyAge,
@@ -14,7 +14,7 @@ import {
   setMyOtherGender,
   setIsMyLimitedUserGender,
 } from '@hive/store/reducers/user';
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 const useDetailsScreen = props => {
   const dispatch = useDispatch();
   const {
@@ -31,10 +31,7 @@ const useDetailsScreen = props => {
     isMyLimitedUserGender,
   } = useSelector(state => state.user);
   const [name, setName] = useState(myName);
-  // const [image, setImage] = useState<string | null>(myImage ? myImage : null);
   const [age, setAge] = useState(myAge ? myAge : 0);
-  // const [showPopupChoose, setshowPopupChoose] = useState(false);
-  // const [isNeedToUpdateCloude, setisNeedToUpdateCloude] = useState(false);
   const [isErrorAge, setisErrorAge] = useState(false);
   const [country, setCountry] = useState(myCountry ?? '');
   const [limitedCountry, setLImitedCountry] = useState(myLimitedCountry);
@@ -155,26 +152,6 @@ const useDetailsScreen = props => {
     updateDefaultIndexes();
   }, []);
 
-  // const updateImageUri = useCallback((imageUri: string | null) => {
-  //   setImage(imageUri);
-  //   setisNeedToUpdateCloude(true);
-  // }, []);
-
-  // const updateImageToCloude = useCallback(async () => {
-  //   if (image) {
-  //     await uploadImageToCloude(DeviceInfo.getDeviceId(), name, image);
-  //     const imageUri = await dounloadImageFromStorage(
-  //       DeviceInfo.getDeviceId(),
-  //       name,
-  //     );
-  //     dispatch(setMyImage(imageUri));
-  //   } else {
-  //     await deleteImagePath(DeviceInfo.getDeviceId(), name);
-  //     dispatch(setMyImage(null));
-  //   }
-  //   setisNeedToUpdateCloude(false);
-  // }, [name, image, dispatch]);
-
   const isMissingData = useMemo(() => {
     return (
       name?.length === 0 ||
@@ -197,10 +174,6 @@ const useDetailsScreen = props => {
     dispatch(setMyOtherGender(otherGender));
     dispatch(setIsMyLimitedUserGender(isLimitUserGender));
     dispatch(setMyLimitedAges(limitedAges));
-
-    // if (isNeedToUpdateCloude) {
-    //   updateImageToCloude();
-    // }
 
     props.navigation.replace('Home');
   }, [

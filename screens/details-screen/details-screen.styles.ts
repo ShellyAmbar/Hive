@@ -1,11 +1,11 @@
-import {GlobalColors} from '@hive/styles/colors';
-import {StyleSheet} from 'react-native';
+import { GlobalColors } from '@hive/styles/colors';
+import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    backgroundColor: GlobalColors.BgColors.Bg9,
+    backgroundColor: GlobalColors.BgColors.Bg3,
   },
   content: {
     justifyContent: 'center',
@@ -19,7 +19,7 @@ export default StyleSheet.create({
     paddingHorizontal: 20,
     zIndex: 3,
   },
-  scrollScontent: {paddingBottom: 200},
+  scrollScontent: { paddingBottom: 200 },
   imageBtn: {
     paddingHorizontal: 15,
     paddingVertical: 10,
@@ -46,9 +46,9 @@ export default StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    height: 150,
     bottom: 0,
-    zIndex: 99,
+    top: 0,
+    zIndex: 0,
   },
   disabledBtn: {
     backgroundColor: GlobalColors.Shades.primary,
@@ -164,7 +164,7 @@ export default StyleSheet.create({
   },
   lottie: {
     position: 'absolute',
-    zIndex: 2,
+    zIndex: 0,
     top: 0,
     bottom: 0,
     left: 0,

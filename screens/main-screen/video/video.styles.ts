@@ -1,5 +1,5 @@
-import {GlobalColors} from '@hive/styles/colors';
-import {StyleSheet} from 'react-native';
+import { GlobalColors } from '@hive/styles/colors';
+import { StyleSheet } from 'react-native';
 
 const createStyle = (isHiding: boolean) =>
   StyleSheet.create({
@@ -71,7 +71,7 @@ const createStyle = (isHiding: boolean) =>
       position: 'relative',
     },
     switchBtn: {
-      backgroundColor: GlobalColors.Border,
+      backgroundColor: GlobalColors.BgColors.Bg11,
       position: 'relative',
       width: 45,
       height: 45,

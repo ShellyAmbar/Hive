@@ -3,14 +3,13 @@ import {
   Text,
   TouchableOpacity,
   Keyboard,
-  Image,
   ScrollView,
   Dimensions,
 } from 'react-native';
 import React from 'react';
 import styles from './details-screen.styles';
 import ReactiveTextInput from 'rn-reactive-text-input';
-import {GlobalColors} from '@hive/styles/colors';
+import { GlobalColors } from '@hive/styles/colors';
 import Spacer from '@hive/components/spacer/spacer';
 import CountryCodePicker from 'rn-country-code-picker-modal';
 import ButtonSwitch from 'rn-switch-button';
@@ -24,10 +23,6 @@ import LottieView from 'lottie-react-native';
 import LinearGradient from 'react-native-linear-gradient';
 const DetailsScreen = props => {
   const {
-    // setshowPopupChoose,
-    // updateImageUri,
-    // showPopupChoose,
-
     name,
     setName,
     age,
@@ -51,51 +46,17 @@ const DetailsScreen = props => {
     onStart,
     isMissingData,
   } = useDetailsScreen(props);
-  // const popup = () => {
-  //   return (
-  //     <PopupPicture
-  //       onPressClose={() => {
-  //         setshowPopupChoose(false);
-  //       }}
-  //       onPressTakePicture={uri => {
-  //         if (uri?.length > 0) {
-  //           updateImageUri(uri);
-  //           setshowPopupChoose(false);
-  //         }
-  //       }}
-  //       onPressUploadFromGalery={uri => {
-  //         if (uri?.length > 0) {
-  //           updateImageUri(uri);
-  //           setshowPopupChoose(false);
-  //         }
-  //       }}
-  //       onError={e => {
-  //         setshowPopupChoose(false);
-  //         // console.log(e);
-  //       }}
-  //       isVisible={showPopupChoose}
-  //       setVisible={setshowPopupChoose}
-  //     />
-  //   );
-  // };
   return (
     <View style={styles.container}>
-      {/* {showPopupChoose && popup()} */}
-
+      <LinearGradient colors={[GlobalColors.BgColors.Bg12, GlobalColors.BgColors.Bg13]} style={styles.gradiant} />
       <LottieView
         source={require('@hive/assets/lotties/sparks.json')}
         autoPlay
         loop
-        speed={1}
+        speed={0.5}
         style={styles.lottie}
       />
-      <LottieView
-        source={require('@hive/assets/lotties/bubbles.json')}
-        autoPlay
-        loop
-        speed={1}
-        style={styles.lottie}
-      />
+
 
       <ScrollView
         keyboardShouldPersistTaps="handled"
@@ -103,15 +64,15 @@ const DetailsScreen = props => {
         contentContainerStyle={styles.scrollScontent}>
         <View style={styles.content}>
           <Spacer size={30} />
-          <Text style={styles.title}>Tell us about you..</Text>
+          <Text style={styles.title}>Let's meet you </Text>
           <Spacer size={30} />
-          <Text style={[styles.subTitle, {color: GlobalColors.Brand.fourth}]}>
+          <Text style={[styles.subTitle, { color: GlobalColors.Brand.fourth }]}>
             We would like to know you better and increase your calls
           </Text>
           <Spacer size={8} />
           <ReactiveTextInput
             textAlignVertical={'bottom'}
-            placeholder="Enter your name.."
+            placeholder="Your Nickname.."
             placeHolderColor="#FFFF"
             defaultValue={name}
             containerStyle={styles.textInputContainer}
@@ -131,33 +92,9 @@ const DetailsScreen = props => {
             cursorColor={GlobalColors.TextColors.white}
           />
           <Spacer size={20} />
-          {/* <TouchableOpacity
-            style={styles.imageBtn}
-            onPress={() => setshowPopupChoose(true)}>
-            <Text style={styles.text}>Upload a picture</Text>
-          </TouchableOpacity>
-          <Spacer size={30} />
-          {image && (
-            <>
-              <View style={styles.image}>
-                <TouchableOpacity
-                  style={styles.closeBtn}
-                  onPress={() => {
-                    updateImageUri(null);
-                  }}>
-                  <Icon name="close" size={24} color={'#FFFF'} />
-                </TouchableOpacity>
-                <Image style={styles.imageContainer} source={{uri: image}} />
-              </View>
-
-              <Spacer size={50} />
-            </>
-          )} */}
-          <Text style={styles.subTitle}>What's your age?</Text>
-
           <ReactiveTextInput
             textAlignVertical={'bottom'}
-            placeholder={age !== 0 ? '' : 'Enter your age'}
+            placeholder={age !== 0 ? '' : 'Your Age'}
             placeHolderColor="#FFFF"
             defaultValue={age !== 0 ? age + '' : ''}
             containerStyle={styles.numberInputContainer}
@@ -210,7 +147,7 @@ const DetailsScreen = props => {
           <View style={styles.horizontal}>
             <Text style={styles.subTitle}>Your country:</Text>
             <CountryCodePicker
-              pickerStyle={{flex: 1}}
+              pickerStyle={{ flex: 1 }}
               textStyle={styles.text}
               onPickedCode={(code, name) => {
                 setCountry(name);
@@ -222,11 +159,11 @@ const DetailsScreen = props => {
           <View style={styles.horizontal}>
             <Text style={styles.subTitle}>limit for country?</Text>
             <ButtonSwitch
-              outerViewStyle={{width: 120, height: 50}}
-              textSelectedStyle={{fontSize: 12}}
-              textUnSelectedStyle={{fontSize: 12}}
-              innerViewStyle={{width: 120}}
-              buttonsStyle={{width: 120}}
+              outerViewStyle={{ width: 120, height: 50 }}
+              textSelectedStyle={{ fontSize: 12 }}
+              textUnSelectedStyle={{ fontSize: 12 }}
+              innerViewStyle={{ width: 120 }}
+              buttonsStyle={{ width: 120 }}
               deafultSelectedIndex={isLimitCountry ? 1 : 0}
               leftText="No"
               rightText="Yes"
@@ -251,11 +188,11 @@ const DetailsScreen = props => {
           <View style={styles.horizontal}>
             <Text style={styles.subTitle}>limit for ages?</Text>
             <ButtonSwitch
-              outerViewStyle={{width: 120, height: 50}}
-              textSelectedStyle={{fontSize: 12}}
-              textUnSelectedStyle={{fontSize: 12}}
-              innerViewStyle={{width: 120}}
-              buttonsStyle={{width: 120}}
+              outerViewStyle={{ width: 120, height: 50 }}
+              textSelectedStyle={{ fontSize: 12 }}
+              textUnSelectedStyle={{ fontSize: 12 }}
+              innerViewStyle={{ width: 120 }}
+              buttonsStyle={{ width: 120 }}
               deafultSelectedIndex={isLimitAges ? 1 : 0}
               leftText="No"
               rightText="Yes"
@@ -277,7 +214,7 @@ const DetailsScreen = props => {
                 initialMaxValue={limitedAges[1]}
                 initialMinValue={limitedAges[0]}
                 sliderWidth={Dimensions.get('window').width - 100}
-                min={0}
+                min={18}
                 max={100}
                 step={1}
                 onValueChange={range => {
@@ -289,18 +226,16 @@ const DetailsScreen = props => {
           )}
         </View>
       </ScrollView>
-      <LinearGradient colors={['transparent', 'black']} style={styles.gradiant}>
-        <TouchableOpacity
-          disabled={isMissingData}
-          style={[styles.startBtn, isMissingData && styles.disabledBtn]}
-          onPress={() => {
-            onStart();
-          }}>
-          <Text style={[styles.btnText, isMissingData && styles.disabledText]}>
-            Start
-          </Text>
-        </TouchableOpacity>
-      </LinearGradient>
+      <TouchableOpacity
+        disabled={isMissingData}
+        style={[styles.startBtn, isMissingData && styles.disabledBtn]}
+        onPress={() => {
+          onStart();
+        }}>
+        <Text style={[styles.btnText, isMissingData && styles.disabledText]}>
+          Start
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
